@@ -1,0 +1,164 @@
+// Schéma Objectiva — étape 001 (socle objectifs).
+// Montants : entiers dans la plus petite unité de la devise (ajoutés à l'étape budget).
+// Dates de calendrier : colonnes DATE (sans heure). Instants : TIMESTAMPTZ (UTC).
+
+generator client {
+  provider   = "prisma-client"
+  output     = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  email        String   @unique @db.VarChar(254)
+  passwordHash String   @map("password_hash")
+  displayName  String   @map("display_name") @db.VarChar(80)
+  timezone     String   @default("Europe/Paris") @db.VarChar(64)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  goals    Goal[]
+  tasks    Task[]
+  sessions Session[]
+
+  @@map("users")
+}
+
+// Une session par appareil connecté. Le jeton porte l'id de session : la déconnexion
+// révoque la session côté serveur, un jeton volé devient inutilisable.
+model Session {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz(6)
+  revokedAt DateTime? @map("revoked_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+// Trace des tentatives de connexion échouées, pour limiter les essais répétés (CA-3).
+model LoginAttempt {
+  id        String   @id @default(uuid()) @db.Uuid
+  email     String   @db.VarChar(254)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([email, createdAt])
+  @@map("login_attempts")
+}
+
+enum GoalCategory {
+  ETUDES
+  CARRIERE
+  SANTE
+  FINANCES
+  SPIRITUALITE
+  FAMILLE
+  PROJET_PERSONNEL
+
+  @@map("goal_category")
+}
+
+enum GoalHorizon {
+  MOIS
+  TRIMESTRE
+  ANNEE
+  PERSONNALISEE
+
+  @@map("goal_horizon")
+}
+
+enum GoalPriority {
+  HAUTE
+  MOYENNE
+  BASSE
+
+  @@map("goal_priority")
+}
+
+enum GoalStatus {
+  A_DEMARRER
+  EN_COURS
+  EN_PAUSE
+  TERMINE
+  ABANDONNE
+
+  @@map("goal_status")
+}
+
+model Goal {
+  id          String       @id @default(uuid()) @db.Uuid
+  userId      String       @map("user_id") @db.Uuid
+  title       String       @db.VarChar(120)
+  description String?      @db.VarChar(2000)
+  motivation  String?      @db.VarChar(500)
+  category    GoalCategory
+  horizon     GoalHorizon  @default(PERSONNALISEE)
+  startDate   DateTime     @map("start_date") @db.Date
+  endDate     DateTime     @map("end_date") @db.Date
+  priority    GoalPriority @default(MOYENNE)
+  status      GoalStatus   @default(A_DEMARRER)
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  milestones Milestone[]
+  tasks      Task[]
+
+  @@index([userId, status])
+  @@map("goals")
+}
+
+model Milestone {
+  id          String    @id @default(uuid()) @db.Uuid
+  goalId      String    @map("goal_id") @db.Uuid
+  title       String    @db.VarChar(120)
+  dueDate     DateTime? @map("due_date") @db.Date
+  completedAt DateTime? @map("completed_at") @db.Timestamptz(6)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  goal  Goal   @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  tasks Task[]
+
+  @@index([goalId])
+  @@map("milestones")
+}
+
+enum TaskStatus {
+  TODO
+  DONE
+  CANCELLED
+
+  @@map("task_status")
+}
+
+model Task {
+  id              String     @id @default(uuid()) @db.Uuid
+  userId          String     @map("user_id") @db.Uuid
+  goalId          String?    @map("goal_id") @db.Uuid
+  milestoneId     String?    @map("milestone_id") @db.Uuid
+  title           String     @db.VarChar(160)
+  notes           String?    @db.VarChar(2000)
+  workDate        DateTime?  @map("work_date") @db.Date
+  dueDate         DateTime?  @map("due_date") @db.Date
+  status          TaskStatus @default(TODO)
+  completedAt     DateTime?  @map("completed_at") @db.Timestamptz(6)
+  originalDate    DateTime?  @map("original_date") @db.Date
+  rescheduleCount Int        @default(0) @map("reschedule_count")
+  createdAt       DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goal      Goal?      @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  milestone Milestone? @relation(fields: [milestoneId], references: [id], onDelete: SetNull)
+
+  @@index([userId, workDate])
+  @@index([userId, status])
+  @@map("tasks")
+}

@@ -1,0 +1,18 @@
+{
+  "name": "objectiva",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Objectiva — planification et suivi personnel (raccourcis de commandes, à lancer depuis la racine)",
+  "scripts": {
+    "install:all": "npm install --prefix backend && npm install --prefix frontend",
+    "db:start": "docker compose -f docker/docker-compose.yml up -d",
+    "db:stop": "docker compose -f docker/docker-compose.yml stop",
+    "db:migrate": "npm run prisma:deploy --prefix backend",
+    "db:seed": "npm run seed --prefix backend",
+    "api": "npm run dev --prefix backend",
+    "web": "npm start --prefix frontend",
+    "web:phone": "npm start --prefix frontend -- --host 0.0.0.0",
+    "test": "npm test --prefix backend && npm run test:unit --prefix frontend",
+    "lint": "npm run typecheck --prefix backend && npm run eslint --prefix frontend"
+  }
+}

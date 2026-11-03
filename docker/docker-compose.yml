@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: objectiva-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: objectiva
+      POSTGRES_PASSWORD: objectiva_dev
+      POSTGRES_DB: objectiva
+    ports:
+      - "5432:5432"
+    volumes:
+      - objectiva_pgdata:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U objectiva -d objectiva"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  objectiva_pgdata:

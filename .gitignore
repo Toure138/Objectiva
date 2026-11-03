@@ -1,0 +1,21 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Dépendances et builds
+node_modules/
+dist/
+build/
+coverage/
+# Client Prisma : régénéré par `npm install` (postinstall) ou `npx prisma generate`
+backend/src/generated/
+.angular/
+www/
+
+# Système et éditeurs
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
