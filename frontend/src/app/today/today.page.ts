@@ -18,6 +18,7 @@ import { localToday, longDate } from '../core/dates';
 import type { TodayView } from '../core/models';
 import { AddMenuService } from '../shared/add-menu.service';
 import { EmptyStateComponent } from '../shared/empty-state.component';
+import { EventItemComponent } from '../shared/event-item.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
 import { ProgressRingComponent } from '../shared/progress-ring.component';
 import { SectionHeaderComponent } from '../shared/section-header.component';
@@ -33,6 +34,7 @@ import { TaskItemComponent } from '../shared/task-item.component';
     ProgressRingComponent,
     SectionHeaderComponent,
     EmptyStateComponent,
+    EventItemComponent,
     RouterLink,
     IonContent,
     IonButton,
@@ -126,6 +128,9 @@ import { TaskItemComponent } from '../shared/task-item.component';
     .toggle[aria-expanded='true'] ion-icon {
       transform: rotate(180deg);
     }
+    .hint {
+      margin: 4px 0 8px;
+    }
     .soon {
       margin: 28px 0 0;
       text-align: center;
@@ -152,6 +157,15 @@ import { TaskItemComponent } from '../shared/task-item.component';
               </div>
             </div>
 
+            @if (v.events.length > 0) {
+              <section>
+                <app-section-header title="Rendez-vous du jour" [count]="v.events.length" />
+                @for (e of v.events; track e.id; let i = $index) {
+                  <app-event-item [event]="e" [index]="i" />
+                }
+              </section>
+            }
+
             <section>
               <app-section-header title="À faire aujourd'hui" [count]="v.planned.length" />
               @for (t of v.planned; track t.id; let i = $index) {
@@ -163,6 +177,10 @@ import { TaskItemComponent } from '../shared/task-item.component';
                     title="Tout est fait pour aujourd’hui"
                     message="Bravo, profite de ce moment. Demain est une nouvelle page."
                   />
+                } @else if (v.events.length > 0) {
+                  <p class="hint ob-muted">
+                    Pas de tâche pour l’instant. Pense à une préparation avant tes rendez-vous.
+                  </p>
                 } @else {
                   <app-empty-state
                     [icon]="icons.leaf"
@@ -270,7 +288,7 @@ export class TodayPage {
   protected readonly ratio = computed(() => (this.total() ? this.view()!.done.length / this.total() : 0));
   protected readonly allDone = computed(() => this.total() > 0 && this.view()!.planned.length === 0);
   protected readonly headline = computed(() => {
-    if (this.total() === 0) return 'Journée libre';
+    if (this.total() === 0) return this.view()!.events.length > 0 ? 'Jour de rendez-vous' : 'Journée libre';
     if (this.allDone()) return 'Journée accomplie !';
     return this.view()!.done.length === 0 ? 'C’est parti !' : 'Tu avances bien';
   });
@@ -278,7 +296,10 @@ export class TodayPage {
     const v = this.view();
     if (!v) return '';
     const total = this.total();
-    if (total === 0) return 'Aucune action prévue';
+    if (total === 0) {
+      const n = v.events.length;
+      return n > 0 ? `${n} rendez-vous prévu${n > 1 ? 's' : ''}, aucune tâche` : 'Aucune action prévue';
+    }
     return `${v.done.length} sur ${total} action${total > 1 ? 's' : ''} terminée${v.done.length > 1 ? 's' : ''}`;
   });
 

@@ -3,7 +3,24 @@ import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
 import { toApiError } from './api-error';
-import type { Goal, GoalDetail, Milestone, Page, Review, Task, TodayView } from './models';
+import type {
+  BudgetAccount,
+  BudgetCategory,
+  BudgetMonth,
+  BudgetOperation,
+  BudgetTransaction,
+  CalendarEvent,
+  CalendarEventDetail,
+  Goal,
+  GoalDetail,
+  GoalReading,
+  Milestone,
+  Page,
+  Progress,
+  Review,
+  Task,
+  TodayView,
+} from './models';
 import { SettingsService } from './settings.service';
 
 interface Envelope<T> {
@@ -54,6 +71,81 @@ export class ApiService {
     return this.call('DELETE', `/milestones/${id}`);
   }
 
+  createReading(goalId: string, body: Body): Promise<{ reading: GoalReading; progress: Progress }> {
+    return this.call('POST', `/goals/${goalId}/readings`, body);
+  }
+  deleteReading(id: string): Promise<{ progress: Progress }> {
+    return this.call('DELETE', `/readings/${id}`);
+  }
+
+  // Événements
+  events(q: Query = {}): Promise<CalendarEvent[]> {
+    return this.call('GET', '/events', undefined, q);
+  }
+  event(id: string): Promise<CalendarEventDetail> {
+    return this.call('GET', `/events/${id}`);
+  }
+  createEvent(body: Body): Promise<CalendarEvent> {
+    return this.call('POST', '/events', body);
+  }
+  updateEvent(id: string, body: Body): Promise<CalendarEvent> {
+    return this.call('PATCH', `/events/${id}`, body);
+  }
+  deleteEvent(id: string): Promise<void> {
+    return this.call('DELETE', `/events/${id}`);
+  }
+  completeEvent(id: string, decisions?: string | null): Promise<CalendarEvent> {
+    return this.call('POST', `/events/${id}/complete`, decisions === undefined ? {} : { decisions });
+  }
+  reopenEvent(id: string): Promise<CalendarEvent> {
+    return this.call('POST', `/events/${id}/reopen`);
+  }
+  cancelEvent(id: string): Promise<CalendarEvent> {
+    return this.call('POST', `/events/${id}/cancel`);
+  }
+  createEventTask(id: string, body: Body): Promise<Task> {
+    return this.call('POST', `/events/${id}/tasks`, body);
+  }
+
+  // Budget
+  budgetMonth(month: string): Promise<BudgetMonth> {
+    return this.call('GET', `/budget/months/${month}`);
+  }
+  budgetSetup(): Promise<{ accounts: BudgetAccount[]; categories: BudgetCategory[] }> {
+    return this.call('POST', '/budget/setup');
+  }
+  createBudgetCategory(body: Body): Promise<BudgetCategory> {
+    return this.call('POST', '/budget/categories', body);
+  }
+  createBudgetAccount(body: Body): Promise<BudgetAccount> {
+    return this.call('POST', '/budget/accounts', body);
+  }
+  setEnvelope(body: Body): Promise<{ month: string; categoryId: string; plannedAmount: number }> {
+    return this.call('PUT', '/budget/envelopes', body);
+  }
+  createOperation(body: Body): Promise<BudgetOperation> {
+    return this.call('POST', '/budget/operations', body);
+  }
+  updateOperation(id: string, body: Body): Promise<BudgetOperation> {
+    return this.call('PATCH', `/budget/operations/${id}`, body);
+  }
+  deleteOperation(id: string): Promise<void> {
+    return this.call('DELETE', `/budget/operations/${id}`);
+  }
+  /** La clé d'idempotence rend le double appui sans effet : la rejouer renvoie la première écriture. */
+  settleOperation(
+    id: string,
+    body: Body,
+  ): Promise<{ operation: BudgetOperation; transaction: BudgetTransaction; replayed: boolean }> {
+    return this.call('POST', `/budget/operations/${id}/settle`, body);
+  }
+  createTransaction(body: Body): Promise<{ transaction: BudgetTransaction; replayed: boolean }> {
+    return this.call('POST', '/budget/transactions', body);
+  }
+  deleteTransaction(id: string): Promise<{ operation: BudgetOperation | null }> {
+    return this.call('DELETE', `/budget/transactions/${id}`);
+  }
+
   // Tâches
   tasks(q: Query = {}): Promise<Page<Task>> {
     return this.call('GET', '/tasks', undefined, q);
@@ -81,7 +173,7 @@ export class ApiService {
   }
 
   private async call<T>(
-    method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
+    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
     path: string,
     body?: Body,
     query?: Query,

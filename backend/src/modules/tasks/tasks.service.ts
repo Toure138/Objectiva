@@ -13,6 +13,8 @@ export function serializeTask(t: Task, today: string) {
     notes: t.notes,
     goalId: t.goalId,
     milestoneId: t.milestoneId,
+    eventId: t.eventId,
+    eventRole: t.eventRole,
     workDate: fromDbDate(t.workDate),
     dueDate: fromDbDate(t.dueDate),
     originalDate: fromDbDate(t.originalDate),
@@ -37,7 +39,7 @@ async function findOwnedTask(userId: string, taskId: string) {
  * Vérifie que l'objectif et le jalon visés appartiennent à l'utilisateur et sont cohérents.
  * Un jalon seul suffit : l'objectif est déduit du jalon.
  */
-async function resolveLinks(
+export async function resolveLinks(
   userId: string,
   goalId: string | null | undefined,
   milestoneId: string | null | undefined,

@@ -1,11 +1,19 @@
 import { Component, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController, IonButton, IonCheckbox, IonContent, IonIcon, ModalController } from '@ionic/angular';
-import { add, calendarOutline, createOutline, flagOutline, trashOutline } from 'ionicons/icons';
+import {
+  AlertController,
+  IonButton,
+  IonCheckbox,
+  IonContent,
+  IonIcon,
+  ModalController,
+  ToastController,
+} from '@ionic/angular';
+import { add, calendarOutline, closeCircleOutline, createOutline, flagOutline, trashOutline } from 'ionicons/icons';
 
 import { ApiService } from '../core/api.service';
 import { localToday, shortDate } from '../core/dates';
-import { CATEGORY_LABELS, PRIORITY_LABELS, type GoalDetail, type Milestone } from '../core/models';
+import { CATEGORY_LABELS, PRIORITY_LABELS, type GoalDetail, type GoalReading, type Milestone } from '../core/models';
 import { AddMenuService } from '../shared/add-menu.service';
 import { CategoryBadgeComponent, categoryClass } from '../shared/category-badge.component';
 import { GoalFormComponent } from '../shared/goal-form.component';
@@ -129,6 +137,10 @@ import { TaskItemComponent } from '../shared/task-item.component';
     .ms .txt small {
       color: var(--ob-text-2);
     }
+    .reading strong {
+      font-family: var(--ob-font-display);
+      font-size: 1.125rem;
+    }
     .hint {
       margin: 4px 0 8px;
       color: var(--ob-text-2);
@@ -190,12 +202,52 @@ import { TaskItemComponent } from '../shared/task-item.component';
                 }
                 <div>
                   <strong>{{ g.progress.label }}</strong>
-                  @if (g.progress.percent !== null) {
+                  @if (g.progress.mode === 'MESURE') {
+                    <small>{{
+                      g.progress.reached
+                        ? 'Cible atteinte, bravo !'
+                        : 'Départ ' + g.progress.start + ' · cible ' + g.progress.target
+                    }}</small>
+                  } @else if (g.progress.percent !== null) {
                     <small>Progression calculée par jalons</small>
                   }
                 </div>
               </div>
             </section>
+
+            @if (g.progressMode === 'MESURE') {
+              <section class="block">
+                <app-section-header title="Relevés" [count]="g.readings.length">
+                  <ion-button class="ob-soft" size="small" (click)="addReading(g)">
+                    <ion-icon slot="start" [icon]="icons.add" aria-hidden="true"></ion-icon>Relevé
+                  </ion-button>
+                </app-section-header>
+                @if (g.readings.length > 0) {
+                  <div class="list ob-card">
+                    @for (r of g.readings; track r.id) {
+                      <div class="ms">
+                        <div class="txt reading">
+                          <p>
+                            <strong class="ob-num">{{ r.value }}</strong> {{ g.measureUnit }}
+                          </p>
+                          <small>{{ date(r.readOn) }}{{ r.note ? ' · ' + r.note : '' }}</small>
+                        </div>
+                        <ion-button
+                          class="icon-btn"
+                          fill="clear"
+                          (click)="removeReading(r)"
+                          [attr.aria-label]="'Supprimer le relevé du ' + date(r.readOn)"
+                        >
+                          <ion-icon slot="icon-only" [icon]="icons.remove"></ion-icon>
+                        </ion-button>
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <p class="hint">Enregistre ton premier relevé pour faire avancer ta progression.</p>
+                }
+              </section>
+            }
 
             <section class="block">
               <app-section-header title="Jalons" [count]="g.milestones.length">
@@ -257,6 +309,7 @@ export class GoalDetailPage {
   private readonly modals = inject(ModalController);
   private readonly router = inject(Router);
   private readonly addMenu = inject(AddMenuService);
+  private readonly toasts = inject(ToastController);
 
   /** Paramètre de route `:id`. */
   readonly id = input.required<string>();
@@ -271,6 +324,7 @@ export class GoalDetailPage {
     edit: createOutline,
     flag: flagOutline,
     trash: trashOutline,
+    remove: closeCircleOutline,
   };
   protected readonly cls = (g: GoalDetail): string => `hero ob-card ob-rise ${categoryClass(g.category)}`;
   protected readonly date = shortDate;
@@ -334,6 +388,70 @@ export class GoalDetailPage {
   protected async toggleMilestone(m: Milestone): Promise<void> {
     await this.api.updateMilestone(m.id, { completed: !m.completed });
     await this.load();
+  }
+
+  protected async addReading(g: GoalDetail): Promise<void> {
+    const alert = await this.alerts.create({
+      header: 'Nouveau relevé',
+      subHeader: g.measureUnit ?? undefined,
+      inputs: [
+        { name: 'value', type: 'number', placeholder: 'Valeur actuelle', value: g.progress.current },
+        { name: 'readOn', type: 'date', value: localToday() },
+        { name: 'note', placeholder: 'Note (facultatif)', attributes: { maxlength: 200 } },
+      ],
+      buttons: [
+        { text: 'Fermer', role: 'cancel' },
+        { text: 'Enregistrer', role: 'confirm' },
+      ],
+    });
+    await alert.present();
+    const { role, data } = await alert.onWillDismiss<{ values: { value: string; readOn: string; note: string } }>();
+    if (role !== 'confirm' || !data) return;
+    const value = data.values.value === '' ? NaN : Number(data.values.value);
+    if (Number.isNaN(value)) {
+      await this.say('Indique la valeur du relevé.', true);
+      return;
+    }
+    try {
+      await this.api.createReading(g.id, {
+        value,
+        readOn: data.values.readOn || undefined,
+        note: data.values.note.trim() || null,
+      });
+      await this.load();
+      await this.say('Relevé enregistré, bravo !');
+    } catch (e) {
+      await this.say(e instanceof Error ? e.message : 'Échec de l’enregistrement', true);
+    }
+  }
+
+  protected async removeReading(r: GoalReading): Promise<void> {
+    const alert = await this.alerts.create({
+      header: 'Supprimer ce relevé ?',
+      message: 'La progression sera recalculée avec le relevé précédent.',
+      buttons: [
+        { text: 'Garder', role: 'cancel' },
+        { text: 'Supprimer', role: 'destructive' },
+      ],
+    });
+    await alert.present();
+    if ((await alert.onWillDismiss()).role !== 'destructive') return;
+    try {
+      await this.api.deleteReading(r.id);
+      await this.load();
+    } catch (e) {
+      await this.say(e instanceof Error ? e.message : 'Suppression impossible', true);
+    }
+  }
+
+  private async say(message: string, danger = false): Promise<void> {
+    const t = await this.toasts.create({
+      message,
+      duration: 2500,
+      position: 'top',
+      cssClass: danger ? 'ob-toast ob-toast-danger' : 'ob-toast',
+    });
+    await t.present();
   }
 
   protected planFor(m?: Milestone): void {

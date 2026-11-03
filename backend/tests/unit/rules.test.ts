@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { dateOnly, todayIn } from '../../src/core/dates.ts';
-import { milestoneProgress } from '../../src/modules/goals/goals.rules.ts';
+import { goalProgress, measuredProgress, milestoneProgress } from '../../src/modules/goals/goals.rules.ts';
 import { periodRange, reviewTasks, type ReviewTask } from '../../src/modules/reviews/reviews.rules.ts';
 import { applyWorkDateChange, taskFlags } from '../../src/modules/tasks/tasks.rules.ts';
 
@@ -105,5 +105,34 @@ describe('dates', () => {
     const instant = new Date('2026-11-03T23:30:00Z');
     expect(todayIn('Africa/Abidjan', instant)).toBe('2026-11-03');
     expect(todayIn('Europe/Paris', instant)).toBe('2026-11-04');
+  });
+});
+
+describe('progression mesurée', () => {
+  const r = (value: number, readOn: string, created = 0) => ({ value, readOn, createdAt: new Date(created) });
+  const base = { start: 0, target: 3, unit: 'démonstrations' };
+
+  it('part de la valeur de départ sans relevé', () => {
+    expect(measuredProgress({ ...base, readings: [] })).toMatchObject({ current: 0, percent: 0, reached: false, label: '0 sur 3 démonstrations' });
+  });
+  it('utilise le dernier relevé par date, puis par ordre de création', () => {
+    const p = measuredProgress({ ...base, readings: [r(2, '2026-11-05'), r(1, '2026-11-02'), r(3, '2026-11-05', 10)] });
+    expect(p.current).toBe(3);
+    expect(measuredProgress({ ...base, readings: [r(2, '2026-11-05'), r(1, '2026-11-02')] }).current).toBe(2);
+  });
+  it('arrondit et borne le pourcentage', () => {
+    expect(measuredProgress({ ...base, readings: [r(1, '2026-11-02')] }).percent).toBe(33);
+    expect(measuredProgress({ ...base, readings: [r(7, '2026-11-02')] })).toMatchObject({ percent: 100, reached: true });
+    expect(measuredProgress({ ...base, readings: [r(-4, '2026-11-02')] }).percent).toBe(0);
+  });
+  it('gère une cible inférieure au départ (perte de poids)', () => {
+    const p = measuredProgress({ start: 80, target: 72, unit: 'kg', readings: [r(76, '2026-11-02')] });
+    expect(p).toMatchObject({ percent: 50, reached: false, label: '76 sur 72 kg' });
+    expect(measuredProgress({ start: 80, target: 72, unit: 'kg', readings: [r(71, '2026-11-09')] }).reached).toBe(true);
+  });
+  it('goalProgress choisit le mode : mesuré ou jalons', () => {
+    const common = { milestones: [{ completedAt: new Date() }, { completedAt: null }], readings: [] };
+    expect(goalProgress({ ...common, progressMode: 'JALONS', measureUnit: null, startValue: null, targetValue: null })).toMatchObject({ mode: 'JALONS', percent: 50 });
+    expect(goalProgress({ ...common, progressMode: 'MESURE', measureUnit: 'km', startValue: 0, targetValue: 10 })).toMatchObject({ mode: 'MESURE', percent: 0 });
   });
 });

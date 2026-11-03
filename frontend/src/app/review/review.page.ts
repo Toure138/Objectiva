@@ -297,6 +297,12 @@ export class ReviewPage {
       { label: 'Ajoutées ensuite', value: t.addedDuringPeriod },
       { label: 'Reportées', value: t.rescheduledOut, tone: 'warn' },
       { label: 'Annulées (hors calcul)', value: t.cancelled },
+      ...(r.events.expected + r.events.cancelled > 0
+        ? [
+            { label: 'Rendez-vous réalisés', value: r.events.done, tone: 'ok' as const },
+            { label: 'Rendez-vous à venir', value: r.events.planned },
+          ]
+        : []),
     ];
   }
 

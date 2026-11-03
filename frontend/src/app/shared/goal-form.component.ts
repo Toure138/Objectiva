@@ -38,7 +38,10 @@ import {
   type GoalHorizon,
   type GoalPriority,
   type GoalStatus,
+  type ProgressMode,
 } from '../core/models';
+
+import { SegmentedComponent, type SegmentOption } from './segmented.component';
 
 @Component({
   selector: 'app-goal-form',
@@ -62,7 +65,22 @@ import {
     IonLabel,
     IonText,
     IonNote,
+    SegmentedComponent,
   ],
+  styles: `
+    .mode-title {
+      margin: 8px 0 8px 4px;
+    }
+    .mode-hint {
+      margin: 8px 4px 12px;
+      font-size: 0.875rem;
+    }
+    .pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 12px;
+    }
+  `,
   template: `
     <ion-header>
       <ion-toolbar>
@@ -126,6 +144,59 @@ import {
             <ion-note color="danger" class="ion-padding-start">{{ msg }}</ion-note>
           }
         </ion-list>
+
+        <p class="ob-eyebrow mode-title">Comment mesurer ma progression ?</p>
+        <app-segmented
+          [options]="modes"
+          [value]="progressMode()"
+          (valueChange)="setMode($event)"
+          ariaLabel="Mode de progression"
+        />
+        @if (progressMode() === 'MESURE') {
+          <p class="ob-muted mode-hint">
+            Ex. « 1 démonstration sur 3 » : tu fixes un départ, une cible, puis tu enregistres des relevés.
+          </p>
+          <ion-list class="ob-form" lines="none">
+            <ion-item>
+              <ion-input
+                label="Unité"
+                labelPlacement="stacked"
+                [(ngModel)]="measureUnit"
+                name="measureUnit"
+                placeholder="Ex. démonstrations, km, livres"
+                [maxlength]="30"
+              ></ion-input>
+            </ion-item>
+            @if (fieldError('measureUnit'); as msg) {
+              <ion-note color="danger" class="ion-padding-start">{{ msg }}</ion-note>
+            }
+            <div class="pair">
+              <ion-item>
+                <ion-input
+                  label="Départ"
+                  labelPlacement="stacked"
+                  type="number"
+                  inputmode="numeric"
+                  [(ngModel)]="startValue"
+                  name="startValue"
+                ></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-input
+                  label="Cible"
+                  labelPlacement="stacked"
+                  type="number"
+                  inputmode="numeric"
+                  [(ngModel)]="targetValue"
+                  name="targetValue"
+                ></ion-input>
+              </ion-item>
+            </div>
+            @if (fieldError('startValue') ?? fieldError('targetValue'); as msg) {
+              <ion-note color="danger" class="ion-padding-start">{{ msg }}</ion-note>
+            }
+          </ion-list>
+        }
 
         <ion-accordion-group>
           <ion-accordion value="avance">
@@ -194,7 +265,9 @@ import {
           </ion-accordion>
         </ion-accordion-group>
 
-        <ion-note class="ion-padding-start">Progression : suivie par jalons (jalons terminés sur le total).</ion-note>
+        @if (progressMode() === 'JALONS') {
+          <ion-note class="ion-padding-start">Progression : jalons terminés sur le total.</ion-note>
+        }
         @if (error()) {
           <ion-text color="danger"
             ><p role="alert">{{ error() }}</p></ion-text
@@ -221,6 +294,15 @@ export class GoalFormComponent implements OnInit {
   protected readonly horizons = Object.entries(HORIZON_LABELS);
   protected readonly priorities = Object.entries(PRIORITY_LABELS);
   protected readonly statuses = Object.entries(GOAL_STATUS_LABELS);
+
+  protected readonly modes: SegmentOption[] = [
+    { value: 'JALONS', label: 'Par jalons' },
+    { value: 'MESURE', label: 'Mesurée' },
+  ];
+  protected readonly progressMode = signal<ProgressMode>('JALONS');
+  protected measureUnit = '';
+  protected startValue: number | string | null = 0;
+  protected targetValue: number | string | null = null;
 
   protected title = '';
   protected category: GoalCategory = 'PROJET_PERSONNEL';
@@ -249,7 +331,22 @@ export class GoalFormComponent implements OnInit {
       endDate: g.endDate,
       description: g.description ?? '',
       motivation: g.motivation ?? '',
+      measureUnit: g.measureUnit ?? '',
+      startValue: g.startValue,
+      targetValue: g.targetValue,
     });
+    this.progressMode.set(g.progressMode);
+  }
+
+  protected setMode(mode: string): void {
+    this.progressMode.set(mode as ProgressMode);
+  }
+
+  // Champ vide = absent : le serveur explique ce qui manque ; on n'envoie jamais NaN.
+  private toInt(v: number | string | null): number | null {
+    if (v === null || v === '') return null;
+    const n = Number(v);
+    return Number.isNaN(n) ? null : n;
   }
 
   protected fieldError(field: string): string | undefined {
@@ -275,6 +372,10 @@ export class GoalFormComponent implements OnInit {
       endDate: this.endDate,
       description: this.description.trim() || null,
       motivation: this.motivation.trim() || null,
+      progressMode: this.progressMode(),
+      measureUnit: this.measureUnit.trim() || null,
+      startValue: this.toInt(this.startValue),
+      targetValue: this.toInt(this.targetValue),
     };
     try {
       const g = this.goal;

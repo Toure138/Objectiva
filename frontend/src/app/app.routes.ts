@@ -17,6 +17,10 @@ export const routes: Routes = [
       { path: 'planifier', loadComponent: () => import('./plan/plan.page').then((m) => m.PlanPage) },
       { path: 'objectifs', loadComponent: () => import('./goals/goals.page').then((m) => m.GoalsPage) },
       { path: 'objectifs/:id', loadComponent: () => import('./goals/goal-detail.page').then((m) => m.GoalDetailPage) },
+      {
+        path: 'evenements/:id',
+        loadComponent: () => import('./events/event-detail.page').then((m) => m.EventDetailPage),
+      },
       { path: 'budget', loadComponent: () => import('./budget/budget.page').then((m) => m.BudgetPage) },
       { path: 'bilan', loadComponent: () => import('./review/review.page').then((m) => m.ReviewPage) },
       { path: '', redirectTo: 'aujourdhui', pathMatch: 'full' },

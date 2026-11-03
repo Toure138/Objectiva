@@ -14,7 +14,7 @@ durée estimée, rappel et note après réalisation sur une tâche, progression 
 (valeur initiale, cible, relevés), historique détaillé d'une tâche, enregistrement des réponses
 du bilan, catégories personnalisées.
 
-## Étape 2 — Premier parcours transversal
+## Étape 2 — Premier parcours transversal (faite, specs 003 à 006)
 
 - Événements : réunion, rencontre, rendez-vous, appel, visio ; lieu ou lien, participants
   (noms seulement), ordre du jour, statut prévu/réalisé/annulé, décisions et action de suivi.
@@ -25,6 +25,10 @@ du bilan, catégories personnalisées.
   (clé d'idempotence).
 - Progression mesurable des objectifs (nécessaire au scénario « 1 démonstration sur 3 »).
 - Scénario d'acceptation EcoleSaaS de la mission (section 11) en test automatisé.
+
+Reste à confirmer : le scénario a été reconstitué sans le texte de la mission (voir la spec 006).
+Reporté de l'étape 2 : choix de la devise (colonne `users.currency` prête, `XOF` par défaut),
+report d'enveloppe d'un mois à l'autre.
 
 ## Étape 3 — Planification complète
 

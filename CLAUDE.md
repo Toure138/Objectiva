@@ -5,7 +5,8 @@ objectifs à long terme, les décomposer en jalons mensuels, planifier tâches e
 semaine et par jour, cocher ce qui est réellement accompli, planifier le budget (jour, mois,
 année), gérer réunions et rencontres, et faire le bilan. Voir [README.md](README.md).
 
-**État** : étape 1 « Socle objectifs » terminée (spec 001) ; interface refondue (spec 002). Suite et éléments reportés :
+**État** : étapes 1 et 2 terminées (specs 001 à 006) : socle objectifs, refonte de l'interface,
+progression mesurée, événements, budget mensuel, scénario EcoleSaaS. Suite et éléments reportés :
 [docs/feuille-de-route.md](docs/feuille-de-route.md). API : [docs/api.md](docs/api.md).
 
 ## Stack technique (versions vérifiées, voir `docs/versions.md`)
@@ -23,7 +24,8 @@ année), gérer réunions et rencontres, et faire le bilan. Voir [README.md](REA
 ### Backend
 - `src/modules/<domaine>/` : `*.routes.ts` (aucune règle métier), `*.service.ts`, `*.schemas.ts`
   (zod), `*.rules.ts` (calculs purs testés sans base). Domaines actuels : `auth`, `goals`
-  (+ jalons), `tasks`, `today`, `reviews`. À venir : `events`, `budget`, `habits`.
+  (+ jalons, relevés), `tasks`, `today`, `reviews`, `events` (+ règles de fuseau), `budget` (+ règlement
+  idempotent). À venir : `habits`.
 - `src/core/` : `env.ts` (validation de l'environnement), `prisma.ts`, `errors.ts` (`AppError`,
   `parseInput`, gestionnaire central), `auth.middleware.ts` (`requireAuth`, `currentUser`),
   `dates.ts`, `ids.ts` (`idParam` : uuid invalide → 404).
@@ -40,7 +42,7 @@ année), gérer réunions et rencontres, et faire le bilan. Voir [README.md](REA
   formulaires en modale, `add-menu.service` + `add-sheet` (feuille « Ajouter »), `state-view`
   (squelette/erreur), `page-header`, `empty-state`, `section-header`, `segmented` (contrôle en
   pilule), `progress-ring`, `progress-bar`, `category-badge`, `goal-status-chip`, `brand-mark`.
-- Un dossier par espace : `today/`, `plan/`, `goals/`, `budget/` (à venir), `review/`, `profile/`.
+- Un dossier par espace : `today/`, `plan/`, `goals/`, `events/`, `budget/`, `review/`, `profile/`.
   Routes en français : `/connexion`, `/app/aujourdhui`, `/app/objectifs/:id`, `/profil`…
 
 ### Design system (spec 002 « calme et cap »)
@@ -66,12 +68,26 @@ année), gérer réunions et rencontres, et faire le bilan. Voir [README.md](REA
 - Validation de toutes les entrées (zod). Limitation par e-mail (5 échecs / 15 min) et par IP.
 - Actions idempotentes contre le double appui (cocher, reporter à la même date). Pour les
   paiements à venir : clé d'idempotence et contrainte d'unicité en base.
-- Montants : entier en plus petite unité, jamais `float`. Dates sans heure : colonne `DATE`,
+- Montants : entier en plus petite unité, jamais `float` (`users.currency`, `XOF` par défaut ; côté
+  frontend, `core/money.ts` formate et lit la saisie sans flottant). Dates sans heure : colonne `DATE`,
   échange `AAAA-MM-JJ`, jamais convertie de fuseau. Instants : UTC + fuseau de l'utilisateur.
 - Tout ajout de route : test de succès, de validation et d'**isolation entre deux utilisateurs**
   (`backend/tests/api/isolation.test.ts`).
 
 ## Pièges déjà rencontrés (ne pas les refaire)
+
+- **Événements** : jour + heure locaux ↔ instants UTC uniquement via `events.rules.ts`
+  (`localToUtc`, `utcToLocal`, `localDaysToUtc`) ; jamais d'arithmétique d'heure à la main (changements
+  d'heure). Un lien d'événement n'accepte que `http(s)://`.
+- **Budget** : tout règlement porte une `idempotencyKey` créée à l'**ouverture** du formulaire
+  (rejouée telle quelle en cas de nouvel essai) ; le service verrouille la prévision (`FOR UPDATE`)
+  et s'appuie sur `UNIQUE (user_id, idempotency_key)`. Le test des règlements simultanés détecte le
+  retrait du verrou : ne pas l'affaiblir.
+- **Frontend, caractères spéciaux** : pas d'espace insécable littéral dans le code (ESLint
+  `no-irregular-whitespace`) : écrire `\u00a0` / `\u202f` ; vérifier le résultat après tout script
+  de remplacement (un `sed` peut supprimer la barre oblique inverse sans erreur).
+- **Build** : un style de composant au-delà de 2 ko avertit ; mutualiser dans `global.scss`
+  (`ob-row`, `ob-chip`, `ob-card`…) plutôt que de relever le seuil.
 
 - **Angular** : dans une garde ou une fonction `async`, appeler tous les `inject()` **avant** le
   premier `await` (sinon NG0203).

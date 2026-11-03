@@ -4,9 +4,10 @@ import { add, calendarClearOutline, todayOutline } from 'ionicons/icons';
 
 import { ApiService } from '../core/api.service';
 import { addDays, localToday, longDate } from '../core/dates';
-import type { Task } from '../core/models';
+import type { CalendarEvent, Task } from '../core/models';
 import { AddMenuService } from '../shared/add-menu.service';
 import { EmptyStateComponent } from '../shared/empty-state.component';
+import { EventItemComponent } from '../shared/event-item.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
 import { SectionHeaderComponent } from '../shared/section-header.component';
 import { SegmentedComponent, type SegmentOption } from '../shared/segmented.component';
@@ -22,6 +23,7 @@ const PAGE_SIZE = 50;
     PageHeaderComponent,
     StateViewComponent,
     TaskItemComponent,
+    EventItemComponent,
     SegmentedComponent,
     SectionHeaderComponent,
     EmptyStateComponent,
@@ -58,7 +60,10 @@ const PAGE_SIZE = 50;
           @if (mode() === 'semaine') {
             @for (group of byDay(); track group.date) {
               <section>
-                <app-section-header [title]="group.label" [count]="group.tasks.length" />
+                <app-section-header [title]="group.label" [count]="group.tasks.length + group.events.length" />
+                @for (e of group.events; track e.id; let i = $index) {
+                  <app-event-item [event]="e" [index]="i" />
+                }
                 @for (t of group.tasks; track t.id; let i = $index) {
                   <app-task-item [task]="t" [showDate]="false" [index]="i" (changed)="load()" />
                 }
@@ -106,17 +111,22 @@ export class PlanPage {
   protected readonly icons = { add, week: todayOutline, clear: calendarClearOutline };
   protected readonly mode = signal<Mode>('semaine');
   protected readonly tasks = signal<Task[]>([]);
+  protected readonly events = signal<CalendarEvent[]>([]);
   protected readonly total = signal(0);
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
 
+  // Les jours de la semaine contiennent les rendez-vous (par heure) puis les tâches.
   protected readonly byDay = computed(() => {
-    const groups = new Map<string, Task[]>();
-    for (const t of this.tasks()) {
-      const key = t.workDate ?? '';
-      groups.set(key, [...(groups.get(key) ?? []), t]);
-    }
-    return [...groups.entries()].map(([date, tasks]) => ({ date, label: longDate(date), tasks }));
+    const groups = new Map<string, { tasks: Task[]; events: CalendarEvent[] }>();
+    const group = (date: string) => {
+      const g = groups.get(date) ?? { tasks: [], events: [] };
+      groups.set(date, g);
+      return g;
+    };
+    for (const t of this.tasks()) group(t.workDate ?? '').tasks.push(t);
+    for (const e of this.events()) group(e.date).events.push(e);
+    return [...groups.keys()].sort().map((date) => ({ date, label: longDate(date), ...groups.get(date)! }));
   });
 
   ionViewWillEnter(): void {
@@ -126,6 +136,7 @@ export class PlanPage {
   protected switchTo(mode: string): void {
     this.mode.set(mode as Mode);
     this.tasks.set([]);
+    this.events.set([]);
     this.loading.set(true);
     void this.load();
   }
@@ -141,8 +152,15 @@ export class PlanPage {
     this.error.set(null);
     if (this.tasks().length === 0) this.loading.set(true);
     try {
-      const page = await this.api.tasks(this.query(0));
+      const today = localToday();
+      const [page, events] = await Promise.all([
+        this.api.tasks(this.query(0)),
+        this.mode() === 'semaine'
+          ? this.api.events({ from: today, to: addDays(today, 6) })
+          : Promise.resolve([] as CalendarEvent[]),
+      ]);
       this.tasks.set(page.items);
+      this.events.set(events.filter((e) => e.status !== 'ANNULE'));
       this.total.set(page.total);
     } catch (e) {
       this.error.set(e instanceof Error ? e.message : 'Chargement impossible');

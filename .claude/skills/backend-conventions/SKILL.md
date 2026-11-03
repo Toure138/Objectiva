@@ -29,6 +29,18 @@ Modèle à copier : `src/modules/tasks/`.
    d'idempotence + contrainte `@@unique`.
 8. Journaux : jamais de corps de requête, mot de passe, jeton ou montant.
 
+## Modèles déjà en place à réutiliser
+- **Instants et fuseaux** (`events/events.rules.ts`) : `localToUtc`, `utcToLocal`, `localDaysToUtc`.
+  Toute plage « jour local » en base se convertit par ces fonctions (changements d'heure inclus).
+- **Argent** (`budget/`) : montants `Int` (minimum 1, maximum 1 000 000 000 pour une opération), refus
+  des décimaux par zod, calculs dans `budget.rules.ts`. Une écriture sensible au double appui prend une
+  `idempotencyKey` (`UNIQUE (user_id, idempotency_key)`) : clé déjà vue → renvoyer la première écriture
+  (`200`, `replayed: true`), sinon `201`. Écritures liées dans `prisma.$transaction`, avec
+  `SELECT … FOR UPDATE` sur la ligne parente quand plusieurs requêtes peuvent la modifier en même temps
+  (`lockOperation`). Ressource utilisée → archivage (`archivedAt`), pas de suppression.
+- **Progression** (`goals.rules.ts`) : `goalProgress` est l'unique point de calcul (jalons ou mesure) ;
+  toute vue qui expose une progression l'appelle.
+
 ## Migrations (Prisma 7)
 - `cd backend && npx prisma migrate dev --name <nom>` puis **`npx prisma generate`**.
 - Ne jamais modifier une migration déjà appliquée : en ajouter une nouvelle.

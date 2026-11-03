@@ -22,6 +22,7 @@ export async function registerUser(name = 'Awa') {
     user: res.body.data.user as { id: string; email: string },
     get: (url: string) => request(app).get(url).set('Authorization', `Bearer ${token}`),
     post: (url: string, body?: object) => request(app).post(url).set('Authorization', `Bearer ${token}`).send(body ?? {}),
+    put: (url: string, body: object) => request(app).put(url).set('Authorization', `Bearer ${token}`).send(body),
     patch: (url: string, body: object) => request(app).patch(url).set('Authorization', `Bearer ${token}`).send(body),
     del: (url: string) => request(app).delete(url).set('Authorization', `Bearer ${token}`),
   };

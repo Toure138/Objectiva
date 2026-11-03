@@ -4,7 +4,7 @@ Application personnelle de planification et de suivi, en français. Tu définis 
 accomplir, tu le découpes en jalons, tu planifies tes actions jour par jour, puis tu coches ce
 que tu as réellement fait et tu fais le bilan.
 
-> **État actuel : étape 1 « Socle objectifs ».** Ce qui marche, ce qui arrive ensuite :
+> **État actuel : étape 2 « Premier parcours transversal ».** Ce qui marche, ce qui arrive ensuite :
 > voir [Feuille de route](#feuille-de-route).
 
 ## Sommaire
@@ -249,6 +249,6 @@ Le détail est dans [docs/feuille-de-route.md](docs/feuille-de-route.md).
 | Étape | Contenu | État |
 |---|---|---|
 | 1. Socle objectifs | Comptes, objectifs, jalons, tâches, cocher/reporter/annuler, Aujourd'hui, bilan | **fait** |
-| 2. Parcours transversal | Réunions et rencontres, tâche de préparation, frais prévus, paiement, budget mensuel | à faire |
+| 2. Parcours transversal | Progression mesurée, réunions et rencontres, tâche de préparation, budget mensuel (prévisions, règlement, économies) | **fait** |
 | 3. Planification complète | Budgets annuel et quotidien, agenda, conflits, charge disponible, habitudes, bilans enrichis | à faire |
 | 4. Fonctions complémentaires | Récurrences, rappels, transferts, épargne, paiements partiels, export, hors connexion, paramètres | à faire |

@@ -3,8 +3,8 @@
 // Dates de calendrier : colonnes DATE (sans heure). Instants : TIMESTAMPTZ (UTC).
 
 generator client {
-  provider   = "prisma-client"
-  output     = "../src/generated/prisma"
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
   moduleFormat = "cjs"
 }
 
@@ -18,12 +18,21 @@ model User {
   passwordHash String   @map("password_hash")
   displayName  String   @map("display_name") @db.VarChar(80)
   timezone     String   @default("Europe/Paris") @db.VarChar(64)
+  // Devise ISO 4217. Les montants sont des entiers dans sa plus petite unité (XOF : 1 franc).
+  currency     String   @default("XOF") @db.VarChar(3)
   createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   goals    Goal[]
   tasks    Task[]
+  events   Event[]
   sessions Session[]
+
+  accounts          Account[]
+  budgetCategories  BudgetCategory[]
+  envelopes         Envelope[]
+  plannedOperations PlannedOperation[]
+  transactions      Transaction[]
 
   @@map("users")
 }
@@ -82,6 +91,13 @@ enum GoalPriority {
   @@map("goal_priority")
 }
 
+enum ProgressMode {
+  JALONS
+  MESURE
+
+  @@map("progress_mode")
+}
+
 enum GoalStatus {
   A_DEMARRER
   EN_COURS
@@ -93,23 +109,30 @@ enum GoalStatus {
 }
 
 model Goal {
-  id          String       @id @default(uuid()) @db.Uuid
-  userId      String       @map("user_id") @db.Uuid
-  title       String       @db.VarChar(120)
-  description String?      @db.VarChar(2000)
-  motivation  String?      @db.VarChar(500)
-  category    GoalCategory
-  horizon     GoalHorizon  @default(PERSONNALISEE)
-  startDate   DateTime     @map("start_date") @db.Date
-  endDate     DateTime     @map("end_date") @db.Date
-  priority    GoalPriority @default(MOYENNE)
-  status      GoalStatus   @default(A_DEMARRER)
-  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
+  id           String       @id @default(uuid()) @db.Uuid
+  userId       String       @map("user_id") @db.Uuid
+  title        String       @db.VarChar(120)
+  description  String?      @db.VarChar(2000)
+  motivation   String?      @db.VarChar(500)
+  category     GoalCategory
+  horizon      GoalHorizon  @default(PERSONNALISEE)
+  startDate    DateTime     @map("start_date") @db.Date
+  endDate      DateTime     @map("end_date") @db.Date
+  priority     GoalPriority @default(MOYENNE)
+  status       GoalStatus   @default(A_DEMARRER)
+  // Progression : par jalons (défaut) ou mesurée (valeur de départ, cible, relevés).
+  progressMode ProgressMode @default(JALONS) @map("progress_mode")
+  measureUnit  String?      @map("measure_unit") @db.VarChar(30)
+  startValue   Int?         @map("start_value")
+  targetValue  Int?         @map("target_value")
+  createdAt    DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   milestones Milestone[]
   tasks      Task[]
+  readings   GoalReading[]
+  events     Event[]
 
   @@index([userId, status])
   @@map("goals")
@@ -123,11 +146,86 @@ model Milestone {
   completedAt DateTime? @map("completed_at") @db.Timestamptz(6)
   createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
 
-  goal  Goal   @relation(fields: [goalId], references: [id], onDelete: Cascade)
-  tasks Task[]
+  goal   Goal    @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  tasks  Task[]
+  events Event[]
 
   @@index([goalId])
   @@map("milestones")
+}
+
+// Relevé d'une progression mesurée. Supprimé avec l'objectif (Cascade) : sans objectif il n'a pas de sens.
+model GoalReading {
+  id        String   @id @default(uuid()) @db.Uuid
+  goalId    String   @map("goal_id") @db.Uuid
+  value     Int
+  readOn    DateTime @map("read_on") @db.Date
+  note      String?  @db.VarChar(200)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  goal Goal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+
+  @@index([goalId, readOn])
+  @@map("goal_readings")
+}
+
+enum EventType {
+  REUNION
+  RENCONTRE
+  RENDEZ_VOUS
+  APPEL
+  VISIO
+
+  @@map("event_type")
+}
+
+enum EventStatus {
+  PREVU
+  REALISE
+  ANNULE
+
+  @@map("event_status")
+}
+
+// Rôle d'une tâche rattachée à un événement.
+enum EventTaskRole {
+  PREPARATION
+  SUIVI
+
+  @@map("event_task_role")
+}
+
+// Réunion, rencontre, rendez-vous, appel ou visio. Les instants sont en UTC (timestamptz) ;
+// le fuseau de l'utilisateur sert à les convertir en jour et heure locaux.
+model Event {
+  id                  String      @id @default(uuid()) @db.Uuid
+  userId              String      @map("user_id") @db.Uuid
+  goalId              String?     @map("goal_id") @db.Uuid
+  milestoneId         String?     @map("milestone_id") @db.Uuid
+  type                EventType
+  title               String      @db.VarChar(160)
+  startsAt            DateTime    @map("starts_at") @db.Timestamptz(6)
+  endsAt              DateTime    @map("ends_at") @db.Timestamptz(6)
+  location            String?     @db.VarChar(200)
+  link                String?     @db.VarChar(500)
+  participants        String[]    @default([])
+  agenda              String?     @db.VarChar(2000)
+  decisions           String?     @db.VarChar(2000)
+  status              EventStatus @default(PREVU)
+  travelBeforeMinutes Int         @default(0) @map("travel_before_minutes")
+  prepBeforeMinutes   Int         @default(0) @map("prep_before_minutes")
+  completedAt         DateTime?   @map("completed_at") @db.Timestamptz(6)
+  createdAt           DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goal      Goal?      @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  milestone Milestone? @relation(fields: [milestoneId], references: [id], onDelete: SetNull)
+  tasks     Task[]
+
+  @@index([userId, startsAt])
+  @@index([userId, status])
+  @@map("events")
 }
 
 enum TaskStatus {
@@ -139,26 +237,163 @@ enum TaskStatus {
 }
 
 model Task {
-  id              String     @id @default(uuid()) @db.Uuid
-  userId          String     @map("user_id") @db.Uuid
-  goalId          String?    @map("goal_id") @db.Uuid
-  milestoneId     String?    @map("milestone_id") @db.Uuid
-  title           String     @db.VarChar(160)
-  notes           String?    @db.VarChar(2000)
-  workDate        DateTime?  @map("work_date") @db.Date
-  dueDate         DateTime?  @map("due_date") @db.Date
-  status          TaskStatus @default(TODO)
-  completedAt     DateTime?  @map("completed_at") @db.Timestamptz(6)
-  originalDate    DateTime?  @map("original_date") @db.Date
-  rescheduleCount Int        @default(0) @map("reschedule_count")
-  createdAt       DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt       DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
+  id              String         @id @default(uuid()) @db.Uuid
+  userId          String         @map("user_id") @db.Uuid
+  goalId          String?        @map("goal_id") @db.Uuid
+  milestoneId     String?        @map("milestone_id") @db.Uuid
+  eventId         String?        @map("event_id") @db.Uuid
+  eventRole       EventTaskRole? @map("event_role")
+  title           String         @db.VarChar(160)
+  notes           String?        @db.VarChar(2000)
+  workDate        DateTime?      @map("work_date") @db.Date
+  dueDate         DateTime?      @map("due_date") @db.Date
+  status          TaskStatus     @default(TODO)
+  completedAt     DateTime?      @map("completed_at") @db.Timestamptz(6)
+  originalDate    DateTime?      @map("original_date") @db.Date
+  rescheduleCount Int            @default(0) @map("reschedule_count")
+  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   goal      Goal?      @relation(fields: [goalId], references: [id], onDelete: SetNull)
   milestone Milestone? @relation(fields: [milestoneId], references: [id], onDelete: SetNull)
+  event     Event?     @relation(fields: [eventId], references: [id], onDelete: SetNull)
 
   @@index([userId, workDate])
+  @@index([eventId])
   @@index([userId, status])
   @@map("tasks")
+}
+
+// ---------------------------------------------------------------------------------------------
+// Budget mensuel (spec 005). Tous les montants sont des entiers dans la plus petite unité de la
+// devise de l'utilisateur : jamais de flottant.
+
+enum AccountKind {
+  ESPECES
+  BANQUE
+  MOBILE_MONEY
+
+  @@map("account_kind")
+}
+
+enum MoneyType {
+  REVENU
+  DEPENSE
+  EPARGNE
+
+  @@map("money_type")
+}
+
+enum OperationStatus {
+  PREVUE
+  PARTIELLE
+  SOLDEE
+  ANNULEE
+
+  @@map("operation_status")
+}
+
+// Un compte utilisé n'est jamais supprimé : il est archivé (les transactions le référencent).
+model Account {
+  id             String      @id @default(uuid()) @db.Uuid
+  userId         String      @map("user_id") @db.Uuid
+  name           String      @db.VarChar(60)
+  kind           AccountKind
+  openingBalance Int         @default(0) @map("opening_balance")
+  archivedAt     DateTime?   @map("archived_at") @db.Timestamptz(6)
+  createdAt      DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+  operations   PlannedOperation[]
+
+  // Évite le doublon créé par un double appui sur « Démarrer mon budget ».
+  @@unique([userId, name])
+  @@map("accounts")
+}
+
+model BudgetCategory {
+  id         String    @id @default(uuid()) @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  name       String    @db.VarChar(60)
+  type       MoneyType
+  archivedAt DateTime? @map("archived_at") @db.Timestamptz(6)
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  envelopes    Envelope[]
+  operations   PlannedOperation[]
+  transactions Transaction[]
+
+  @@unique([userId, type, name])
+  @@map("budget_categories")
+}
+
+// Montant prévu pour une catégorie sur un mois (month = premier jour du mois).
+model Envelope {
+  id            String   @id @default(uuid()) @db.Uuid
+  userId        String   @map("user_id") @db.Uuid
+  categoryId    String   @map("category_id") @db.Uuid
+  month         DateTime @db.Date
+  plannedAmount Int      @map("planned_amount")
+
+  user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category BudgetCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, categoryId, month])
+  @@index([userId, month])
+  @@map("envelopes")
+}
+
+// Prévision : quelque chose à payer ou à recevoir à une date. Réglée par une ou plusieurs transactions.
+model PlannedOperation {
+  id            String          @id @default(uuid()) @db.Uuid
+  userId        String          @map("user_id") @db.Uuid
+  categoryId    String?         @map("category_id") @db.Uuid
+  accountId     String?         @map("account_id") @db.Uuid
+  type          MoneyType
+  label         String          @db.VarChar(120)
+  plannedAmount Int             @map("planned_amount")
+  dueDate       DateTime        @map("due_date") @db.Date
+  status        OperationStatus @default(PREVUE)
+  // Soldée volontairement : un paiement inférieur au prévu clôt la prévision (la différence = économie).
+  closedAt      DateTime?       @map("closed_at") @db.Timestamptz(6)
+  createdAt     DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category     BudgetCategory? @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  account      Account?        @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  transactions Transaction[]
+
+  @@index([userId, dueDate])
+  @@map("planned_operations")
+}
+
+// Opération réelle (argent réellement entré ou sorti). La clé d'idempotence rend le double appui
+// sans effet : la base refuse la seconde écriture, le service renvoie la première.
+model Transaction {
+  id                 String    @id @default(uuid()) @db.Uuid
+  userId             String    @map("user_id") @db.Uuid
+  accountId          String    @map("account_id") @db.Uuid
+  categoryId         String?   @map("category_id") @db.Uuid
+  plannedOperationId String?   @map("planned_operation_id") @db.Uuid
+  type               MoneyType
+  amount             Int
+  date               DateTime  @db.Date
+  label              String?   @db.VarChar(120)
+  idempotencyKey     String?   @map("idempotency_key") @db.VarChar(80)
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account          Account           @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  category         BudgetCategory?   @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  plannedOperation PlannedOperation? @relation(fields: [plannedOperationId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, idempotencyKey])
+  @@index([userId, date])
+  @@index([accountId])
+  @@index([plannedOperationId])
+  @@map("transactions")
 }

@@ -45,6 +45,16 @@ chargement et l'erreur avec « Réessayer », message explicite pour une liste v
   `--ok|--warn|--danger|--primary`, toujours avec libellé (et icône).
 - Vérifier chaque écran en clair **et** en sombre à 360×740 (captures Playwright).
 
+## Argent, événements, formulaires à clé
+- Montants : `core/money.ts` (`formatMoney`, `formatSigned`, `parseMoney`, `toInputValue`,
+  `newIdempotencyKey`). Le frontend n'additionne ni ne soustrait des montants : il affiche les valeurs de
+  l'API (`remaining`, `economy`, `percent`…). Une saisie invalide est refusée localement, jamais arrondie.
+- Un formulaire qui crée une écriture d'argent génère sa `idempotencyKey` **à l'ouverture** et la rejoue
+  telle quelle ; le bouton est désactivé pendant l'appel (`saving`).
+- Événements : jour et heures locaux viennent de l'API (`date`, `startTime`, `endTime`, `leaveAtTime`) ;
+  ne jamais reconvertir d'instants dans le navigateur.
+- Icônes des nouveaux composants : `[icon]="importee"` (pas de `addIcons`).
+
 ## Vérifier
 ```bash
 npx ng lint --fix && npx prettier --write "src/**/*.{ts,html}"

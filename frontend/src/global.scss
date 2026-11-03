@@ -388,6 +388,39 @@ ion-action-sheet {
   --cat: var(--cat-projet);
 }
 
+/* Ligne de liste : pastille d'icône, texte (titre + détail) et valeur à droite. */
+.ob-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  padding: 12px 14px;
+}
+.ob-ico {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--ion-color-primary) 13%, var(--ob-surface));
+  color: var(--ob-primary-ink);
+  font-size: 21px;
+}
+.ob-row-txt {
+  flex: 1;
+  min-width: 0;
+}
+.ob-row-txt p {
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+.ob-row-txt small {
+  color: var(--ob-text-2);
+}
+
 /* Réserve sous les listes pour que le bouton « + » ne masque pas le dernier élément. */
 .ob-fab-space {
   height: 96px;

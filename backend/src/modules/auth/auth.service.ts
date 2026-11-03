@@ -15,8 +15,8 @@ const BCRYPT_COST = env.NODE_ENV === 'test' ? 4 : 12;
 // trahit pas l'existence d'un compte.
 const DUMMY_HASH = bcrypt.hashSync('objectiva-dummy-password', BCRYPT_COST);
 
-function publicUser(u: { id: string; email: string; displayName: string; timezone: string }) {
-  return { id: u.id, email: u.email, displayName: u.displayName, timezone: u.timezone };
+function publicUser(u: { id: string; email: string; displayName: string; timezone: string; currency: string }) {
+  return { id: u.id, email: u.email, displayName: u.displayName, timezone: u.timezone, currency: u.currency };
 }
 
 async function openSession(userId: string) {

@@ -12,5 +12,5 @@ export const todayRouter = Router();
 todayRouter.get('/', async (req, res) => {
   const { userId, timezone } = currentUser(req);
   const { date } = parseInput(todayQuery, req.query);
-  res.json({ success: true, data: await getToday(userId, date ?? todayIn(timezone)) });
+  res.json({ success: true, data: await getToday(userId, timezone, date ?? todayIn(timezone)) });
 });

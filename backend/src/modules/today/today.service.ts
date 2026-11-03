@@ -1,11 +1,12 @@
 import { toDbDate } from '../../core/dates.ts';
 import { prisma } from '../../core/prisma.ts';
 import { ACTIVE_GOAL_STATUSES } from '../goals/goals.rules.ts';
+import { eventsOfDay } from '../events/events.service.ts';
 import { serializeTask } from '../tasks/tasks.service.ts';
 
-export async function getToday(userId: string, date: string) {
+export async function getToday(userId: string, timezone: string, date: string) {
   const day = toDbDate(date);
-  const [planned, done, toReschedule, overdue, goalsWithoutNext] = await Promise.all([
+  const [planned, done, toReschedule, overdue, goalsWithoutNext, events] = await Promise.all([
     prisma.task.findMany({ where: { userId, status: 'TODO', workDate: day }, orderBy: { createdAt: 'asc' } }),
     prisma.task.findMany({ where: { userId, status: 'DONE', workDate: day }, orderBy: { completedAt: 'asc' } }),
     prisma.task.findMany({ where: { userId, status: 'TODO', workDate: { lt: day } }, orderBy: { workDate: 'asc' } }),
@@ -24,11 +25,13 @@ export async function getToday(userId: string, date: string) {
       select: { id: true, title: true },
       orderBy: { endDate: 'asc' },
     }),
+    eventsOfDay(userId, timezone, date),
   ]);
 
   const s = (t: Parameters<typeof serializeTask>[0]) => serializeTask(t, date);
   return {
     date,
+    events,
     planned: planned.map(s),
     done: done.map(s),
     toReschedule: toReschedule.map(s),

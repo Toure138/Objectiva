@@ -2,9 +2,9 @@ import { Component, inject } from '@angular/core';
 import { IonContent, IonIcon, ModalController } from '@ionic/angular';
 import { calendarOutline, checkmarkCircleOutline, flagOutline, repeatOutline, walletOutline } from 'ionicons/icons';
 
-export type AddChoice = 'task' | 'goal';
+export type AddChoice = 'task' | 'goal' | 'event' | 'money';
 
-/** Feuille « Ajouter » : deux actions disponibles en grand, les prochaines étapes en attente. */
+/** Feuille « Ajouter » : tuiles des créations disponibles, les prochaines étapes en attente. */
 @Component({
   selector: 'app-add-sheet',
   imports: [IonContent, IonIcon],
@@ -25,12 +25,13 @@ export type AddChoice = 'task' | 'goal';
       gap: 12px;
     }
     .tile {
+      position: relative;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      gap: 10px;
-      min-height: 112px;
-      padding: 16px;
+      gap: 8px;
+      min-height: 108px;
+      padding: 14px;
       border: 1px solid var(--ob-hairline);
       border-radius: var(--ob-radius-lg);
       background: var(--ob-surface);
@@ -42,8 +43,15 @@ export type AddChoice = 'task' | 'goal';
       transition: transform 0.15s var(--ob-ease);
       -webkit-tap-highlight-color: transparent;
     }
-    .tile:active {
+    .tile:active:not(:disabled) {
       transform: scale(0.97);
+    }
+    .tile:disabled {
+      border-style: dashed;
+      background: transparent;
+      box-shadow: none;
+      color: var(--ob-text-2);
+      cursor: default;
     }
     .tile .ico {
       display: grid;
@@ -54,6 +62,10 @@ export type AddChoice = 'task' | 'goal';
       background: color-mix(in srgb, var(--ion-color-primary) 15%, var(--ob-surface));
       color: var(--ob-primary-ink);
       font-size: 22px;
+    }
+    .tile:disabled .ico {
+      background: var(--ob-surface-2);
+      color: var(--ob-text-2);
     }
     .tile strong {
       font-size: 1rem;
@@ -92,19 +104,27 @@ export type AddChoice = 'task' | 'goal';
           <button type="button" class="tile" (click)="choose('task')">
             <span class="ico"><ion-icon [icon]="icons.task" aria-hidden="true"></ion-icon></span>
             <strong>Une tâche</strong>
-            <small>Une action à faire, un jour précis ou plus tard</small>
+            <small>Une action à faire</small>
           </button>
           <button type="button" class="tile" (click)="choose('goal')">
             <span class="ico"><ion-icon [icon]="icons.goal" aria-hidden="true"></ion-icon></span>
             <strong>Un objectif</strong>
-            <small>Ce que tu veux accomplir, étape par étape</small>
+            <small>Un cap, étape par étape</small>
+          </button>
+          <button type="button" class="tile" (click)="choose('event')">
+            <span class="ico"><ion-icon [icon]="icons.event" aria-hidden="true"></ion-icon></span>
+            <strong>Un événement</strong>
+            <small>Réunion, rendez-vous, appel</small>
+          </button>
+          <button type="button" class="tile" (click)="choose('money')">
+            <span class="ico"><ion-icon [icon]="icons.money" aria-hidden="true"></ion-icon></span>
+            <strong>Dépense ou revenu</strong>
+            <small>Ton budget du mois</small>
           </button>
         </div>
         <p class="ob-eyebrow soon-title">Bientôt disponible</p>
         <div class="soon" aria-label="Fonctions à venir">
           <span><ion-icon [icon]="icons.habit" aria-hidden="true"></ion-icon>Habitude</span>
-          <span><ion-icon [icon]="icons.event" aria-hidden="true"></ion-icon>Événement</span>
-          <span><ion-icon [icon]="icons.money" aria-hidden="true"></ion-icon>Dépense ou revenu</span>
         </div>
       </div>
     </ion-content>
@@ -116,8 +136,8 @@ export class AddSheetComponent {
   protected readonly icons = {
     task: checkmarkCircleOutline,
     goal: flagOutline,
-    habit: repeatOutline,
     event: calendarOutline,
+    habit: repeatOutline,
     money: walletOutline,
   };
 

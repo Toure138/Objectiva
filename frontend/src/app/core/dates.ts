@@ -38,3 +38,18 @@ export function longDate(date: string): string {
 export function shortDate(date: string | null): string {
   return date ? SHORT.format(toUtc(date)) : '—';
 }
+
+const MONTH = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+
+/** Mois « AAAA-MM » décalé de `n` mois (négatif pour reculer). */
+export function addMonths(month: string, n: number): string {
+  const [y, m] = month.split('-').map(Number) as [number, number];
+  const d = new Date(Date.UTC(y, m - 1 + n, 1));
+  return d.toISOString().slice(0, 7);
+}
+
+/** « Novembre 2026 ». */
+export function monthLabel(month: string): string {
+  const s = MONTH.format(new Date(`${month}-01T00:00:00Z`));
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}

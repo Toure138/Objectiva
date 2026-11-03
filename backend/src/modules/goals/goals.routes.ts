@@ -6,6 +6,7 @@ import { idParam } from '../../core/ids.ts';
 import {
   createGoalSchema,
   createMilestoneSchema,
+  createReadingSchema,
   listGoalsQuery,
   updateGoalSchema,
   updateMilestoneSchema,
@@ -55,6 +56,25 @@ goalsRouter.post('/:id/milestones', async (req, res) => {
     parseInput(createMilestoneSchema, req.body),
   );
   res.status(201).json({ success: true, data });
+});
+
+goalsRouter.post('/:id/readings', async (req, res) => {
+  const { userId, timezone } = currentUser(req);
+  const data = await goals.createReading(
+    userId,
+    idParam(req.params.id, 'Objectif'),
+    todayIn(timezone),
+    parseInput(createReadingSchema, req.body),
+  );
+  res.status(201).json({ success: true, data });
+});
+
+export const readingsRouter = Router();
+
+readingsRouter.delete('/:id', async (req, res) => {
+  const { userId, timezone } = currentUser(req);
+  const data = await goals.deleteReading(userId, idParam(req.params.id, 'Relevé'), todayIn(timezone));
+  res.json({ success: true, data });
 });
 
 export const milestonesRouter = Router();
