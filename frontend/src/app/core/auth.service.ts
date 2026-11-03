@@ -1,20 +1,13 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Preferences } from '@capacitor/preferences';
-import { firstValueFrom } from 'rxjs';
 
-import { toApiError } from './api-error';
+import { ApiService, type AuthSession } from './api.service';
 import type { User } from './models';
 import { SettingsService } from './settings.service';
 
 const TOKEN_KEY = 'objectiva.token';
 const USER_KEY = 'objectiva.user';
-
-interface AuthResponse {
-  success: true;
-  data: { user: User; token: string; expiresAt: string };
-}
 
 /**
  * Session : le jeton est conservé via Capacitor Preferences (stockage natif sur
@@ -22,7 +15,7 @@ interface AuthResponse {
  */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly http = inject(HttpClient);
+  private readonly api = inject(ApiService);
   private readonly router = inject(Router);
   private readonly settings = inject(SettingsService);
 
@@ -49,17 +42,17 @@ export class AuthService {
   }
 
   async login(email: string, password: string): Promise<void> {
-    await this.authenticate('/auth/login', { email, password });
+    await this.startSession(() => this.api.login({ email, password }));
   }
 
   async register(displayName: string, email: string, password: string): Promise<void> {
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    await this.authenticate('/auth/register', { displayName, email, password, timezone });
+    await this.startSession(() => this.api.register({ displayName, email, password, timezone }));
   }
 
   async logout(): Promise<void> {
     try {
-      if (this.token()) await firstValueFrom(this.http.post(`${this.settings.apiUrl()}/auth/logout`, {}));
+      if (this.token()) await this.api.logout();
     } catch {
       // Hors connexion : on oublie quand même la session localement.
     }
@@ -74,18 +67,14 @@ export class AuthService {
     await this.router.navigateByUrl('/connexion', { replaceUrl: true });
   }
 
-  private async authenticate(path: string, body: object): Promise<void> {
-    try {
-      const res = await firstValueFrom(this.http.post<AuthResponse>(`${this.settings.apiUrl()}${path}`, body));
-      this.token.set(res.data.token);
-      this.user.set(res.data.user);
-      await Promise.all([
-        Preferences.set({ key: TOKEN_KEY, value: res.data.token }),
-        Preferences.set({ key: USER_KEY, value: JSON.stringify(res.data.user) }),
-      ]);
-    } catch (e) {
-      throw toApiError(e);
-    }
+  private async startSession(call: () => Promise<AuthSession>): Promise<void> {
+    const session = await call();
+    this.token.set(session.token);
+    this.user.set(session.user);
+    await Promise.all([
+      Preferences.set({ key: TOKEN_KEY, value: session.token }),
+      Preferences.set({ key: USER_KEY, value: JSON.stringify(session.user) }),
+    ]);
   }
 
   private async clearSession(): Promise<void> {

@@ -44,6 +44,36 @@ describe('isolation entre utilisateurs', () => {
     expect((await bob.patch(`/api/tasks/${own.id}`, { milestoneId: aliceMilestone.id })).status).toBe(404);
   });
 
+  it("les actions d'état, le jalon, « Aujourd'hui » et le bilan restent propres à chacun (audit)", async () => {
+    const today = new Date().toISOString().slice(0, 10);
+    const planned = (await alice.post('/api/tasks', { title: 'Du jour', goalId: aliceGoal.id, workDate: today })).body.data;
+    const finished = (await alice.post('/api/tasks', { title: 'Terminée', workDate: today })).body.data;
+    await alice.post(`/api/tasks/${finished.id}/complete`);
+
+    // reopen et cancel sur une tâche d'autrui : 404, et l'état d'origine est intact.
+    expect((await bob.post(`/api/tasks/${finished.id}/reopen`)).status).toBe(404);
+    expect((await bob.post(`/api/tasks/${planned.id}/cancel`)).status).toBe(404);
+    expect((await alice.get(`/api/tasks/${finished.id}`)).body.data.status).toBe('DONE');
+    expect((await alice.get(`/api/tasks/${planned.id}`)).body.data.status).toBe('TODO');
+
+    // Suppression d'un jalon d'autrui : 404, le jalon existe toujours.
+    expect((await bob.del(`/api/milestones/${aliceMilestone.id}`)).status).toBe(404);
+    expect((await alice.get(`/api/goals/${aliceGoal.id}`)).body.data.milestones).toHaveLength(1);
+
+    // Filtrer par l'objectif d'autrui ne révèle rien.
+    expect((await bob.get(`/api/tasks?goalId=${aliceGoal.id}`)).body.data.total).toBe(0);
+
+    // « Aujourd'hui » et le bilan de Bob ne contiennent rien d'Alice.
+    const view = (await bob.get(`/api/today?date=${today}`)).body.data;
+    expect([view.planned, view.done, view.toReschedule, view.overdue, view.goalsWithoutNextAction, view.events]).toEqual([[], [], [], [], [], []]);
+    const review = (await bob.get(`/api/reviews?period=day&date=${today}`)).body.data;
+    expect(review.tasks).toMatchObject({ expected: 0, done: 0, pending: 0 });
+    expect(review.tasks.executionRate).toBeNull();
+    expect(review.goals).toEqual([]);
+    // Alice, elle, voit bien ses données.
+    expect((await alice.get(`/api/today?date=${today}`)).body.data.planned.map((t: { id: string }) => t.id)).toContain(planned.id);
+  });
+
   it("les relevés d'un objectif mesuré sont inaccessibles à autrui (spec 003, CA-8)", async () => {
     const measured = (
       await alice.post('/api/goals', { ...goalPayload, progressMode: 'MESURE', measureUnit: 'démonstrations', startValue: 0, targetValue: 3 })

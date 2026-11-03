@@ -20,12 +20,19 @@ import type {
   Review,
   Task,
   TodayView,
+  User,
 } from './models';
 import { SettingsService } from './settings.service';
 
 interface Envelope<T> {
   success: boolean;
   data: T;
+}
+
+export interface AuthSession {
+  user: User;
+  token: string;
+  expiresAt: string;
 }
 
 type Query = Record<string, string | number | boolean | undefined | null>;
@@ -36,6 +43,17 @@ type Body = Record<string, unknown>;
 export class ApiService {
   private readonly http = inject(HttpClient);
   private readonly settings = inject(SettingsService);
+
+  // Authentification (sans jeton : l'intercepteur n'en ajoute pas sur login et register)
+  login(body: Body): Promise<AuthSession> {
+    return this.call('POST', '/auth/login', body);
+  }
+  register(body: Body): Promise<AuthSession> {
+    return this.call('POST', '/auth/register', body);
+  }
+  logout(): Promise<unknown> {
+    return this.call('POST', '/auth/logout', {});
+  }
 
   // Aujourd'hui et bilan
   today(date?: string): Promise<TodayView> {
