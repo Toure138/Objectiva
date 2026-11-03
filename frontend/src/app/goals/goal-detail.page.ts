@@ -1,166 +1,253 @@
 import { Component, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import {
-  AlertController,
-  IonBackButton,
-  IonButton,
-  IonButtons,
-  IonCheckbox,
-  IonContent,
-  IonHeader,
-  IonIcon,
-  IonItem,
-  IonLabel,
-  IonList,
-  IonListHeader,
-  IonNote,
-  IonProgressBar,
-  IonTitle,
-  IonToolbar,
-  ModalController,
-} from '@ionic/angular';
-import { addIcons } from 'ionicons';
-import { createOutline, trashOutline } from 'ionicons/icons';
+import { AlertController, IonButton, IonCheckbox, IonContent, IonIcon, ModalController } from '@ionic/angular';
+import { add, calendarOutline, createOutline, flagOutline, trashOutline } from 'ionicons/icons';
 
 import { ApiService } from '../core/api.service';
 import { localToday, shortDate } from '../core/dates';
-import { CATEGORY_LABELS, GOAL_STATUS_LABELS, PRIORITY_LABELS, type GoalDetail, type Milestone } from '../core/models';
+import { CATEGORY_LABELS, PRIORITY_LABELS, type GoalDetail, type Milestone } from '../core/models';
 import { AddMenuService } from '../shared/add-menu.service';
+import { CategoryBadgeComponent, categoryClass } from '../shared/category-badge.component';
 import { GoalFormComponent } from '../shared/goal-form.component';
+import { GoalStatusChipComponent } from '../shared/goal-status-chip.component';
+import { PageHeaderComponent } from '../shared/page-header.component';
+import { ProgressRingComponent } from '../shared/progress-ring.component';
+import { SectionHeaderComponent } from '../shared/section-header.component';
 import { StateViewComponent } from '../shared/state-view.component';
 import { TaskItemComponent } from '../shared/task-item.component';
 
 @Component({
   selector: 'app-goal-detail',
   imports: [
+    PageHeaderComponent,
     StateViewComponent,
     TaskItemComponent,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
-    IonBackButton,
+    CategoryBadgeComponent,
+    GoalStatusChipComponent,
+    ProgressRingComponent,
+    SectionHeaderComponent,
+    IonContent,
     IonButton,
     IonIcon,
-    IonContent,
-    IonList,
-    IonListHeader,
-    IonItem,
-    IonLabel,
     IonCheckbox,
-    IonNote,
-    IonProgressBar,
   ],
   styles: `
-    .head {
-      padding: 16px;
+    .hero {
+      margin-top: 8px;
+      padding: 18px;
+      background: linear-gradient(160deg, var(--cat-soft), var(--ob-surface) 75%);
     }
-    .head h1 {
-      margin: 0 0 4px;
-      font-size: 1.4rem;
+    .hero-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
-    .meta {
-      color: var(--ion-color-medium);
-      font-size: 0.9rem;
+    .hero-top .cat {
+      flex: 1;
+      color: var(--cat-ink);
+    }
+    h1 {
+      margin: 14px 0 10px;
+      font-size: 1.625rem;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+    }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
     }
     .motivation {
+      margin: 14px 0 0;
+      padding-left: 12px;
+      border-left: 3px solid var(--cat);
+      font-family: var(--ob-font-display);
+      font-size: 1.0625rem;
       font-style: italic;
+      line-height: 1.4;
     }
-    ion-progress-bar {
-      margin: 12px 0 4px;
+    .description {
+      margin: 12px 0 0;
+      color: var(--ob-text-2);
     }
-    .empty {
-      padding: 8px 16px;
-      color: var(--ion-color-medium);
+    .progress {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--ob-hairline);
+      --ring-color: var(--cat);
     }
-    ion-checkbox {
-      margin-inline-end: 12px;
+    .progress strong {
+      display: block;
+      font-size: 1.0625rem;
     }
-    .done {
+    .progress small {
+      color: var(--ob-text-2);
+    }
+    .pct {
+      font-size: 1.25rem;
+    }
+    .pct small {
+      font-size: 0.75rem;
+    }
+    section.block {
+      margin-top: 28px;
+    }
+    .list {
+      overflow: hidden;
+    }
+    .ms {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 4px 6px 8px;
+    }
+    .ms + .ms {
+      border-top: 1px solid var(--ob-hairline);
+    }
+    .ms ion-checkbox {
+      flex: none;
+      padding: 9px;
+    }
+    .ms .txt {
+      flex: 1;
+      min-width: 0;
+      padding: 6px 0;
+    }
+    .ms .txt p {
+      margin: 0;
+      font-weight: 550;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+    .ms .txt p.done {
+      color: var(--ob-text-2);
       text-decoration: line-through;
-      color: var(--ion-color-medium);
+    }
+    .ms .txt small {
+      color: var(--ob-text-2);
+    }
+    .hint {
+      margin: 4px 0 8px;
+      color: var(--ob-text-2);
+    }
+    .icon-btn {
+      --padding-start: 0;
+      --padding-end: 0;
+      width: 44px;
+      height: 44px;
+      color: var(--ob-text-2);
     }
   `,
   template: `
-    <ion-header>
-      <ion-toolbar>
-        <ion-buttons slot="start"
-          ><ion-back-button defaultHref="/app/objectifs" text="Objectifs"></ion-back-button
-        ></ion-buttons>
-        <ion-title>Objectif</ion-title>
-        <ion-buttons slot="end">
-          <ion-button (click)="edit()" aria-label="Modifier"
-            ><ion-icon slot="icon-only" name="create-outline"></ion-icon
-          ></ion-button>
-          <ion-button (click)="remove()" aria-label="Supprimer"
-            ><ion-icon slot="icon-only" name="trash-outline"></ion-icon
-          ></ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
+    <app-page-header title="Objectif" backHref="/app/objectifs" [showProfile]="false">
+      <ion-button class="icon-btn" fill="clear" (click)="edit()" aria-label="Modifier l’objectif">
+        <ion-icon slot="icon-only" [icon]="icons.edit"></ion-icon>
+      </ion-button>
+      <ion-button class="icon-btn" fill="clear" (click)="remove()" aria-label="Supprimer l’objectif">
+        <ion-icon slot="icon-only" [icon]="icons.trash"></ion-icon>
+      </ion-button>
+    </app-page-header>
     <ion-content>
-      <app-state-view [loading]="loading()" [error]="error()" (retry)="load()">
-        @if (goal(); as g) {
-          <div class="head">
-            <h1>{{ g.title }}</h1>
-            <div class="meta">
-              {{ labels.category[g.category] }} · {{ labels.status[g.status] }} · priorité
-              {{ labels.priority[g.priority].toLowerCase() }}
-            </div>
-            <div class="meta">Du {{ date(g.startDate) }} au {{ date(g.endDate) }}</div>
-            @if (g.motivation) {
-              <p class="motivation">« {{ g.motivation }} »</p>
-            }
-            @if (g.description) {
-              <p>{{ g.description }}</p>
-            }
-            @if (g.progress.percent !== null) {
-              <ion-progress-bar
-                [value]="g.progress.percent / 100"
-                [attr.aria-label]="g.progress.label"
-              ></ion-progress-bar>
-            }
-            <ion-note>{{ g.progress.label }} — progression calculée par jalons.</ion-note>
-          </div>
+      <div class="ob-container">
+        <app-state-view [loading]="loading()" [error]="error()" [hero]="true" (retry)="load()">
+          @if (goal(); as g) {
+            <section [class]="cls(g)">
+              <div class="hero-top">
+                <app-category-badge [category]="g.category" [size]="48" />
+                <p class="cat ob-eyebrow">{{ labels.category[g.category] }}</p>
+                <app-goal-status-chip [status]="g.status" />
+              </div>
+              <h1 class="ob-display">{{ g.title }}</h1>
+              <div class="chips">
+                <span class="ob-chip"
+                  ><ion-icon [icon]="icons.flag" aria-hidden="true"></ion-icon>Priorité
+                  {{ labels.priority[g.priority].toLowerCase() }}</span
+                >
+                <span class="ob-chip"
+                  ><ion-icon [icon]="icons.calendar" aria-hidden="true"></ion-icon>{{ date(g.startDate) }} →
+                  {{ date(g.endDate) }}</span
+                >
+              </div>
+              @if (g.motivation) {
+                <p class="motivation">« {{ g.motivation }} »</p>
+              }
+              @if (g.description) {
+                <p class="description">{{ g.description }}</p>
+              }
+              <div class="progress">
+                @if (g.progress.percent !== null) {
+                  <app-progress-ring
+                    [value]="g.progress.percent / 100"
+                    [size]="76"
+                    [stroke]="9"
+                    [label]="g.progress.label"
+                  >
+                    <span class="pct ob-display ob-num">{{ g.progress.percent }}<small>%</small></span>
+                  </app-progress-ring>
+                }
+                <div>
+                  <strong>{{ g.progress.label }}</strong>
+                  @if (g.progress.percent !== null) {
+                    <small>Progression calculée par jalons</small>
+                  }
+                </div>
+              </div>
+            </section>
 
-          <ion-list>
-            <ion-list-header>
-              <ion-label>Jalons</ion-label>
-              <ion-button (click)="addMilestone()">Ajouter</ion-button>
-            </ion-list-header>
-            @for (m of g.milestones; track m.id) {
-              <ion-item lines="full">
-                <ion-checkbox
-                  slot="start"
-                  [checked]="m.completed"
-                  (ionChange)="toggleMilestone(m)"
-                  [attr.aria-label]="'Jalon terminé : ' + m.title"
-                ></ion-checkbox>
-                <ion-label class="ion-text-wrap">
-                  <div [class.done]="m.completed">{{ m.title }}</div>
-                  <ion-note>{{ m.dueDate ? 'pour le ' + date(m.dueDate) : 'sans date' }}</ion-note>
-                </ion-label>
-                <ion-button slot="end" fill="clear" size="small" (click)="planFor(m)">Planifier</ion-button>
-              </ion-item>
-            } @empty {
-              <p class="empty">Ajoute un premier jalon, par exemple l'étape de ce mois-ci.</p>
-            }
-          </ion-list>
+            <section class="block">
+              <app-section-header title="Jalons" [count]="g.milestones.length">
+                <ion-button class="ob-soft" size="small" (click)="addMilestone()">
+                  <ion-icon slot="start" [icon]="icons.add" aria-hidden="true"></ion-icon>Ajouter
+                </ion-button>
+              </app-section-header>
+              @if (g.milestones.length > 0) {
+                <div class="list ob-card">
+                  @for (m of g.milestones; track m.id) {
+                    <div class="ms">
+                      <ion-checkbox
+                        [checked]="m.completed"
+                        (ionChange)="toggleMilestone(m)"
+                        [attr.aria-label]="'Jalon terminé : ' + m.title"
+                      ></ion-checkbox>
+                      <div class="txt">
+                        <p [class.done]="m.completed">{{ m.title }}</p>
+                        <small>{{ m.dueDate ? 'Pour le ' + date(m.dueDate) : 'Sans date' }}</small>
+                      </div>
+                      <ion-button
+                        fill="clear"
+                        size="small"
+                        (click)="planFor(m)"
+                        [attr.aria-label]="'Planifier une action pour ' + m.title"
+                        >Planifier</ion-button
+                      >
+                    </div>
+                  }
+                </div>
+              } @else {
+                <p class="hint">Ajoute un premier jalon, par exemple l'étape de ce mois-ci.</p>
+              }
+            </section>
 
-          <ion-list>
-            <ion-list-header>
-              <ion-label>Actions</ion-label>
-              <ion-button (click)="planFor()">Ajouter</ion-button>
-            </ion-list-header>
-            @if (g.needsNextAction) {
-              <p class="empty">Aucune prochaine action. Planifie la prochaine étape pour avancer.</p>
-            }
-            @for (t of g.tasks; track t.id) {
-              <app-task-item [task]="t" (changed)="load()" />
-            }
-          </ion-list>
-        }
-      </app-state-view>
+            <section class="block">
+              <app-section-header title="Actions" [count]="g.tasks.length">
+                <ion-button class="ob-soft" size="small" (click)="planFor()">
+                  <ion-icon slot="start" [icon]="icons.add" aria-hidden="true"></ion-icon>Ajouter
+                </ion-button>
+              </app-section-header>
+              @if (g.needsNextAction) {
+                <p class="hint">Aucune prochaine action. Planifie la prochaine étape pour avancer.</p>
+              }
+              @for (t of g.tasks; track t.id; let i = $index) {
+                <app-task-item [task]="t" [index]="i" (changed)="load()" />
+              }
+            </section>
+            <div class="ob-fab-space"></div>
+          }
+        </app-state-view>
+      </div>
     </ion-content>
   `,
 })
@@ -177,12 +264,16 @@ export class GoalDetailPage {
   protected readonly goal = signal<GoalDetail | null>(null);
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
-  protected readonly labels = { category: CATEGORY_LABELS, status: GOAL_STATUS_LABELS, priority: PRIORITY_LABELS };
+  protected readonly labels = { category: CATEGORY_LABELS, priority: PRIORITY_LABELS };
+  protected readonly icons = {
+    add,
+    calendar: calendarOutline,
+    edit: createOutline,
+    flag: flagOutline,
+    trash: trashOutline,
+  };
+  protected readonly cls = (g: GoalDetail): string => `hero ob-card ob-rise ${categoryClass(g.category)}`;
   protected readonly date = shortDate;
-
-  constructor() {
-    addIcons({ createOutline, trashOutline });
-  }
 
   ionViewWillEnter(): void {
     void this.load();

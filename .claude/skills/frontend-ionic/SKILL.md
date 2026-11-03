@@ -34,6 +34,17 @@ chargement et l'erreur avec « Réessayer », message explicite pour une liste v
 9. Toasts en position `top` ; action « Annuler » après une action réversible.
 10. Dates : `AAAA-MM-JJ`, affichage via `core/dates.ts` (`relativeDay`, `longDate`).
 
+## Design system (spec 002)
+- Composer les écrans avec les composants de `shared/` : `app-page-header` (titre display, avatar,
+  retour), `app-state-view` (squelette/erreur), `app-empty-state`, `app-section-header`,
+  `app-segmented` (à la place d'`ion-segment`), `app-progress-ring` / `app-progress-bar`,
+  `app-task-item` (passer `[index]` pour l'animation), `app-category-badge`.
+- Contenu d'un écran dans `<div class="ob-container">` ; réserver `ob-fab-space` sous les listes
+  qui ont un bouton « + ». Formulaires : `<ion-list class="ob-form" lines="none">`.
+- Couleurs uniquement par jetons (`variables.scss`), jamais en dur. Pastilles : `ob-chip` +
+  `--ok|--warn|--danger|--primary`, toujours avec libellé (et icône).
+- Vérifier chaque écran en clair **et** en sombre à 360×740 (captures Playwright).
+
 ## Vérifier
 ```bash
 npx ng lint --fix && npx prettier --write "src/**/*.{ts,html}"

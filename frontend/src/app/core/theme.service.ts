@@ -1,5 +1,7 @@
 import { Injectable, signal } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
 import { Preferences } from '@capacitor/preferences';
+import { StatusBar, Style } from '@capacitor/status-bar';
 
 export type ThemeChoice = 'system' | 'light' | 'dark';
 const THEME_KEY = 'objectiva.theme';
@@ -26,5 +28,10 @@ export class ThemeService {
   private apply() {
     const dark = this.choice() === 'dark' || (this.choice() === 'system' && this.media.matches);
     document.documentElement.classList.toggle('ion-palette-dark', dark);
+    // Barre du navigateur / du système aux couleurs du thème (mêmes valeurs que --ob-bg).
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0b1310' : '#f6f4ee');
+    if (Capacitor.isNativePlatform()) {
+      void StatusBar.setStyle({ style: dark ? Style.Dark : Style.Light }).catch(() => undefined);
+    }
   }
 }

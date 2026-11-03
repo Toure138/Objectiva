@@ -8,6 +8,7 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
+  IonIcon,
   IonInput,
   IonItem,
   IonLabel,
@@ -20,6 +21,7 @@ import {
   IonToolbar,
   ModalController,
 } from '@ionic/angular';
+import { close } from 'ionicons/icons';
 
 import { ApiService } from '../core/api.service';
 import { localToday } from '../core/dates';
@@ -31,6 +33,7 @@ import type { Goal, Milestone } from '../core/models';
   imports: [
     FormsModule,
     IonHeader,
+    IonIcon,
     IonToolbar,
     IonTitle,
     IonButtons,
@@ -50,7 +53,11 @@ import type { Goal, Milestone } from '../core/models';
   template: `
     <ion-header>
       <ion-toolbar>
-        <ion-buttons slot="start"><ion-button (click)="close()">Fermer</ion-button></ion-buttons>
+        <ion-buttons slot="start">
+          <ion-button (click)="close()" aria-label="Fermer">
+            <ion-icon slot="icon-only" [icon]="closeIcon"></ion-icon>
+          </ion-button>
+        </ion-buttons>
         <ion-title>Nouvelle tâche</ion-title>
         <ion-buttons slot="end">
           <ion-button strong (click)="save()" [disabled]="saving() || !title.trim()">Enregistrer</ion-button>
@@ -59,7 +66,7 @@ import type { Goal, Milestone } from '../core/models';
     </ion-header>
     <ion-content class="ion-padding">
       <form (ngSubmit)="save()">
-        <ion-list>
+        <ion-list class="ob-form" lines="none">
           <ion-item>
             <ion-input
               label="Titre"
@@ -101,7 +108,7 @@ import type { Goal, Milestone } from '../core/models';
         <ion-accordion-group>
           <ion-accordion value="avance">
             <ion-item slot="header"><ion-label>Plus d'options</ion-label></ion-item>
-            <ion-list slot="content">
+            <ion-list class="ob-form" lines="none" slot="content">
               @if (milestones().length > 0) {
                 <ion-item>
                   <ion-select
@@ -157,6 +164,8 @@ import type { Goal, Milestone } from '../core/models';
 export class TaskFormComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly modalCtrl = inject(ModalController);
+
+  protected readonly closeIcon = close;
 
   /** Préremplissage depuis un objectif, un jalon ou le bilan. */
   // `@Input()` classiques : Ionic affecte `componentProps` directement aux propriétés,

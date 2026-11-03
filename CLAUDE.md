@@ -5,7 +5,7 @@ objectifs à long terme, les décomposer en jalons mensuels, planifier tâches e
 semaine et par jour, cocher ce qui est réellement accompli, planifier le budget (jour, mois,
 année), gérer réunions et rencontres, et faire le bilan. Voir [README.md](README.md).
 
-**État** : étape 1 « Socle objectifs » terminée (spec 001). Suite et éléments reportés :
+**État** : étape 1 « Socle objectifs » terminée (spec 001) ; interface refondue (spec 002). Suite et éléments reportés :
 [docs/feuille-de-route.md](docs/feuille-de-route.md). API : [docs/api.md](docs/api.md).
 
 ## Stack technique (versions vérifiées, voir `docs/versions.md`)
@@ -37,9 +37,23 @@ année), gérer réunions et rencontres, et faire le bilan. Voir [README.md](REA
   via Capacitor Preferences), `auth.interceptor.ts`, `auth.guard.ts`, `settings.service.ts`
   (adresse d'API modifiable dans l'app), `theme.service.ts`, `models.ts` (types + libellés FR).
 - `src/app/shared/` : `task-item`, `task-actions.service` (cocher/reporter/annuler + « Annuler »),
-  formulaires en modale, `add-menu.service` (bouton « Ajouter »), `state-view` (chargement/erreur).
+  formulaires en modale, `add-menu.service` + `add-sheet` (feuille « Ajouter »), `state-view`
+  (squelette/erreur), `page-header`, `empty-state`, `section-header`, `segmented` (contrôle en
+  pilule), `progress-ring`, `progress-bar`, `category-badge`, `goal-status-chip`, `brand-mark`.
 - Un dossier par espace : `today/`, `plan/`, `goals/`, `budget/` (à venir), `review/`, `profile/`.
   Routes en français : `/connexion`, `/app/aujourdhui`, `/app/objectifs/:id`, `/profil`…
+
+### Design system (spec 002 « calme et cap »)
+- **Jetons** : `src/theme/variables.scss` (couleurs Ionic + `--ob-*`, clair et sombre) ; habillage
+  des composants Ionic et utilitaires `ob-*` (`ob-card`, `ob-chip`, `ob-cat--*`, `ob-rise`,
+  `ob-container`, `ob-form`…) dans `src/global.scss`. **Jamais de couleur en dur** dans un
+  composant : utiliser les jetons (`--ob-surface`, `--ob-text-2`, `--ion-color-primary`…) ; seuls les
+  dégradés de marque (connexion, Budget, bienvenue) sont en dur, avec du texte blanc.
+- **Typographie** : Fraunces (titres, chiffres : classe `ob-display`) et Inter (interface), fichiers
+  woff2 dans `src/fonts/` (embarqués, hors ligne). Mode Ionic **`md` forcé** (`main.ts`).
+- **Catégories d'objectifs** : une couleur + une icône chacune (`category-badge.component.ts`,
+  classes `ob-cat ob-cat--<categorie>` qui posent `--cat`, `--cat-soft`, `--cat-ink`).
+- Une icône se passe en `[icon]="importee"` (pas de `addIcons`) dans les nouveaux composants.
 
 ## Règles de sécurité non négociables
 
@@ -67,7 +81,14 @@ année), gérer réunions et rencontres, et faire le bilan. Voir [README.md](REA
 - **Ionic, pile de navigation** : les pages précédentes restent dans le DOM ; dans les tests e2e,
   restreindre les sélecteurs à la page active (`app-today …`).
 - **Ionic, toasts** : position `top` (en bas, le bouton « + » masque l'action « Annuler »).
-- **Petits écrans** : libellés courts dans les segments et onglets (360 px de large).
+- **Petits écrans** : libellés courts dans les segments et onglets (360 px de large). Les 5 onglets
+  ne tiennent que grâce à `ion-tab-button { --padding-*: 0; min-width: 0 }` et une pastille d'icône
+  compacte (`global.scss`) : ne pas les élargir.
+- **Ionic md** : `ion-header` porte une ombre portée (`box-shadow`) à retirer, pas seulement
+  `::after`. Les variables sombres d'Ionic (`.ion-palette-dark.md`) sont plus spécifiques que
+  `:root` : les surcharger sous `:root.ion-palette-dark.md` (voir `variables.scss`).
+- **Angular** : une propriété CSS personnalisée se lie par `[style.--nom]="valeur + 'px'"` (pas de
+  suffixe d'unité `.px`).
 - **Prisma 7** : `migrate dev` ne régénère plus le client → `npx prisma generate` après une
   modification du schéma (fait aussi par `postinstall`).
 - **Port** : l'API utilise **3100** ; le port 3000 est occupé par un autre projet sur ce poste.

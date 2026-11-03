@@ -1,40 +1,49 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angular';
-import { addIcons } from 'ionicons';
-import { calendarOutline, flagOutline, statsChartOutline, sunnyOutline, walletOutline } from 'ionicons/icons';
+import {
+  calendar,
+  calendarOutline,
+  flag,
+  flagOutline,
+  statsChart,
+  statsChartOutline,
+  sunny,
+  sunnyOutline,
+  wallet,
+  walletOutline,
+} from 'ionicons/icons';
+
+interface Tab {
+  id: string;
+  label: string;
+  outline: string;
+  filled: string;
+}
 
 @Component({
   selector: 'app-tabs',
   imports: [IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel],
   template: `
-    <ion-tabs>
+    <ion-tabs (ionTabsDidChange)="current.set($event.tab)">
       <ion-tab-bar slot="bottom">
-        <ion-tab-button tab="aujourdhui" href="/app/aujourdhui">
-          <ion-icon aria-hidden="true" name="sunny-outline"></ion-icon>
-          <ion-label>Aujourd'hui</ion-label>
-        </ion-tab-button>
-        <ion-tab-button tab="planifier" href="/app/planifier">
-          <ion-icon aria-hidden="true" name="calendar-outline"></ion-icon>
-          <ion-label>Planifier</ion-label>
-        </ion-tab-button>
-        <ion-tab-button tab="objectifs" href="/app/objectifs">
-          <ion-icon aria-hidden="true" name="flag-outline"></ion-icon>
-          <ion-label>Objectifs</ion-label>
-        </ion-tab-button>
-        <ion-tab-button tab="budget" href="/app/budget">
-          <ion-icon aria-hidden="true" name="wallet-outline"></ion-icon>
-          <ion-label>Budget</ion-label>
-        </ion-tab-button>
-        <ion-tab-button tab="bilan" href="/app/bilan">
-          <ion-icon aria-hidden="true" name="stats-chart-outline"></ion-icon>
-          <ion-label>Bilan</ion-label>
-        </ion-tab-button>
+        @for (t of tabs; track t.id) {
+          <ion-tab-button [tab]="t.id" [href]="'/app/' + t.id">
+            <ion-icon aria-hidden="true" [icon]="current() === t.id ? t.filled : t.outline"></ion-icon>
+            <ion-label>{{ t.label }}</ion-label>
+          </ion-tab-button>
+        }
       </ion-tab-bar>
     </ion-tabs>
   `,
 })
 export class TabsPage {
-  constructor() {
-    addIcons({ sunnyOutline, calendarOutline, flagOutline, walletOutline, statsChartOutline });
-  }
+  // Libellés courts : 5 onglets doivent tenir sur 360 px.
+  protected readonly tabs: Tab[] = [
+    { id: 'aujourdhui', label: "Aujourd'hui", outline: sunnyOutline, filled: sunny },
+    { id: 'planifier', label: 'Planifier', outline: calendarOutline, filled: calendar },
+    { id: 'objectifs', label: 'Objectifs', outline: flagOutline, filled: flag },
+    { id: 'budget', label: 'Budget', outline: walletOutline, filled: wallet },
+    { id: 'bilan', label: 'Bilan', outline: statsChartOutline, filled: statsChart },
+  ];
+  protected readonly current = signal<string>(location.pathname.split('/')[2] ?? 'aujourdhui');
 }

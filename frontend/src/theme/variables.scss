@@ -1,2 +1,145 @@
-// For information on how to create your own theme, please refer to:
-// https://ionicframework.com/docs/theming/
+@use 'sass:color';
+
+// Thème Objectiva « calme et cap » (spec 002).
+// Jetons Ionic (--ion-*) + jetons propres à l'application (--ob-*), en clair puis en sombre.
+// Chargé APRÈS global.scss : ces règles l'emportent sur la palette sombre d'Ionic.
+
+// Génère une couleur Ionic complète à partir de sa valeur de base et de la couleur du texte dessus.
+@mixin ion-color($name, $base, $contrast, $shade, $tint) {
+  --ion-color-#{$name}: #{$base};
+  --ion-color-#{$name}-rgb: #{color.channel($base, 'red', $space: rgb)}, #{color.channel($base, 'green', $space: rgb)}, #{color.channel($base, 'blue', $space: rgb)};
+  --ion-color-#{$name}-contrast: #{$contrast};
+  --ion-color-#{$name}-contrast-rgb: #{color.channel($contrast, 'red', $space: rgb)}, #{color.channel($contrast, 'green', $space: rgb)}, #{color.channel($contrast, 'blue', $space: rgb)};
+  --ion-color-#{$name}-shade: #{$shade};
+  --ion-color-#{$name}-tint: #{$tint};
+}
+
+// Rampe de gris dérivée du fond et du texte : reste chaude, en clair comme en sombre.
+@mixin step-ramp {
+  @for $i from 1 through 19 {
+    $n: $i * 50;
+    --ion-background-color-step-#{$n}: color-mix(in srgb, var(--ion-text-color) #{$n * 0.1}%, var(--ion-background-color));
+    --ion-text-color-step-#{$n}: color-mix(in srgb, var(--ion-background-color) #{$n * 0.1}%, var(--ion-text-color));
+  }
+}
+
+:root {
+  // ---- Typographie ----
+  --ion-font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --ob-font-display: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+
+  // ---- Surfaces et texte (clair) ----
+  --ob-bg: #f6f4ee;
+  --ob-surface: #ffffff;
+  --ob-surface-2: #ece9df;
+  --ob-text: #16221e;
+  --ob-text-2: #55645e;
+  --ob-hairline: rgba(22, 34, 30, 0.1);
+  --ob-hairline-strong: rgba(22, 34, 30, 0.2);
+  --ob-ink-mix: black; // cible du mélange pour obtenir une version sombre d'une couleur
+  --ob-shadow-sm: 0 1px 2px rgba(22, 34, 30, 0.06);
+  --ob-shadow-md: 0 8px 24px rgba(22, 34, 30, 0.1);
+  --ob-scrim: rgba(22, 34, 30, 0.45);
+
+  // ---- Formes et mouvement ----
+  --ob-radius-sm: 10px;
+  --ob-radius-md: 14px;
+  --ob-radius-lg: 20px;
+  --ob-radius-xl: 28px;
+  --ob-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ob-content-width: 640px;
+
+  // ---- Couleurs sémantiques d'état ----
+  --ob-ok: #2f7d4f;
+  --ob-warn: #b96f0b;
+  --ob-danger: #b8372d;
+
+  // ---- Catégories d'objectifs ----
+  --cat-etudes: #4756c9;
+  --cat-carriere: #0e7a8a;
+  --cat-sante: #c93d69;
+  --cat-finances: #a8700e;
+  --cat-spiritualite: #7a56be;
+  --cat-famille: #c9672a;
+  --cat-projet: #2e8052;
+
+  // ---- Mappage Ionic ----
+  --ion-background-color: var(--ob-bg);
+  --ion-background-color-rgb: 246, 244, 238;
+  --ion-text-color: var(--ob-text);
+  --ion-text-color-rgb: 22, 34, 30;
+  --ion-border-color: var(--ob-hairline);
+  --ion-item-background: transparent;
+  --ion-card-background: var(--ob-surface);
+  --ion-toolbar-background: transparent;
+  --ion-toolbar-color: var(--ob-text);
+  --ion-tab-bar-background: var(--ob-surface);
+  --ion-tab-bar-border-color: var(--ob-hairline);
+  --ion-tab-bar-color: var(--ob-text-2);
+  --ion-tab-bar-color-selected: var(--ion-color-primary);
+  --ion-overlay-background-color: var(--ob-surface);
+
+  @include ion-color(primary, #17695a, #ffffff, #145c4f, #2f7a6b);
+  @include ion-color(secondary, #4756c9, #ffffff, #3e4cb1, #5967d0);
+  @include ion-color(tertiary, #7a56be, #ffffff, #6c4ba7, #8867c5);
+  @include ion-color(success, #2f7d4f, #ffffff, #297046, #448a62);
+  @include ion-color(warning, #e3a21a, #1b1300, #c78f17, #e6ae33);
+  @include ion-color(danger, #b8372d, #ffffff, #a23129, #bf4b42);
+  @include ion-color(medium, #55645e, #ffffff, #4b5853, #67756f);
+  @include ion-color(light, #ece9df, #16221e, #d0cec4, #eeebe2);
+  @include ion-color(dark, #16221e, #ffffff, #141e1a, #2e3935);
+
+  @include step-ramp;
+}
+
+// ---- Sombre ----
+// Les sélecteurs reprennent ceux d'Ionic (`.ion-palette-dark.md`) avec une classe de plus.
+:root.ion-palette-dark,
+:root.ion-palette-dark.md {
+  --ob-bg: #0b1310;
+  --ob-surface: #131d19;
+  --ob-surface-2: #1c2823;
+  --ob-text: #e9f0ed;
+  --ob-text-2: #a3b5ae;
+  --ob-hairline: rgba(233, 240, 237, 0.1);
+  --ob-hairline-strong: rgba(233, 240, 237, 0.22);
+  --ob-ink-mix: white;
+  --ob-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --ob-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --ob-scrim: rgba(0, 0, 0, 0.6);
+
+  --ob-ok: #6fcb92;
+  --ob-warn: #f2b84b;
+  --ob-danger: #f2766b;
+
+  --cat-etudes: #8d98f0;
+  --cat-carriere: #4fc3d4;
+  --cat-sante: #f27a9f;
+  --cat-finances: #e3b04b;
+  --cat-spiritualite: #b496ea;
+  --cat-famille: #f0985f;
+  --cat-projet: #6fcb92;
+
+  --ion-background-color: var(--ob-bg);
+  --ion-background-color-rgb: 11, 19, 16;
+  --ion-text-color: var(--ob-text);
+  --ion-text-color-rgb: 233, 240, 237;
+  --ion-item-background: transparent;
+  --ion-card-background: var(--ob-surface);
+  --ion-toolbar-background: transparent;
+  --ion-tab-bar-background: var(--ob-surface);
+  --ion-tab-bar-background-focused: var(--ob-surface-2);
+  --ion-overlay-background-color: var(--ob-surface-2);
+
+  @include ion-color(primary, #5cc9a7, #04221a, #52b193, #6dcfb0);
+  @include ion-color(secondary, #8d98f0, #0d1033, #7d87d3, #99a3f2);
+  @include ion-color(tertiary, #b496ea, #1a0f33, #9f84cf, #bda3ec);
+  @include ion-color(success, #6fcb92, #04210f, #62b381, #7dd09b);
+  @include ion-color(warning, #f2b84b, #261a00, #d5a243, #f4c05f);
+  @include ion-color(danger, #f2766b, #2a0604, #d56960, #f3857b);
+  @include ion-color(medium, #a3b5ae, #04100c, #90a19b, #aebdb7);
+  @include ion-color(light, #1c2823, #e9f0ed, #19231f, #36413d);
+  @include ion-color(dark, #e9f0ed, #04100c, #cdd3d0, #ebf1ee);
+
+  @include step-ramp;
+}

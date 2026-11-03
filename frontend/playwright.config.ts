@@ -15,7 +15,7 @@ export default defineConfig({
   projects: [
     {
       name: 'Mobile Chrome',
-      use: { ...devices['Pixel 7'] },
+      use: { ...devices['Pixel 7'], viewport: { width: 360, height: 740 } },
     },
   ],
   webServer: {

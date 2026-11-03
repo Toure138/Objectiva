@@ -1,31 +1,27 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {
-  IonButton,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardTitle,
-  IonContent,
-  IonItem,
-  IonLabel,
-  IonList,
-  IonNote,
-  IonProgressBar,
-  IonSegment,
-  IonSegmentButton,
-  IonTextarea,
-  IonToolbar,
-} from '@ionic/angular';
+import { IonButton, IonContent, IonItem, IonList, IonTextarea } from '@ionic/angular';
+import { hourglassOutline } from 'ionicons/icons';
 
 import { ApiService } from '../core/api.service';
 import { addDays, localToday, shortDate } from '../core/dates';
 import type { Review } from '../core/models';
 import { AddMenuService } from '../shared/add-menu.service';
+import { EmptyStateComponent } from '../shared/empty-state.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
+import { ProgressBarComponent } from '../shared/progress-bar.component';
+import { ProgressRingComponent } from '../shared/progress-ring.component';
+import { SectionHeaderComponent } from '../shared/section-header.component';
+import { SegmentedComponent, type SegmentOption } from '../shared/segmented.component';
 import { StateViewComponent } from '../shared/state-view.component';
 
 type Period = 'day' | 'week' | 'month';
+
+interface Stat {
+  label: string;
+  value: number;
+  tone?: 'ok' | 'warn';
+}
 
 @Component({
   selector: 'app-review',
@@ -33,126 +29,211 @@ type Period = 'day' | 'week' | 'month';
     FormsModule,
     PageHeaderComponent,
     StateViewComponent,
+    SegmentedComponent,
+    SectionHeaderComponent,
+    ProgressRingComponent,
+    ProgressBarComponent,
+    EmptyStateComponent,
     IonContent,
-    IonToolbar,
-    IonSegment,
-    IonSegmentButton,
-    IonLabel,
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardContent,
     IonList,
     IonItem,
-    IonNote,
-    IonProgressBar,
     IonTextarea,
     IonButton,
   ],
   styles: `
+    .switch {
+      padding-block: 4px 12px;
+    }
+    section {
+      margin-top: 24px;
+    }
+    .hero {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 20px;
+      background: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--ion-color-primary) 15%, var(--ob-surface)),
+        var(--ob-surface) 70%
+      );
+    }
     .rate {
-      font-size: 2rem;
-      font-weight: 700;
+      font-size: 1.875rem;
+      line-height: 1;
     }
-    .grid {
+    .rate small {
+      font-size: 1rem;
+    }
+    .headline {
+      margin: 0 0 4px;
+      font-size: 1.375rem;
+      line-height: 1.2;
+    }
+    .hero p {
+      margin: 0;
+    }
+    .stats {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4px 12px;
-      margin-top: 8px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 10px;
     }
-    ion-progress-bar {
-      margin: 6px 0;
+    .stat {
+      padding: 14px 16px;
+    }
+    .stat .n {
+      display: block;
+      font-size: 1.75rem;
+      line-height: 1.1;
+    }
+    .stat.ok .n {
+      color: var(--ob-ok);
+    }
+    .stat.warn .n {
+      color: var(--ob-warn-ink);
+    }
+    .stat .l {
+      display: block;
+      margin-top: 2px;
+      color: var(--ob-text-2);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      line-height: 1.3;
+    }
+    .goal {
+      margin-bottom: 10px;
+      padding: 14px 16px;
+    }
+    .goal strong {
+      display: block;
+      margin-bottom: 10px;
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+    }
+    .goal small {
+      display: block;
+      margin-top: 8px;
+      color: var(--ob-text-2);
+    }
+    .reflect {
+      padding: 16px;
+    }
+    .reflect p.note {
+      margin: 0 0 12px;
+      font-size: 0.875rem;
+    }
+    .reflect ion-list {
+      padding: 0;
+      background: transparent;
     }
   `,
   template: `
-    <app-page-header title="Bilan" />
-    <ion-toolbar>
-      <ion-segment [value]="period()" (ionChange)="setPeriod($any($event.detail.value))">
-        <ion-segment-button value="day"><ion-label>Jour</ion-label></ion-segment-button>
-        <ion-segment-button value="week"><ion-label>Semaine</ion-label></ion-segment-button>
-        <ion-segment-button value="month"><ion-label>Mois</ion-label></ion-segment-button>
-      </ion-segment>
-    </ion-toolbar>
+    <app-page-header title="Bilan" [eyebrow]="eyebrow()" />
     <ion-content>
-      <app-state-view [loading]="loading()" [error]="error()" (retry)="load()">
-        @if (review(); as r) {
-          <ion-card>
-            <ion-card-header>
-              <ion-card-title>Exécution du planning</ion-card-title>
-              <ion-note>{{ range(r) }}</ion-note>
-            </ion-card-header>
-            <ion-card-content>
-              @if (r.tasks.executionRate; as rate) {
-                <div class="rate">{{ rate.percent }} %</div>
-                <ion-note
-                  >{{ rate.numerator }} action{{ rate.numerator > 1 ? 's' : '' }} réalisée{{
-                    rate.numerator > 1 ? 's' : ''
-                  }}
-                  sur {{ rate.denominator }} attendue{{ rate.denominator > 1 ? 's' : '' }}</ion-note
+      <div class="ob-container">
+        <div class="switch">
+          <app-segmented
+            [options]="options"
+            [value]="period()"
+            (valueChange)="setPeriod($event)"
+            ariaLabel="Période du bilan"
+          />
+        </div>
+        <app-state-view [loading]="loading()" [error]="error()" [hero]="true" (retry)="load()">
+          @if (review(); as r) {
+            @if (r.tasks.executionRate; as rate) {
+              <div class="hero ob-card ob-rise">
+                <app-progress-ring
+                  [value]="rate.percent / 100"
+                  [size]="112"
+                  [stroke]="11"
+                  [label]="'Taux d’exécution : ' + rate.percent + ' %'"
                 >
-              } @else {
-                <p>Aucune action attendue sur cette période : pas de taux à calculer.</p>
-              }
-              <div class="grid">
-                <span>Prévues au départ</span><strong>{{ r.tasks.plannedAtStart }}</strong> <span>Ajoutées ensuite</span
-                ><strong>{{ r.tasks.addedDuringPeriod }}</strong> <span>Réalisées</span
-                ><strong>{{ r.tasks.done }}</strong> <span>Encore à faire</span><strong>{{ r.tasks.pending }}</strong>
-                <span>Reportées</span><strong>{{ r.tasks.rescheduledOut }}</strong> <span>Annulées (hors calcul)</span
-                ><strong>{{ r.tasks.cancelled }}</strong>
-              </div>
-            </ion-card-content>
-          </ion-card>
-
-          <ion-card>
-            <ion-card-header><ion-card-title>Progression des objectifs</ion-card-title></ion-card-header>
-            <ion-card-content>
-              @for (g of r.goals; track g.id) {
+                  <span class="rate ob-display ob-num">{{ rate.percent }}<small>%</small></span>
+                </app-progress-ring>
                 <div>
+                  <p class="ob-eyebrow">Exécution du planning</p>
+                  <p class="headline ob-display">{{ message(rate.percent) }}</p>
+                  <p class="ob-muted">
+                    {{ rate.numerator }} action{{ rate.numerator > 1 ? 's' : '' }} réalisée{{
+                      rate.numerator > 1 ? 's' : ''
+                    }}
+                    sur {{ rate.denominator }} attendue{{ rate.denominator > 1 ? 's' : '' }}
+                  </p>
+                </div>
+              </div>
+            } @else {
+              <div class="ob-card ob-rise">
+                <app-empty-state
+                  [icon]="icons.hourglass"
+                  title="Pas encore de taux"
+                  message="Aucune action attendue sur cette période : il n’y a rien à calculer, et c’est très bien ainsi."
+                />
+              </div>
+            }
+
+            <div class="stats">
+              @for (s of stats(r); track s.label; let i = $index) {
+                <div
+                  class="stat ob-card ob-rise"
+                  [class.ok]="s.tone === 'ok'"
+                  [class.warn]="s.tone === 'warn'"
+                  [style.--i]="i"
+                >
+                  <span class="n ob-display ob-num">{{ s.value }}</span>
+                  <span class="l">{{ s.label }}</span>
+                </div>
+              }
+            </div>
+
+            <section>
+              <app-section-header title="Progression des objectifs" />
+              @for (g of r.goals; track g.id) {
+                <div class="goal ob-card">
                   <strong>{{ g.title }}</strong>
                   @if (g.progress.percent !== null) {
-                    <ion-progress-bar
-                      [value]="g.progress.percent / 100"
-                      [attr.aria-label]="g.progress.label"
-                    ></ion-progress-bar>
+                    <app-progress-bar [percent]="g.progress.percent" [label]="g.progress.label" />
                   }
-                  <ion-note
+                  <small
                     >{{ g.progress.label
                     }}{{
                       g.milestonesDoneInPeriod ? ' · ' + g.milestonesDoneInPeriod + ' sur cette période' : ''
-                    }}</ion-note
+                    }}</small
                   >
                 </div>
               } @empty {
-                <p>Aucun objectif actif.</p>
+                <p class="ob-muted">Aucun objectif actif.</p>
               }
-            </ion-card-content>
-          </ion-card>
+            </section>
 
-          <ion-card>
-            <ion-card-header><ion-card-title>Mes réflexions</ion-card-title></ion-card-header>
-            <ion-card-content>
-              <ion-list>
-                @for (q of r.questions; track q; let i = $index) {
-                  <ion-item>
-                    <ion-textarea
-                      [label]="q"
-                      labelPlacement="stacked"
-                      [autoGrow]="true"
-                      [(ngModel)]="answers[i]"
-                      [name]="'q' + i"
-                      placeholder="Facultatif"
-                    ></ion-textarea>
-                  </ion-item>
-                }
-              </ion-list>
-              <ion-note>L'enregistrement de tes réponses arrive à une prochaine étape.</ion-note>
-              <ion-button expand="block" class="ion-margin-top" (click)="planNext()"
-                >Planifier ma prochaine priorité</ion-button
-              >
-            </ion-card-content>
-          </ion-card>
-        }
-      </app-state-view>
+            <section>
+              <app-section-header title="Mes réflexions" />
+              <div class="reflect ob-card">
+                <p class="note ob-muted">
+                  Prends une minute pour toi. L’enregistrement de tes réponses arrive à une prochaine étape.
+                </p>
+                <ion-list class="ob-form" lines="none">
+                  @for (q of r.questions; track q; let i = $index) {
+                    <ion-item>
+                      <ion-textarea
+                        [label]="q"
+                        labelPlacement="stacked"
+                        [autoGrow]="true"
+                        [(ngModel)]="answers[i]"
+                        [name]="'q' + i"
+                        placeholder="Facultatif"
+                      ></ion-textarea>
+                    </ion-item>
+                  }
+                </ion-list>
+                <ion-button expand="block" (click)="planNext()">Planifier ma prochaine priorité</ion-button>
+              </div>
+            </section>
+            <div class="ob-fab-space"></div>
+          }
+        </app-state-view>
+      </div>
     </ion-content>
   `,
 })
@@ -160,18 +241,28 @@ export class ReviewPage {
   private readonly api = inject(ApiService);
   private readonly addMenu = inject(AddMenuService);
 
+  protected readonly options: SegmentOption[] = [
+    { value: 'day', label: 'Jour' },
+    { value: 'week', label: 'Semaine' },
+    { value: 'month', label: 'Mois' },
+  ];
+  protected readonly icons = { hourglass: hourglassOutline };
   protected readonly period = signal<Period>('day');
   protected readonly review = signal<Review | null>(null);
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
+  protected readonly eyebrow = computed(() => {
+    const r = this.review();
+    return r ? this.range(r) : 'Ce que j’ai accompli';
+  });
   protected answers: string[] = ['', '', ''];
 
   ionViewWillEnter(): void {
     void this.load();
   }
 
-  protected setPeriod(p: Period): void {
-    this.period.set(p);
+  protected setPeriod(p: string): void {
+    this.period.set(p as Period);
     void this.load();
   }
 
@@ -187,7 +278,26 @@ export class ReviewPage {
   }
 
   protected range(r: Review): string {
-    return r.from === r.to ? shortDate(r.from) : `du ${shortDate(r.from)} au ${shortDate(r.to)}`;
+    return r.from === r.to ? shortDate(r.from) : `${shortDate(r.from)} → ${shortDate(r.to)}`;
+  }
+
+  // Message d'encouragement selon le taux fourni par l'API (présentation seulement).
+  protected message(percent: number): string {
+    if (percent >= 80) return 'Superbe régularité !';
+    if (percent >= 50) return 'Belle progression';
+    return 'Chaque pas compte';
+  }
+
+  protected stats(r: Review): Stat[] {
+    const t = r.tasks;
+    return [
+      { label: 'Réalisées', value: t.done, tone: 'ok' },
+      { label: 'Encore à faire', value: t.pending },
+      { label: 'Prévues au départ', value: t.plannedAtStart },
+      { label: 'Ajoutées ensuite', value: t.addedDuringPeriod },
+      { label: 'Reportées', value: t.rescheduledOut, tone: 'warn' },
+      { label: 'Annulées (hors calcul)', value: t.cancelled },
+    ];
   }
 
   protected planNext(): void {

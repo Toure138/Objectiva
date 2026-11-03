@@ -1,25 +1,15 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import {
-  IonButton,
-  IonContent,
-  IonFab,
-  IonFabButton,
-  IonIcon,
-  IonItemDivider,
-  IonLabel,
-  IonList,
-  IonSegment,
-  IonSegmentButton,
-  IonToolbar,
-} from '@ionic/angular';
-import { addIcons } from 'ionicons';
-import { add } from 'ionicons/icons';
+import { IonButton, IonContent, IonFab, IonFabButton, IonIcon } from '@ionic/angular';
+import { add, calendarClearOutline, todayOutline } from 'ionicons/icons';
 
 import { ApiService } from '../core/api.service';
 import { addDays, localToday, longDate } from '../core/dates';
 import type { Task } from '../core/models';
 import { AddMenuService } from '../shared/add-menu.service';
+import { EmptyStateComponent } from '../shared/empty-state.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
+import { SectionHeaderComponent } from '../shared/section-header.component';
+import { SegmentedComponent, type SegmentOption } from '../shared/segmented.component';
 import { StateViewComponent } from '../shared/state-view.component';
 import { TaskItemComponent } from '../shared/task-item.component';
 
@@ -32,67 +22,75 @@ const PAGE_SIZE = 50;
     PageHeaderComponent,
     StateViewComponent,
     TaskItemComponent,
+    SegmentedComponent,
+    SectionHeaderComponent,
+    EmptyStateComponent,
     IonContent,
-    IonToolbar,
-    IonSegment,
-    IonSegmentButton,
-    IonLabel,
-    IonList,
-    IonItemDivider,
     IonButton,
     IonFab,
     IonFabButton,
     IonIcon,
   ],
   styles: `
-    .empty {
-      padding: 24px 16px;
-      text-align: center;
-      color: var(--ion-color-medium);
+    .switch {
+      padding-block: 4px 12px;
     }
-    .spacer {
-      height: 88px;
+    section {
+      margin-bottom: 20px;
+    }
+    .more {
+      margin-top: 4px;
     }
   `,
   template: `
-    <app-page-header title="Planifier" />
-    <ion-toolbar>
-      <ion-segment [value]="mode()" (ionChange)="switch($any($event.detail.value))">
-        <ion-segment-button value="semaine"><ion-label>7 prochains jours</ion-label></ion-segment-button>
-        <ion-segment-button value="aplanifier"><ion-label>À planifier</ion-label></ion-segment-button>
-      </ion-segment>
-    </ion-toolbar>
+    <app-page-header title="Planifier" eyebrow="Ta semaine" />
     <ion-content>
-      <app-state-view [loading]="loading()" [error]="error()" (retry)="load()">
-        @if (mode() === 'semaine') {
-          @for (group of byDay(); track group.date) {
-            <ion-list>
-              <ion-item-divider sticky
-                ><ion-label>{{ group.label }}</ion-label></ion-item-divider
-              >
-              @for (t of group.tasks; track t.id) {
-                <app-task-item [task]="t" [showDate]="false" (changed)="load()" />
-              }
-            </ion-list>
-          } @empty {
-            <p class="empty">Rien de prévu sur les 7 prochains jours.</p>
-          }
-        } @else {
-          <ion-list>
-            @for (t of tasks(); track t.id) {
-              <app-task-item [task]="t" (changed)="load()" />
+      <div class="ob-container">
+        <div class="switch">
+          <app-segmented
+            [options]="options"
+            [value]="mode()"
+            (valueChange)="switchTo($event)"
+            ariaLabel="Mode d’affichage"
+          />
+        </div>
+        <app-state-view [loading]="loading()" [error]="error()" (retry)="load()">
+          @if (mode() === 'semaine') {
+            @for (group of byDay(); track group.date) {
+              <section>
+                <app-section-header [title]="group.label" [count]="group.tasks.length" />
+                @for (t of group.tasks; track t.id; let i = $index) {
+                  <app-task-item [task]="t" [showDate]="false" [index]="i" (changed)="load()" />
+                }
+              </section>
             } @empty {
-              <p class="empty">Aucune action en attente de date.</p>
+              <app-empty-state
+                [icon]="icons.week"
+                title="Semaine dégagée"
+                message="Rien de prévu sur les 7 prochains jours. Un bon moment pour planifier ta prochaine étape."
+              >
+                <ion-button class="ob-soft" (click)="add()">Ajouter une action</ion-button>
+              </app-empty-state>
             }
-          </ion-list>
-        }
-        @if (tasks().length < total()) {
-          <ion-button expand="block" fill="clear" (click)="more()">Afficher plus</ion-button>
-        }
-        <div class="spacer"></div>
-      </app-state-view>
+          } @else {
+            @for (t of tasks(); track t.id; let i = $index) {
+              <app-task-item [task]="t" [index]="i" (changed)="load()" />
+            } @empty {
+              <app-empty-state
+                [icon]="icons.clear"
+                title="Tout a une date"
+                message="Aucune action n’attend d’être planifiée. Joli travail d’organisation !"
+              />
+            }
+          }
+          @if (tasks().length < total()) {
+            <ion-button class="more" expand="block" fill="clear" (click)="more()">Afficher plus</ion-button>
+          }
+          <div class="ob-fab-space"></div>
+        </app-state-view>
+      </div>
       <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-        <ion-fab-button (click)="add()" aria-label="Ajouter"><ion-icon name="add"></ion-icon></ion-fab-button>
+        <ion-fab-button (click)="add()" aria-label="Ajouter"><ion-icon [icon]="icons.add"></ion-icon></ion-fab-button>
       </ion-fab>
     </ion-content>
   `,
@@ -101,6 +99,11 @@ export class PlanPage {
   private readonly api = inject(ApiService);
   private readonly addMenu = inject(AddMenuService);
 
+  protected readonly options: SegmentOption[] = [
+    { value: 'semaine', label: '7 prochains jours' },
+    { value: 'aplanifier', label: 'À planifier' },
+  ];
+  protected readonly icons = { add, week: todayOutline, clear: calendarClearOutline };
   protected readonly mode = signal<Mode>('semaine');
   protected readonly tasks = signal<Task[]>([]);
   protected readonly total = signal(0);
@@ -116,17 +119,14 @@ export class PlanPage {
     return [...groups.entries()].map(([date, tasks]) => ({ date, label: longDate(date), tasks }));
   });
 
-  constructor() {
-    addIcons({ add });
-  }
-
   ionViewWillEnter(): void {
     void this.load();
   }
 
-  protected switch(mode: Mode): void {
-    this.mode.set(mode);
+  protected switchTo(mode: string): void {
+    this.mode.set(mode as Mode);
     this.tasks.set([]);
+    this.loading.set(true);
     void this.load();
   }
 

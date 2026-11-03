@@ -23,7 +23,8 @@ bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: LOCALE_ID, useValue: 'fr-FR' },
-    provideIonicAngular({ backButtonText: 'Retour' }),
+    // Mode « md » partout : un seul rendu à concevoir et à tester (Android d'abord, iOS ensuite).
+    provideIonicAngular({ backButtonText: 'Retour', mode: 'md' }),
     provideRouter(routes, withPreloading(PreloadAllModules), withComponentInputBinding()),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideAppInitializer(() => inject(ThemeService).init()),

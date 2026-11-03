@@ -1,12 +1,6 @@
 /*
- * App Global CSS
- * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
+ * Styles globaux Objectiva (spec 002). Les jetons de couleur sont dans theme/variables.scss.
+ * Ordre : Ionic (noyau) → polices → base → composants Ionic → utilitaires `ob-*`.
  */
 
 /* Core CSS required for Ionic components to work properly */
@@ -18,29 +12,436 @@
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
 
-/* Optional CSS utils that can be commented out */
+/* Optional CSS utils */
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
-
 /* Palette sombre pilotée par la classe `ion-palette-dark` (ThemeService : système, clair ou sombre). */
 @import '@ionic/angular/css/palettes/dark.class.css';
 
-/* Cibles tactiles confortables au pouce (44 px minimum). */
-ion-button,
-ion-checkbox,
+/* ------------------------------------------------------------------ Polices (embarquées) */
+@font-face {
+  font-family: 'Fraunces';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('./fonts/fraunces-latin-opsz-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('./fonts/inter-latin-wght-normal.woff2') format('woff2');
+}
+
+/* ------------------------------------------------------------------ Base */
+html {
+  color-scheme: light;
+}
+html.ion-palette-dark {
+  color-scheme: dark;
+}
+body {
+  font-family: var(--ion-font-family);
+  font-size: 1rem;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+h1,
+h2,
+h3 {
+  margin: 0;
+}
+a {
+  color: var(--ion-color-primary);
+}
+:focus-visible {
+  outline: 2px solid var(--ion-color-primary);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------------ Composants Ionic */
+ion-header.header-md {
+  box-shadow: none;
+}
+ion-header.header-md::after {
+  display: none;
+}
+ion-toolbar {
+  --background: transparent;
+  --border-width: 0;
+  --min-height: 56px;
+  --padding-start: 16px;
+  --padding-end: 12px;
+}
+
+ion-button {
+  --border-radius: var(--ob-radius-md);
+  --box-shadow: none;
+  --padding-start: 18px;
+  --padding-end: 18px;
+  min-height: 44px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+ion-button[expand='block'] {
+  min-height: 52px;
+  font-size: 1rem;
+}
+ion-button[fill='outline'] {
+  --border-width: 1.5px;
+}
+ion-button[fill='clear'] {
+  --padding-start: 10px;
+  --padding-end: 10px;
+}
+ion-button.ob-soft {
+  --background: color-mix(in srgb, var(--ion-color-primary) 13%, var(--ob-surface));
+  --color: var(--ob-primary-ink);
+  --background-hover: color-mix(in srgb, var(--ion-color-primary) 20%, var(--ob-surface));
+  --background-activated: color-mix(in srgb, var(--ion-color-primary) 24%, var(--ob-surface));
+}
+
+ion-checkbox {
+  --size: 26px;
+  --border-radius: 50%;
+  --border-width: 2px;
+  --border-color: var(--ob-text-2);
+  --border-color-checked: var(--ion-color-primary);
+  --checkbox-background-checked: var(--ion-color-primary);
+  --checkmark-color: var(--ion-color-primary-contrast);
+  --checkmark-width: 3px;
+}
+ion-checkbox::part(container) {
+  transition:
+    transform 0.2s var(--ob-ease),
+    background-color 0.2s;
+}
+ion-checkbox.checkbox-checked::part(container) {
+  animation: ob-pop 0.35s var(--ob-ease);
+}
+
+ion-fab-button {
+  --background: var(--ion-color-primary);
+  --background-activated: var(--ion-color-primary-shade);
+  --color: var(--ion-color-primary-contrast);
+  --border-radius: 20px;
+  --box-shadow: 0 10px 24px color-mix(in srgb, var(--ion-color-primary) 38%, transparent);
+  width: 60px;
+  height: 60px;
+}
+ion-fab-button ion-icon {
+  font-size: 28px;
+}
+
+ion-tab-bar {
+  --border: 1px solid var(--ob-hairline);
+  --background: var(--ob-surface);
+  height: 68px;
+  padding-top: 6px;
+  contain: none;
+}
+/* Les 5 onglets doivent tenir sur 360 px : pas de marge latérale, pastille d'icône compacte. */
+ion-tab-button {
+  --color: var(--ob-text-2);
+  --color-selected: var(--ob-primary-ink);
+  --padding-top: 0;
+  --padding-start: 0;
+  --padding-end: 0;
+  min-width: 0;
+  max-width: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+ion-tab-button ion-label {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+ion-tab-button ion-icon {
+  margin: 0 0 3px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: 22px;
+  box-sizing: content-box;
+  transition: background-color 0.25s var(--ob-ease);
+}
+ion-tab-button.tab-selected ion-icon {
+  background: color-mix(in srgb, var(--ion-color-primary) 16%, transparent);
+}
+
 ion-item {
+  --background: transparent;
   --min-height: 44px;
 }
-ion-checkbox {
-  --size: 24px;
+
+/* Champs de formulaire : cases arrondies, étiquette au-dessus. */
+.ob-form {
+  background: transparent;
+  padding: 0;
+}
+.ob-form ion-item {
+  --background: var(--ob-surface);
+  --border-width: 0;
+  --inner-border-width: 0;
+  --padding-start: 14px;
+  --inner-padding-end: 12px;
+  --min-height: 62px;
+  margin-bottom: 12px;
+  border: 1px solid var(--ob-hairline-strong);
+  border-radius: var(--ob-radius-md);
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.ob-form ion-item.item-has-focus {
+  border-color: var(--ion-color-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ion-color-primary) 22%, transparent);
+}
+.ob-form ion-item.ion-invalid.ion-touched {
+  border-color: var(--ion-color-danger);
+}
+
+ion-accordion-group {
+  background: transparent;
+}
+ion-accordion {
+  --ion-item-background: transparent;
+  background: transparent;
+}
+
+ion-skeleton-text {
+  --border-radius: 12px;
+  --background-rgb: var(--ion-text-color-rgb);
+  margin: 0;
+}
+
+ion-spinner {
+  color: var(--ion-color-primary);
+}
+
+ion-refresher-content {
+  --color: var(--ion-color-primary);
+}
+
+/* Toasts : pastille inversée, lisible en clair comme en sombre. */
+:root {
+  --ob-toast-accent: #8fe0c6;
+}
+:root.ion-palette-dark {
+  --ob-toast-accent: #17695a;
+}
+ion-toast.ob-toast {
+  --background: var(--ob-text);
+  --color: var(--ob-bg);
+  --border-radius: 16px;
+  --box-shadow: var(--ob-shadow-md);
+  --button-color: var(--ob-toast-accent);
+  --max-width: 520px;
+  font-weight: 500;
+}
+ion-toast.ob-toast::part(button) {
+  font-weight: 700;
+  min-height: 44px;
+}
+ion-toast.ob-toast.ob-toast-danger {
+  --background: var(--ion-color-danger);
+  --color: var(--ion-color-danger-contrast);
+  --button-color: var(--ion-color-danger-contrast);
+}
+
+/* Feuilles du bas (menu « Ajouter »). */
+ion-modal.ob-sheet {
+  --border-radius: var(--ob-radius-xl) var(--ob-radius-xl) 0 0;
+  --background: var(--ob-bg);
+  --backdrop-opacity: 0.45;
+}
+ion-modal.ob-sheet::part(handle) {
+  width: 40px;
+  height: 5px;
+  background: var(--ob-hairline-strong);
+}
+
+ion-alert,
+ion-action-sheet {
+  --background: var(--ob-surface);
+}
+
+/* ------------------------------------------------------------------ Utilitaires ob-* */
+:root {
+  --ob-primary-ink: color-mix(in srgb, var(--ion-color-primary) 82%, var(--ob-ink-mix));
+  --ob-warn-ink: color-mix(in srgb, var(--ob-warn) 65%, var(--ob-ink-mix));
+  --ob-danger-ink: color-mix(in srgb, var(--ob-danger) 80%, var(--ob-ink-mix));
+}
+
+/* Colonne centrée : lisible aussi sur grand écran. */
+.ob-container {
+  width: 100%;
+  max-width: var(--ob-content-width);
+  margin-inline: auto;
+  padding-inline: 16px;
+}
+
+.ob-display {
+  font-family: var(--ob-font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.ob-eyebrow {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ob-text-2);
+}
+.ob-muted {
+  color: var(--ob-text-2);
+}
+.ob-num {
+  font-variant-numeric: tabular-nums;
+}
+.ob-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.ob-card {
+  background: var(--ob-surface);
+  border: 1px solid var(--ob-hairline);
+  border-radius: var(--ob-radius-lg);
+  box-shadow: var(--ob-shadow-sm);
+}
+
+/* Pastilles de statut : toujours un libellé, souvent une icône (jamais la couleur seule). */
+.ob-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--ob-surface-2);
+  color: var(--ob-text-2);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+.ob-chip ion-icon {
+  font-size: 14px;
+  flex: none;
+}
+.ob-chip--ok {
+  background: color-mix(in srgb, var(--ob-ok) 14%, var(--ob-surface));
+  color: color-mix(in srgb, var(--ob-ok) 75%, var(--ob-ink-mix));
+}
+.ob-chip--warn {
+  background: color-mix(in srgb, var(--ob-warn) 16%, var(--ob-surface));
+  color: var(--ob-warn-ink);
+}
+.ob-chip--danger {
+  background: color-mix(in srgb, var(--ob-danger) 14%, var(--ob-surface));
+  color: var(--ob-danger-ink);
+}
+.ob-chip--primary {
+  background: color-mix(in srgb, var(--ion-color-primary) 14%, var(--ob-surface));
+  color: var(--ob-primary-ink);
+}
+
+/* Catégories d'objectifs : couleur + dérivés (fond doux, texte contrasté). */
+.ob-cat {
+  --cat: var(--ion-color-primary);
+  --cat-soft: color-mix(in srgb, var(--cat) 14%, var(--ob-surface));
+  --cat-ink: color-mix(in srgb, var(--cat) 62%, var(--ob-ink-mix));
+}
+.ob-cat--etudes {
+  --cat: var(--cat-etudes);
+}
+.ob-cat--carriere {
+  --cat: var(--cat-carriere);
+}
+.ob-cat--sante {
+  --cat: var(--cat-sante);
+}
+.ob-cat--finances {
+  --cat: var(--cat-finances);
+}
+.ob-cat--spiritualite {
+  --cat: var(--cat-spiritualite);
+}
+.ob-cat--famille {
+  --cat: var(--cat-famille);
+}
+.ob-cat--projet_personnel {
+  --cat: var(--cat-projet);
+}
+
+/* Réserve sous les listes pour que le bouton « + » ne masque pas le dernier élément. */
+.ob-fab-space {
+  height: 96px;
+}
+
+/* ------------------------------------------------------------------ Mouvement */
+@keyframes ob-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+@keyframes ob-pop {
+  40% {
+    transform: scale(1.18);
+  }
+}
+.ob-rise {
+  animation: ob-rise 0.4s var(--ob-ease) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Modales de formulaire : titre en police d'affichage, fond papier. */
+ion-modal:not(.ob-sheet) ion-title {
+  font-family: var(--ob-font-display);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  --padding-start: 4px;
+  --padding-end: 4px;
+}
+ion-modal:not(.ob-sheet) ion-content {
+  --background: var(--ob-bg);
+}
+ion-modal:not(.ob-sheet) ion-accordion ion-item[slot='header'] {
+  --background: transparent;
+  --background-focused: color-mix(in srgb, var(--ion-color-primary) 8%, transparent);
+  --background-hover: transparent;
+  --background-activated: color-mix(in srgb, var(--ion-color-primary) 8%, transparent);
+  --border-radius: var(--ob-radius-md);
+  --padding-start: 4px;
+  --min-height: 48px;
+  margin-bottom: 4px;
+  border: 0;
+  font-weight: 600;
 }

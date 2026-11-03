@@ -8,6 +8,7 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
+  IonIcon,
   IonInput,
   IonItem,
   IonLabel,
@@ -21,6 +22,7 @@ import {
   IonToolbar,
   ModalController,
 } from '@ionic/angular';
+import { close } from 'ionicons/icons';
 
 import type { FieldError } from '../core/api-error';
 import { ApiError } from '../core/api-error';
@@ -43,6 +45,7 @@ import {
   imports: [
     FormsModule,
     IonHeader,
+    IonIcon,
     IonToolbar,
     IonTitle,
     IonButtons,
@@ -63,7 +66,11 @@ import {
   template: `
     <ion-header>
       <ion-toolbar>
-        <ion-buttons slot="start"><ion-button (click)="close()">Fermer</ion-button></ion-buttons>
+        <ion-buttons slot="start">
+          <ion-button (click)="close()" aria-label="Fermer">
+            <ion-icon slot="icon-only" [icon]="closeIcon"></ion-icon>
+          </ion-button>
+        </ion-buttons>
         <ion-title>{{ goal ? 'Modifier l’objectif' : 'Nouvel objectif' }}</ion-title>
         <ion-buttons slot="end">
           <ion-button strong (click)="save()" [disabled]="saving() || !title.trim()">Enregistrer</ion-button>
@@ -72,7 +79,7 @@ import {
     </ion-header>
     <ion-content class="ion-padding">
       <form (ngSubmit)="save()">
-        <ion-list>
+        <ion-list class="ob-form" lines="none">
           <ion-item>
             <ion-input
               label="Ce que je veux accomplir"
@@ -123,7 +130,7 @@ import {
         <ion-accordion-group>
           <ion-accordion value="avance">
             <ion-item slot="header"><ion-label>Plus d'options</ion-label></ion-item>
-            <ion-list slot="content">
+            <ion-list class="ob-form" lines="none" slot="content">
               <ion-item>
                 <ion-select
                   label="Horizon"
@@ -203,6 +210,8 @@ import {
 export class GoalFormComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly modalCtrl = inject(ModalController);
+
+  protected readonly closeIcon = close;
 
   /** Objectif à modifier ; absent pour une création. */
   // `@Input()` classique : Ionic affecte `componentProps` directement (voir task-form).

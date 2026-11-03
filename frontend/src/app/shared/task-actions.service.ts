@@ -100,7 +100,7 @@ export class TaskActionsService {
       duration: undo ? 5000 : 2500,
       // En haut : en bas, le bouton « + » et la barre d'onglets masqueraient « Annuler ».
       position: 'top',
-      color,
+      cssClass: color === 'danger' ? 'ob-toast ob-toast-danger' : 'ob-toast',
       buttons: undo
         ? [
             {
