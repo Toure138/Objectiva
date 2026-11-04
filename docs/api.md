@@ -186,3 +186,32 @@ Préparation du fonctionnement hors connexion. Aucune route de synchronisation n
 - **Dans la base** (invisible de l'API) : chaque ligne synchronisable reçoit un `server_version` (compteur
   par utilisateur) et un `updated_at` par déclencheur PostgreSQL, et chaque suppression, cascades
   comprises, laisse une pierre tombale (`tombstones`).
+
+## Synchronisation (spec 007, phase 1)
+
+Réservée aux applications : tâches, objectifs, jalons et relevés. Exige l'authentification **et**
+l'en-tête `X-Objectiva-Protocol: <version>` (sinon `426 UPGRADE_REQUIRED`). Les envois peuvent peser
+jusqu'à 1 Mo.
+
+| Méthode | Chemin | Entrée | Réponse |
+|---|---|---|---|
+| POST | `/sync/push` | `{ deviceId, mutations[1..200] }` | `{ epoch, results[] }` : un résultat par modification, dans l'ordre |
+| GET | `/sync/pull` | `cursor?` (défaut 0), `limit?` (1-500, défaut 200) | `{ epoch, cursor, hasMore, changes[] }` |
+
+**Modification** : `{ mutationId (UUID), entity (goals | milestones | goal_readings | tasks), id, op
+(create | update | delete), fields?, clocks?, createdAt? }`. `fields` : tous les champs à la création,
+seulement ceux qui changent à la modification ; `clocks` : une horloge hybride par champ (format
+`<ms sur 15 chiffres>.<compteur sur 5>.<appareil>`, voir `shared/src/hlc.ts`).
+
+**Résultat** : `status` `applied`, `ignored` (`deleted`, `exists`, `stale`, `parent-missing`) ou
+`rejected` (`invalid`, `not-found`, `conflict`, avec `message` affichable). Rejouer un `mutationId` renvoie
+le même résultat sans rien réécrire.
+
+**Règles** : par champ, l'horloge la plus récente l'emporte ; une suppression l'emporte sur toute
+modification ; une tâche dont l'objectif, le jalon ou le rendez-vous a disparu est conservée sans ce lien ;
+le jalon impose son objectif à la tâche ; un jalon ou un relevé dont l'objectif a disparu est ignoré ;
+l'identifiant d'une donnée d'autrui n'est jamais accepté, ni révélé.
+
+**Changement reçu** : `{ entity, op: upsert | delete, id, version, row?, clocks? }`, par `version`
+croissante. `cursor` est à renvoyer tel quel ; `hasMore` indique qu'il reste des pages. Un curseur 0
+renvoie tout (nouvel appareil). L'`epoch` change si le serveur a été restauré.

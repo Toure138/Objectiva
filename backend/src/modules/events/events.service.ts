@@ -4,7 +4,7 @@ import { AppError, notFound } from '../../core/errors.ts';
 import { prisma } from '../../core/prisma.ts';
 import type { Event, Prisma } from '../../generated/prisma/client.ts';
 import { resolveLinks, serializeTask } from '../tasks/tasks.service.ts';
-import { blockedWindow, defaultTaskDate, localDaysToUtc, localToUtc, utcToLocal } from './events.rules.ts';
+import { blockedWindow, defaultTaskDate, localDaysToUtc, localToUtc, summarizeEvents, utcToLocal } from './events.rules.ts';
 import type {
   completeEventSchema,
   createEventSchema,
@@ -100,6 +100,13 @@ export async function eventsOfDay(userId: string, timezone: string, date: string
     orderBy: { startsAt: 'asc' },
   });
   return items.map((e) => serializeEvent(e, timezone));
+}
+
+/** Résumé des rendez-vous d'une plage de jours locaux, pour le bilan. */
+export async function eventsSummary(userId: string, timezone: string, from: string, to: string) {
+  const { start, end } = localDaysToUtc(from, to, timezone);
+  const rows = await prisma.event.findMany({ where: { userId, startsAt: { gte: start, lt: end } }, select: { status: true } });
+  return summarizeEvents(rows);
 }
 
 export async function getEvent(userId: string, eventId: string, timezone: string, today: string) {

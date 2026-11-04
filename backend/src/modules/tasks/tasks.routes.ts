@@ -1,64 +1,59 @@
 import { Router } from 'express';
+import type { Request } from 'express';
 import { currentUser } from '../../core/auth.middleware.ts';
-import { todayIn } from '../../core/dates.ts';
-import { parseInput } from '../../core/errors.ts';
 import { idParam } from '../../core/ids.ts';
-import { createTaskSchema, listTasksQuery, rescheduleSchema, updateTaskSchema } from './tasks.schemas.ts';
-import * as tasks from './tasks.service.ts';
+import { ctxFor, prismaRepo } from '../../core/repo.prisma.ts';
+import * as tasks from '../../../../shared/src/domain/tasks.ts';
 
+// Aucune règle ici : les commandes vivent dans shared/src/domain (partagées avec le téléphone).
 export const tasksRouter = Router();
 
-function ctx(req: Parameters<typeof currentUser>[0]) {
+function ctx(req: Request) {
   const { userId, timezone } = currentUser(req);
-  return { userId, today: todayIn(timezone), taskId: idParam(req.params.id, 'Tâche') };
+  return { repo: prismaRepo(userId), ctx: ctxFor(timezone) };
 }
 
 tasksRouter.get('/', async (req, res) => {
-  const { userId, timezone } = currentUser(req);
-  const data = await tasks.listTasks(userId, todayIn(timezone), parseInput(listTasksQuery, req.query));
-  res.json({ success: true, data });
+  const { repo, ctx: c } = ctx(req);
+  res.json({ success: true, data: await tasks.listTasks(repo, c, req.query) });
 });
 
 tasksRouter.post('/', async (req, res) => {
-  const { userId, timezone } = currentUser(req);
-  const data = await tasks.createTask(userId, todayIn(timezone), parseInput(createTaskSchema, req.body));
-  res.status(201).json({ success: true, data });
+  const { repo, ctx: c } = ctx(req);
+  res.status(201).json({ success: true, data: await tasks.createTask(repo, c, req.body) });
 });
 
 tasksRouter.get('/:id', async (req, res) => {
-  const { userId, today, taskId } = ctx(req);
-  res.json({ success: true, data: await tasks.getTask(userId, taskId, today) });
+  const { repo, ctx: c } = ctx(req);
+  res.json({ success: true, data: await tasks.getTask(repo, c, idParam(req.params.id, 'Tâche')) });
 });
 
 tasksRouter.patch('/:id', async (req, res) => {
-  const { userId, today, taskId } = ctx(req);
-  const data = await tasks.updateTask(userId, taskId, today, parseInput(updateTaskSchema, req.body));
-  res.json({ success: true, data });
+  const { repo, ctx: c } = ctx(req);
+  res.json({ success: true, data: await tasks.updateTask(repo, c, idParam(req.params.id, 'Tâche'), req.body) });
 });
 
 tasksRouter.delete('/:id', async (req, res) => {
-  const { userId, taskId } = ctx(req);
-  await tasks.deleteTask(userId, taskId);
+  await tasks.deleteTask(ctx(req).repo, idParam(req.params.id, 'Tâche'));
   res.json({ success: true, message: 'Tâche supprimée' });
 });
 
 tasksRouter.post('/:id/complete', async (req, res) => {
-  const { userId, today, taskId } = ctx(req);
-  res.json({ success: true, data: await tasks.completeTask(userId, taskId, today) });
+  const { repo, ctx: c } = ctx(req);
+  res.json({ success: true, data: await tasks.completeTask(repo, c, idParam(req.params.id, 'Tâche')) });
 });
 
 tasksRouter.post('/:id/reopen', async (req, res) => {
-  const { userId, today, taskId } = ctx(req);
-  res.json({ success: true, data: await tasks.reopenTask(userId, taskId, today) });
+  const { repo, ctx: c } = ctx(req);
+  res.json({ success: true, data: await tasks.reopenTask(repo, c, idParam(req.params.id, 'Tâche')) });
 });
 
 tasksRouter.post('/:id/reschedule', async (req, res) => {
-  const { userId, today, taskId } = ctx(req);
-  const data = await tasks.rescheduleTask(userId, taskId, today, parseInput(rescheduleSchema, req.body));
-  res.json({ success: true, data });
+  const { repo, ctx: c } = ctx(req);
+  res.json({ success: true, data: await tasks.rescheduleTask(repo, c, idParam(req.params.id, 'Tâche'), req.body) });
 });
 
 tasksRouter.post('/:id/cancel', async (req, res) => {
-  const { userId, today, taskId } = ctx(req);
-  res.json({ success: true, data: await tasks.cancelTask(userId, taskId, today) });
+  const { repo, ctx: c } = ctx(req);
+  res.json({ success: true, data: await tasks.cancelTask(repo, c, idParam(req.params.id, 'Tâche')) });
 });

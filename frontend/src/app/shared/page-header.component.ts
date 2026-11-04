@@ -1,8 +1,10 @@
 import { Component, computed, inject, input } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { IonBackButton, IonButtons, IonHeader, IonToolbar } from '@ionic/angular';
 
 import { AuthService } from '../core/auth.service';
+
+import { SyncStatusComponent } from './sync-status.component';
 
 /**
  * En-tête commun : titre en police d'affichage, accès au profil (avatar à l'initiale) et,
@@ -10,7 +12,7 @@ import { AuthService } from '../core/auth.service';
  */
 @Component({
   selector: 'app-page-header',
-  imports: [IonHeader, IonToolbar, IonButtons, IonBackButton, RouterLink],
+  imports: [IonHeader, IonToolbar, IonButtons, IonBackButton, RouterLink, SyncStatusComponent],
   template: `
     <ion-header>
       <ion-toolbar>
@@ -28,15 +30,35 @@ import { AuthService } from '../core/auth.service';
           </div>
           <div class="end">
             <ng-content />
+            <app-sync-status />
             @if (showProfile()) {
               <a class="avatar" routerLink="/profil" aria-label="Profil et paramètres">{{ initial() }}</a>
             }
           </div>
         </div>
       </ion-toolbar>
+      @if (auth.sessionExpired()) {
+        <button type="button" class="banner" (click)="reconnect()">
+          Ta session a expiré : reconnecte-toi pour synchroniser. Tes données restent sur ce téléphone.
+        </button>
+      }
     </ion-header>
   `,
   styles: `
+    .banner {
+      display: block;
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 16px;
+      border: 0;
+      background: color-mix(in srgb, var(--ob-warn) 18%, var(--ob-surface));
+      color: var(--ob-warn-ink);
+      font: inherit;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+    }
     .bar {
       display: flex;
       align-items: center;
@@ -91,7 +113,8 @@ import { AuthService } from '../core/auth.service';
   `,
 })
 export class PageHeaderComponent {
-  private readonly auth = inject(AuthService);
+  protected readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
 
   readonly title = input.required<string>();
   /** Petit texte au-dessus du titre (ex. la date). */
@@ -100,6 +123,10 @@ export class PageHeaderComponent {
   readonly backHref = input<string | null>(null);
   readonly backText = input('');
   readonly showProfile = input(true);
+
+  protected reconnect(): void {
+    void this.router.navigateByUrl('/connexion');
+  }
 
   protected readonly initial = computed(() => (this.auth.user()?.displayName.trim().charAt(0) || '?').toUpperCase());
 }

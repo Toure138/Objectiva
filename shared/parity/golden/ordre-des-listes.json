@@ -1,0 +1,2477 @@
+{
+  "01 POST /api/goals": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000034",
+        "title": "Zoologie",
+        "description": null,
+        "motivation": null,
+        "category": "ETUDES",
+        "horizon": "PERSONNALISEE",
+        "startDate": "2026-10-01",
+        "endDate": "2027-03-01",
+        "priority": "MOYENNE",
+        "status": "EN_COURS",
+        "progressMode": "JALONS",
+        "measureUnit": null,
+        "startValue": null,
+        "targetValue": null,
+        "progress": {
+          "mode": "JALONS",
+          "done": 0,
+          "total": 0,
+          "percent": null,
+          "label": "Ajoute un premier jalon"
+        },
+        "nextAction": null,
+        "needsNextAction": true
+      }
+    }
+  },
+  "02 POST /api/goals": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000033",
+        "title": "Algèbre",
+        "description": null,
+        "motivation": null,
+        "category": "ETUDES",
+        "horizon": "PERSONNALISEE",
+        "startDate": "2026-10-01",
+        "endDate": "2027-01-01",
+        "priority": "MOYENNE",
+        "status": "EN_COURS",
+        "progressMode": "JALONS",
+        "measureUnit": null,
+        "startValue": null,
+        "targetValue": null,
+        "progress": {
+          "mode": "JALONS",
+          "done": 0,
+          "total": 0,
+          "percent": null,
+          "label": "Ajoute un premier jalon"
+        },
+        "nextAction": null,
+        "needsNextAction": true
+      }
+    }
+  },
+  "03 POST /api/goals": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000035",
+        "title": "Chimie",
+        "description": null,
+        "motivation": null,
+        "category": "SANTE",
+        "horizon": "PERSONNALISEE",
+        "startDate": "2026-10-01",
+        "endDate": "2027-01-01",
+        "priority": "MOYENNE",
+        "status": "A_DEMARRER",
+        "progressMode": "JALONS",
+        "measureUnit": null,
+        "startValue": null,
+        "targetValue": null,
+        "progress": {
+          "mode": "JALONS",
+          "done": 0,
+          "total": 0,
+          "percent": null,
+          "label": "Ajoute un premier jalon"
+        },
+        "nextAction": null,
+        "needsNextAction": true
+      }
+    }
+  },
+  "04 POST /api/goals": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000036",
+        "title": "Courir",
+        "description": null,
+        "motivation": null,
+        "category": "SANTE",
+        "horizon": "PERSONNALISEE",
+        "startDate": "2026-10-01",
+        "endDate": "2027-02-01",
+        "priority": "MOYENNE",
+        "status": "EN_PAUSE",
+        "progressMode": "MESURE",
+        "measureUnit": "km",
+        "startValue": 0,
+        "targetValue": 10,
+        "progress": {
+          "mode": "MESURE",
+          "current": 0,
+          "start": 0,
+          "target": 10,
+          "unit": "km",
+          "percent": 0,
+          "reached": false,
+          "label": "0 sur 10 km"
+        },
+        "nextAction": null,
+        "needsNextAction": false
+      }
+    }
+  },
+  "05 POST /api/goals/00000000-0000-4000-8000-000000000033/milestones": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000037",
+        "goalId": "00000000-0000-4000-8000-000000000033",
+        "title": "Sans date (premier)",
+        "dueDate": null,
+        "completed": false,
+        "completedAt": null
+      }
+    }
+  },
+  "06 POST /api/goals/00000000-0000-4000-8000-000000000033/milestones": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000038",
+        "goalId": "00000000-0000-4000-8000-000000000033",
+        "title": "Décembre",
+        "dueDate": "2026-12-01",
+        "completed": false,
+        "completedAt": null
+      }
+    }
+  },
+  "07 POST /api/goals/00000000-0000-4000-8000-000000000033/milestones": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000039",
+        "goalId": "00000000-0000-4000-8000-000000000033",
+        "title": "Novembre",
+        "dueDate": "2026-11-01",
+        "completed": false,
+        "completedAt": null
+      }
+    }
+  },
+  "08 POST /api/goals/00000000-0000-4000-8000-000000000033/milestones": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000003a",
+        "goalId": "00000000-0000-4000-8000-000000000033",
+        "title": "Sans date (second)",
+        "dueDate": null,
+        "completed": false,
+        "completedAt": null
+      }
+    }
+  },
+  "09 POST /api/goals/00000000-0000-4000-8000-000000000036/readings": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "reading": {
+          "id": "00000000-0000-4000-8000-000000000046",
+          "goalId": "00000000-0000-4000-8000-000000000036",
+          "value": 2,
+          "readOn": "2026-11-01",
+          "note": null
+        },
+        "progress": {
+          "mode": "MESURE",
+          "current": 2,
+          "start": 0,
+          "target": 10,
+          "unit": "km",
+          "percent": 20,
+          "reached": false,
+          "label": "2 sur 10 km"
+        }
+      }
+    }
+  },
+  "10 POST /api/goals/00000000-0000-4000-8000-000000000036/readings": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "reading": {
+          "id": "00000000-0000-4000-8000-000000000047",
+          "goalId": "00000000-0000-4000-8000-000000000036",
+          "value": 5,
+          "readOn": "2026-11-03",
+          "note": null
+        },
+        "progress": {
+          "mode": "MESURE",
+          "current": 5,
+          "start": 0,
+          "target": 10,
+          "unit": "km",
+          "percent": 50,
+          "reached": false,
+          "label": "5 sur 10 km"
+        }
+      }
+    }
+  },
+  "11 POST /api/goals/00000000-0000-4000-8000-000000000036/readings": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "reading": {
+          "id": "00000000-0000-4000-8000-000000000048",
+          "goalId": "00000000-0000-4000-8000-000000000036",
+          "value": 4,
+          "readOn": "2026-11-03",
+          "note": null
+        },
+        "progress": {
+          "mode": "MESURE",
+          "current": 4,
+          "start": 0,
+          "target": 10,
+          "unit": "km",
+          "percent": 40,
+          "reached": false,
+          "label": "4 sur 10 km"
+        }
+      }
+    }
+  },
+  "12 POST /api/goals/00000000-0000-4000-8000-000000000036/readings": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "reading": {
+          "id": "00000000-0000-4000-8000-000000000049",
+          "goalId": "00000000-0000-4000-8000-000000000036",
+          "value": 3,
+          "readOn": "2026-11-02",
+          "note": null
+        },
+        "progress": {
+          "mode": "MESURE",
+          "current": 4,
+          "start": 0,
+          "target": 10,
+          "unit": "km",
+          "percent": 40,
+          "reached": false,
+          "label": "4 sur 10 km"
+        }
+      }
+    }
+  },
+  "13 POST /api/tasks": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000003d",
+        "title": "Zèbre",
+        "notes": null,
+        "goalId": "00000000-0000-4000-8000-000000000033",
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-04",
+        "dueDate": null,
+        "originalDate": "2026-11-04",
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "14 POST /api/tasks": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000003e",
+        "title": "Abeille",
+        "notes": null,
+        "goalId": null,
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-04",
+        "dueDate": null,
+        "originalDate": "2026-11-04",
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "15 POST /api/tasks": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000003f",
+        "title": "Mouette",
+        "notes": null,
+        "goalId": null,
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-04",
+        "dueDate": null,
+        "originalDate": "2026-11-04",
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "16 POST /api/tasks": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000040",
+        "title": "Sans date 1",
+        "notes": null,
+        "goalId": null,
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": null,
+        "dueDate": null,
+        "originalDate": null,
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": true,
+        "suggestSplit": false
+      }
+    }
+  },
+  "17 POST /api/tasks": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000041",
+        "title": "Sans date 2",
+        "notes": null,
+        "goalId": "00000000-0000-4000-8000-000000000033",
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": null,
+        "dueDate": null,
+        "originalDate": null,
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": true,
+        "suggestSplit": false
+      }
+    }
+  },
+  "18 POST /api/tasks": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000042",
+        "title": "Hier B",
+        "notes": null,
+        "goalId": null,
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-03",
+        "dueDate": null,
+        "originalDate": "2026-11-03",
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": true,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "19 POST /api/tasks": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000043",
+        "title": "Avant-hier",
+        "notes": null,
+        "goalId": null,
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-02",
+        "dueDate": null,
+        "originalDate": "2026-11-02",
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": true,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "20 POST /api/tasks": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000044",
+        "title": "Hier A",
+        "notes": null,
+        "goalId": null,
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-03",
+        "dueDate": null,
+        "originalDate": "2026-11-03",
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": true,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "21 POST /api/tasks": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000045",
+        "title": "Retard 1er nov. (A)",
+        "notes": null,
+        "goalId": null,
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": null,
+        "dueDate": "2026-11-01",
+        "originalDate": null,
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": true,
+        "unscheduled": true,
+        "suggestSplit": false
+      }
+    }
+  },
+  "22 POST /api/tasks": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000046",
+        "title": "Retard 30 oct.",
+        "notes": null,
+        "goalId": null,
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-09",
+        "dueDate": "2026-10-30",
+        "originalDate": "2026-11-09",
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": true,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "23 POST /api/tasks": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000047",
+        "title": "Retard 1er nov. (B)",
+        "notes": null,
+        "goalId": null,
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": null,
+        "dueDate": "2026-11-01",
+        "originalDate": null,
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": true,
+        "unscheduled": true,
+        "suggestSplit": false
+      }
+    }
+  },
+  "24 POST /api/tasks": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000048",
+        "title": "GA lointaine",
+        "notes": null,
+        "goalId": "00000000-0000-4000-8000-000000000033",
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-12-20",
+        "dueDate": null,
+        "originalDate": "2026-12-20",
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "25 POST /api/tasks": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000049",
+        "title": "GA proche",
+        "notes": null,
+        "goalId": "00000000-0000-4000-8000-000000000033",
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-06",
+        "dueDate": null,
+        "originalDate": "2026-11-06",
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "26 POST /api/tasks/00000000-0000-4000-8000-00000000003f/complete": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000003f",
+        "title": "Mouette",
+        "notes": null,
+        "goalId": null,
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-04",
+        "dueDate": null,
+        "originalDate": "2026-11-04",
+        "rescheduleCount": 0,
+        "status": "DONE",
+        "completedAt": "2026-11-04T09:00:26.000Z",
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "27 POST /api/tasks/00000000-0000-4000-8000-00000000003d/complete": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000003d",
+        "title": "Zèbre",
+        "notes": null,
+        "goalId": "00000000-0000-4000-8000-000000000033",
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-04",
+        "dueDate": null,
+        "originalDate": "2026-11-04",
+        "rescheduleCount": 0,
+        "status": "DONE",
+        "completedAt": "2026-11-04T09:00:27.000Z",
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "28 POST /api/tasks/00000000-0000-4000-8000-00000000003e/complete": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000003e",
+        "title": "Abeille",
+        "notes": null,
+        "goalId": null,
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-04",
+        "dueDate": null,
+        "originalDate": "2026-11-04",
+        "rescheduleCount": 0,
+        "status": "DONE",
+        "completedAt": "2026-11-04T09:00:28.000Z",
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "29 GET /api/today": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "date": "2026-11-04",
+        "events": [],
+        "planned": [],
+        "done": [
+          {
+            "id": "00000000-0000-4000-8000-00000000003f",
+            "title": "Mouette",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-04",
+            "dueDate": null,
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 0,
+            "status": "DONE",
+            "completedAt": "2026-11-04T09:00:26.000Z",
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000003d",
+            "title": "Zèbre",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000033",
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-04",
+            "dueDate": null,
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 0,
+            "status": "DONE",
+            "completedAt": "2026-11-04T09:00:27.000Z",
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000003e",
+            "title": "Abeille",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-04",
+            "dueDate": null,
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 0,
+            "status": "DONE",
+            "completedAt": "2026-11-04T09:00:28.000Z",
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          }
+        ],
+        "toReschedule": [
+          {
+            "id": "00000000-0000-4000-8000-000000000043",
+            "title": "Avant-hier",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-02",
+            "dueDate": null,
+            "originalDate": "2026-11-02",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": true,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000042",
+            "title": "Hier B",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-03",
+            "dueDate": null,
+            "originalDate": "2026-11-03",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": true,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000044",
+            "title": "Hier A",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-03",
+            "dueDate": null,
+            "originalDate": "2026-11-03",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": true,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          }
+        ],
+        "overdue": [
+          {
+            "id": "00000000-0000-4000-8000-000000000046",
+            "title": "Retard 30 oct.",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-09",
+            "dueDate": "2026-10-30",
+            "originalDate": "2026-11-09",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": true,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000045",
+            "title": "Retard 1er nov. (A)",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": null,
+            "dueDate": "2026-11-01",
+            "originalDate": null,
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": true,
+            "unscheduled": true,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000047",
+            "title": "Retard 1er nov. (B)",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": null,
+            "dueDate": "2026-11-01",
+            "originalDate": null,
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": true,
+            "unscheduled": true,
+            "suggestSplit": false
+          }
+        ],
+        "goalsWithoutNextAction": [
+          {
+            "id": "00000000-0000-4000-8000-000000000035",
+            "title": "Chimie"
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000034",
+            "title": "Zoologie"
+          }
+        ],
+        "emptyMessage": null
+      }
+    }
+  },
+  "30 GET /api/today?date=2026-11-09": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "date": "2026-11-09",
+        "events": [],
+        "planned": [
+          {
+            "id": "00000000-0000-4000-8000-000000000046",
+            "title": "Retard 30 oct.",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-09",
+            "dueDate": "2026-10-30",
+            "originalDate": "2026-11-09",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": true,
+            "unscheduled": false,
+            "suggestSplit": false
+          }
+        ],
+        "done": [],
+        "toReschedule": [
+          {
+            "id": "00000000-0000-4000-8000-000000000043",
+            "title": "Avant-hier",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-02",
+            "dueDate": null,
+            "originalDate": "2026-11-02",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": true,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000042",
+            "title": "Hier B",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-03",
+            "dueDate": null,
+            "originalDate": "2026-11-03",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": true,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000044",
+            "title": "Hier A",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-03",
+            "dueDate": null,
+            "originalDate": "2026-11-03",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": true,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000049",
+            "title": "GA proche",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000033",
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-06",
+            "dueDate": null,
+            "originalDate": "2026-11-06",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": true,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          }
+        ],
+        "overdue": [
+          {
+            "id": "00000000-0000-4000-8000-000000000045",
+            "title": "Retard 1er nov. (A)",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": null,
+            "dueDate": "2026-11-01",
+            "originalDate": null,
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": true,
+            "unscheduled": true,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000047",
+            "title": "Retard 1er nov. (B)",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": null,
+            "dueDate": "2026-11-01",
+            "originalDate": null,
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": true,
+            "unscheduled": true,
+            "suggestSplit": false
+          }
+        ],
+        "goalsWithoutNextAction": [
+          {
+            "id": "00000000-0000-4000-8000-000000000035",
+            "title": "Chimie"
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000034",
+            "title": "Zoologie"
+          }
+        ],
+        "emptyMessage": null
+      }
+    }
+  },
+  "31 GET /api/tasks": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "items": [
+          {
+            "id": "00000000-0000-4000-8000-000000000043",
+            "title": "Avant-hier",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-02",
+            "dueDate": null,
+            "originalDate": "2026-11-02",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": true,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000042",
+            "title": "Hier B",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-03",
+            "dueDate": null,
+            "originalDate": "2026-11-03",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": true,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000044",
+            "title": "Hier A",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-03",
+            "dueDate": null,
+            "originalDate": "2026-11-03",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": true,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000003d",
+            "title": "Zèbre",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000033",
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-04",
+            "dueDate": null,
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 0,
+            "status": "DONE",
+            "completedAt": "2026-11-04T09:00:27.000Z",
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000003e",
+            "title": "Abeille",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-04",
+            "dueDate": null,
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 0,
+            "status": "DONE",
+            "completedAt": "2026-11-04T09:00:28.000Z",
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000003f",
+            "title": "Mouette",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-04",
+            "dueDate": null,
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 0,
+            "status": "DONE",
+            "completedAt": "2026-11-04T09:00:26.000Z",
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000049",
+            "title": "GA proche",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000033",
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-06",
+            "dueDate": null,
+            "originalDate": "2026-11-06",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000046",
+            "title": "Retard 30 oct.",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-09",
+            "dueDate": "2026-10-30",
+            "originalDate": "2026-11-09",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": true,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000048",
+            "title": "GA lointaine",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000033",
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-12-20",
+            "dueDate": null,
+            "originalDate": "2026-12-20",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000040",
+            "title": "Sans date 1",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": null,
+            "dueDate": null,
+            "originalDate": null,
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": true,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000041",
+            "title": "Sans date 2",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000033",
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": null,
+            "dueDate": null,
+            "originalDate": null,
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": true,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000045",
+            "title": "Retard 1er nov. (A)",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": null,
+            "dueDate": "2026-11-01",
+            "originalDate": null,
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": true,
+            "unscheduled": true,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000047",
+            "title": "Retard 1er nov. (B)",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": null,
+            "dueDate": "2026-11-01",
+            "originalDate": null,
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": true,
+            "unscheduled": true,
+            "suggestSplit": false
+          }
+        ],
+        "total": 13,
+        "limit": 50,
+        "offset": 0
+      }
+    }
+  },
+  "32 GET /api/tasks?limit=4&offset=0": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "items": [
+          {
+            "id": "00000000-0000-4000-8000-000000000043",
+            "title": "Avant-hier",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-02",
+            "dueDate": null,
+            "originalDate": "2026-11-02",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": true,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000042",
+            "title": "Hier B",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-03",
+            "dueDate": null,
+            "originalDate": "2026-11-03",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": true,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000044",
+            "title": "Hier A",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-03",
+            "dueDate": null,
+            "originalDate": "2026-11-03",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": true,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000003d",
+            "title": "Zèbre",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000033",
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-04",
+            "dueDate": null,
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 0,
+            "status": "DONE",
+            "completedAt": "2026-11-04T09:00:27.000Z",
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          }
+        ],
+        "total": 13,
+        "limit": 4,
+        "offset": 0
+      }
+    }
+  },
+  "33 GET /api/tasks?limit=4&offset=4": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "items": [
+          {
+            "id": "00000000-0000-4000-8000-00000000003e",
+            "title": "Abeille",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-04",
+            "dueDate": null,
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 0,
+            "status": "DONE",
+            "completedAt": "2026-11-04T09:00:28.000Z",
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000003f",
+            "title": "Mouette",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-04",
+            "dueDate": null,
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 0,
+            "status": "DONE",
+            "completedAt": "2026-11-04T09:00:26.000Z",
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000049",
+            "title": "GA proche",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000033",
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-06",
+            "dueDate": null,
+            "originalDate": "2026-11-06",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000046",
+            "title": "Retard 30 oct.",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-09",
+            "dueDate": "2026-10-30",
+            "originalDate": "2026-11-09",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": true,
+            "unscheduled": false,
+            "suggestSplit": false
+          }
+        ],
+        "total": 13,
+        "limit": 4,
+        "offset": 4
+      }
+    }
+  },
+  "34 GET /api/tasks?status=TODO&limit=5&offset=5": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "items": [
+          {
+            "id": "00000000-0000-4000-8000-000000000048",
+            "title": "GA lointaine",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000033",
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-12-20",
+            "dueDate": null,
+            "originalDate": "2026-12-20",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000040",
+            "title": "Sans date 1",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": null,
+            "dueDate": null,
+            "originalDate": null,
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": true,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000041",
+            "title": "Sans date 2",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000033",
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": null,
+            "dueDate": null,
+            "originalDate": null,
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": true,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000045",
+            "title": "Retard 1er nov. (A)",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": null,
+            "dueDate": "2026-11-01",
+            "originalDate": null,
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": true,
+            "unscheduled": true,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000047",
+            "title": "Retard 1er nov. (B)",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": null,
+            "dueDate": "2026-11-01",
+            "originalDate": null,
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": true,
+            "unscheduled": true,
+            "suggestSplit": false
+          }
+        ],
+        "total": 10,
+        "limit": 5,
+        "offset": 5
+      }
+    }
+  },
+  "35 GET /api/tasks?from=2026-11-02&to=2026-11-04": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "items": [
+          {
+            "id": "00000000-0000-4000-8000-000000000043",
+            "title": "Avant-hier",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-02",
+            "dueDate": null,
+            "originalDate": "2026-11-02",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": true,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000042",
+            "title": "Hier B",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-03",
+            "dueDate": null,
+            "originalDate": "2026-11-03",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": true,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000044",
+            "title": "Hier A",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-03",
+            "dueDate": null,
+            "originalDate": "2026-11-03",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": true,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000003d",
+            "title": "Zèbre",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000033",
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-04",
+            "dueDate": null,
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 0,
+            "status": "DONE",
+            "completedAt": "2026-11-04T09:00:27.000Z",
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000003e",
+            "title": "Abeille",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-04",
+            "dueDate": null,
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 0,
+            "status": "DONE",
+            "completedAt": "2026-11-04T09:00:28.000Z",
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000003f",
+            "title": "Mouette",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-04",
+            "dueDate": null,
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 0,
+            "status": "DONE",
+            "completedAt": "2026-11-04T09:00:26.000Z",
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          }
+        ],
+        "total": 6,
+        "limit": 50,
+        "offset": 0
+      }
+    }
+  },
+  "36 GET /api/tasks?unscheduled=true": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "items": [
+          {
+            "id": "00000000-0000-4000-8000-000000000040",
+            "title": "Sans date 1",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": null,
+            "dueDate": null,
+            "originalDate": null,
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": true,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000041",
+            "title": "Sans date 2",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000033",
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": null,
+            "dueDate": null,
+            "originalDate": null,
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": true,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000045",
+            "title": "Retard 1er nov. (A)",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": null,
+            "dueDate": "2026-11-01",
+            "originalDate": null,
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": true,
+            "unscheduled": true,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000047",
+            "title": "Retard 1er nov. (B)",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": null,
+            "dueDate": "2026-11-01",
+            "originalDate": null,
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": true,
+            "unscheduled": true,
+            "suggestSplit": false
+          }
+        ],
+        "total": 4,
+        "limit": 50,
+        "offset": 0
+      }
+    }
+  },
+  "37 GET /api/tasks?goalId=00000000-0000-4000-8000-000000000033": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "items": [
+          {
+            "id": "00000000-0000-4000-8000-00000000003d",
+            "title": "Zèbre",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000033",
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-04",
+            "dueDate": null,
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 0,
+            "status": "DONE",
+            "completedAt": "2026-11-04T09:00:27.000Z",
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000049",
+            "title": "GA proche",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000033",
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-06",
+            "dueDate": null,
+            "originalDate": "2026-11-06",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000048",
+            "title": "GA lointaine",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000033",
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-12-20",
+            "dueDate": null,
+            "originalDate": "2026-12-20",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000041",
+            "title": "Sans date 2",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000033",
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": null,
+            "dueDate": null,
+            "originalDate": null,
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": true,
+            "suggestSplit": false
+          }
+        ],
+        "total": 4,
+        "limit": 50,
+        "offset": 0
+      }
+    }
+  },
+  "38 GET /api/goals": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": [
+        {
+          "id": "00000000-0000-4000-8000-000000000033",
+          "title": "Algèbre",
+          "description": null,
+          "motivation": null,
+          "category": "ETUDES",
+          "horizon": "PERSONNALISEE",
+          "startDate": "2026-10-01",
+          "endDate": "2027-01-01",
+          "priority": "MOYENNE",
+          "status": "EN_COURS",
+          "progressMode": "JALONS",
+          "measureUnit": null,
+          "startValue": null,
+          "targetValue": null,
+          "progress": {
+            "mode": "JALONS",
+            "done": 0,
+            "total": 4,
+            "percent": 0,
+            "label": "0 jalon terminé sur 4"
+          },
+          "nextAction": {
+            "id": "00000000-0000-4000-8000-000000000049",
+            "title": "GA proche",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000033",
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-06",
+            "dueDate": null,
+            "originalDate": "2026-11-06",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          "needsNextAction": false
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000035",
+          "title": "Chimie",
+          "description": null,
+          "motivation": null,
+          "category": "SANTE",
+          "horizon": "PERSONNALISEE",
+          "startDate": "2026-10-01",
+          "endDate": "2027-01-01",
+          "priority": "MOYENNE",
+          "status": "A_DEMARRER",
+          "progressMode": "JALONS",
+          "measureUnit": null,
+          "startValue": null,
+          "targetValue": null,
+          "progress": {
+            "mode": "JALONS",
+            "done": 0,
+            "total": 0,
+            "percent": null,
+            "label": "Ajoute un premier jalon"
+          },
+          "nextAction": null,
+          "needsNextAction": true
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000036",
+          "title": "Courir",
+          "description": null,
+          "motivation": null,
+          "category": "SANTE",
+          "horizon": "PERSONNALISEE",
+          "startDate": "2026-10-01",
+          "endDate": "2027-02-01",
+          "priority": "MOYENNE",
+          "status": "EN_PAUSE",
+          "progressMode": "MESURE",
+          "measureUnit": "km",
+          "startValue": 0,
+          "targetValue": 10,
+          "progress": {
+            "mode": "MESURE",
+            "current": 4,
+            "start": 0,
+            "target": 10,
+            "unit": "km",
+            "percent": 40,
+            "reached": false,
+            "label": "4 sur 10 km"
+          },
+          "nextAction": null,
+          "needsNextAction": false
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000034",
+          "title": "Zoologie",
+          "description": null,
+          "motivation": null,
+          "category": "ETUDES",
+          "horizon": "PERSONNALISEE",
+          "startDate": "2026-10-01",
+          "endDate": "2027-03-01",
+          "priority": "MOYENNE",
+          "status": "EN_COURS",
+          "progressMode": "JALONS",
+          "measureUnit": null,
+          "startValue": null,
+          "targetValue": null,
+          "progress": {
+            "mode": "JALONS",
+            "done": 0,
+            "total": 0,
+            "percent": null,
+            "label": "Ajoute un premier jalon"
+          },
+          "nextAction": null,
+          "needsNextAction": true
+        }
+      ]
+    }
+  },
+  "39 GET /api/goals?status=EN_COURS": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": [
+        {
+          "id": "00000000-0000-4000-8000-000000000033",
+          "title": "Algèbre",
+          "description": null,
+          "motivation": null,
+          "category": "ETUDES",
+          "horizon": "PERSONNALISEE",
+          "startDate": "2026-10-01",
+          "endDate": "2027-01-01",
+          "priority": "MOYENNE",
+          "status": "EN_COURS",
+          "progressMode": "JALONS",
+          "measureUnit": null,
+          "startValue": null,
+          "targetValue": null,
+          "progress": {
+            "mode": "JALONS",
+            "done": 0,
+            "total": 4,
+            "percent": 0,
+            "label": "0 jalon terminé sur 4"
+          },
+          "nextAction": {
+            "id": "00000000-0000-4000-8000-000000000049",
+            "title": "GA proche",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000033",
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-06",
+            "dueDate": null,
+            "originalDate": "2026-11-06",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          "needsNextAction": false
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000034",
+          "title": "Zoologie",
+          "description": null,
+          "motivation": null,
+          "category": "ETUDES",
+          "horizon": "PERSONNALISEE",
+          "startDate": "2026-10-01",
+          "endDate": "2027-03-01",
+          "priority": "MOYENNE",
+          "status": "EN_COURS",
+          "progressMode": "JALONS",
+          "measureUnit": null,
+          "startValue": null,
+          "targetValue": null,
+          "progress": {
+            "mode": "JALONS",
+            "done": 0,
+            "total": 0,
+            "percent": null,
+            "label": "Ajoute un premier jalon"
+          },
+          "nextAction": null,
+          "needsNextAction": true
+        }
+      ]
+    }
+  },
+  "40 GET /api/goals?category=SANTE": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": [
+        {
+          "id": "00000000-0000-4000-8000-000000000035",
+          "title": "Chimie",
+          "description": null,
+          "motivation": null,
+          "category": "SANTE",
+          "horizon": "PERSONNALISEE",
+          "startDate": "2026-10-01",
+          "endDate": "2027-01-01",
+          "priority": "MOYENNE",
+          "status": "A_DEMARRER",
+          "progressMode": "JALONS",
+          "measureUnit": null,
+          "startValue": null,
+          "targetValue": null,
+          "progress": {
+            "mode": "JALONS",
+            "done": 0,
+            "total": 0,
+            "percent": null,
+            "label": "Ajoute un premier jalon"
+          },
+          "nextAction": null,
+          "needsNextAction": true
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000036",
+          "title": "Courir",
+          "description": null,
+          "motivation": null,
+          "category": "SANTE",
+          "horizon": "PERSONNALISEE",
+          "startDate": "2026-10-01",
+          "endDate": "2027-02-01",
+          "priority": "MOYENNE",
+          "status": "EN_PAUSE",
+          "progressMode": "MESURE",
+          "measureUnit": "km",
+          "startValue": 0,
+          "targetValue": 10,
+          "progress": {
+            "mode": "MESURE",
+            "current": 4,
+            "start": 0,
+            "target": 10,
+            "unit": "km",
+            "percent": 40,
+            "reached": false,
+            "label": "4 sur 10 km"
+          },
+          "nextAction": null,
+          "needsNextAction": false
+        }
+      ]
+    }
+  },
+  "41 GET /api/goals/00000000-0000-4000-8000-000000000033": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000033",
+        "title": "Algèbre",
+        "description": null,
+        "motivation": null,
+        "category": "ETUDES",
+        "horizon": "PERSONNALISEE",
+        "startDate": "2026-10-01",
+        "endDate": "2027-01-01",
+        "priority": "MOYENNE",
+        "status": "EN_COURS",
+        "progressMode": "JALONS",
+        "measureUnit": null,
+        "startValue": null,
+        "targetValue": null,
+        "progress": {
+          "mode": "JALONS",
+          "done": 0,
+          "total": 4,
+          "percent": 0,
+          "label": "0 jalon terminé sur 4"
+        },
+        "nextAction": {
+          "id": "00000000-0000-4000-8000-000000000049",
+          "title": "GA proche",
+          "notes": null,
+          "goalId": "00000000-0000-4000-8000-000000000033",
+          "milestoneId": null,
+          "eventId": null,
+          "eventRole": null,
+          "workDate": "2026-11-06",
+          "dueDate": null,
+          "originalDate": "2026-11-06",
+          "rescheduleCount": 0,
+          "status": "TODO",
+          "completedAt": null,
+          "needsRescheduling": false,
+          "overdue": false,
+          "unscheduled": false,
+          "suggestSplit": false
+        },
+        "needsNextAction": false,
+        "milestones": [
+          {
+            "id": "00000000-0000-4000-8000-000000000039",
+            "goalId": "00000000-0000-4000-8000-000000000033",
+            "title": "Novembre",
+            "dueDate": "2026-11-01",
+            "completed": false,
+            "completedAt": null
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000038",
+            "goalId": "00000000-0000-4000-8000-000000000033",
+            "title": "Décembre",
+            "dueDate": "2026-12-01",
+            "completed": false,
+            "completedAt": null
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000037",
+            "goalId": "00000000-0000-4000-8000-000000000033",
+            "title": "Sans date (premier)",
+            "dueDate": null,
+            "completed": false,
+            "completedAt": null
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000003a",
+            "goalId": "00000000-0000-4000-8000-000000000033",
+            "title": "Sans date (second)",
+            "dueDate": null,
+            "completed": false,
+            "completedAt": null
+          }
+        ],
+        "readings": [],
+        "tasks": [
+          {
+            "id": "00000000-0000-4000-8000-00000000003d",
+            "title": "Zèbre",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000033",
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-04",
+            "dueDate": null,
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 0,
+            "status": "DONE",
+            "completedAt": "2026-11-04T09:00:27.000Z",
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000049",
+            "title": "GA proche",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000033",
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-06",
+            "dueDate": null,
+            "originalDate": "2026-11-06",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000048",
+            "title": "GA lointaine",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000033",
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-12-20",
+            "dueDate": null,
+            "originalDate": "2026-12-20",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000041",
+            "title": "Sans date 2",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000033",
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": null,
+            "dueDate": null,
+            "originalDate": null,
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": true,
+            "suggestSplit": false
+          }
+        ]
+      }
+    }
+  },
+  "42 GET /api/goals/00000000-0000-4000-8000-000000000036": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000036",
+        "title": "Courir",
+        "description": null,
+        "motivation": null,
+        "category": "SANTE",
+        "horizon": "PERSONNALISEE",
+        "startDate": "2026-10-01",
+        "endDate": "2027-02-01",
+        "priority": "MOYENNE",
+        "status": "EN_PAUSE",
+        "progressMode": "MESURE",
+        "measureUnit": "km",
+        "startValue": 0,
+        "targetValue": 10,
+        "progress": {
+          "mode": "MESURE",
+          "current": 4,
+          "start": 0,
+          "target": 10,
+          "unit": "km",
+          "percent": 40,
+          "reached": false,
+          "label": "4 sur 10 km"
+        },
+        "nextAction": null,
+        "needsNextAction": false,
+        "milestones": [],
+        "readings": [
+          {
+            "id": "00000000-0000-4000-8000-000000000048",
+            "goalId": "00000000-0000-4000-8000-000000000036",
+            "value": 4,
+            "readOn": "2026-11-03",
+            "note": null
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000047",
+            "goalId": "00000000-0000-4000-8000-000000000036",
+            "value": 5,
+            "readOn": "2026-11-03",
+            "note": null
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000049",
+            "goalId": "00000000-0000-4000-8000-000000000036",
+            "value": 3,
+            "readOn": "2026-11-02",
+            "note": null
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000046",
+            "goalId": "00000000-0000-4000-8000-000000000036",
+            "value": 2,
+            "readOn": "2026-11-01",
+            "note": null
+          }
+        ],
+        "tasks": []
+      }
+    }
+  },
+  "43 GET /api/reviews?period=week&date=2026-11-04": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "from": "2026-11-02",
+        "to": "2026-11-08",
+        "tasks": {
+          "expected": 7,
+          "done": 3,
+          "pending": 4,
+          "rescheduledOut": 0,
+          "cancelled": 0,
+          "plannedAtStart": 0,
+          "addedDuringPeriod": 7,
+          "executionRate": {
+            "numerator": 3,
+            "denominator": 7,
+            "percent": 43
+          }
+        },
+        "events": {
+          "planned": 0,
+          "done": 0,
+          "cancelled": 0,
+          "expected": 0
+        },
+        "goals": [
+          {
+            "id": "00000000-0000-4000-8000-000000000033",
+            "title": "Algèbre",
+            "progress": {
+              "mode": "JALONS",
+              "done": 0,
+              "total": 4,
+              "percent": 0,
+              "label": "0 jalon terminé sur 4"
+            },
+            "milestonesDoneInPeriod": 0
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000035",
+            "title": "Chimie",
+            "progress": {
+              "mode": "JALONS",
+              "done": 0,
+              "total": 0,
+              "percent": null,
+              "label": "Ajoute un premier jalon"
+            },
+            "milestonesDoneInPeriod": 0
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000034",
+            "title": "Zoologie",
+            "progress": {
+              "mode": "JALONS",
+              "done": 0,
+              "total": 0,
+              "percent": null,
+              "label": "Ajoute un premier jalon"
+            },
+            "milestonesDoneInPeriod": 0
+          }
+        ],
+        "questions": [
+          "Qu'ai-je accompli ?",
+          "Qu'est-ce qui m'a bloqué ?",
+          "Quelle est ma prochaine priorité ?"
+        ]
+      }
+    }
+  },
+  "44 GET /api/tasks?limit=0": {
+    "status": 400,
+    "body": {
+      "success": false,
+      "code": "VALIDATION_ERROR",
+      "message": "Certaines informations sont invalides",
+      "details": [
+        {
+          "field": "limit",
+          "message": "Too small: expected number to be >=1"
+        }
+      ]
+    }
+  }
+}

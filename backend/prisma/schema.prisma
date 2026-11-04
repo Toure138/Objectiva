@@ -32,6 +32,7 @@ model User {
   goalReadings      GoalReading[]
   syncState         SyncState?
   tombstones        Tombstone[]
+  syncMutations     SyncMutation[]
   accounts          Account[]
   budgetCategories  BudgetCategory[]
   envelopes         Envelope[]
@@ -139,6 +140,8 @@ model Goal {
   events     Event[]
 
   // Numéro de version attribué par un déclencheur (spec 007) : sert à la synchronisation.
+  // Horloge hybride de chaque champ (synchronisation, spec 007) : sert à trancher les conflits.
+  fieldClocks   Json   @default("{}") @map("field_clocks")
   serverVersion BigInt @default(0) @map("server_version")
 
   @@index([userId, serverVersion])
@@ -159,6 +162,8 @@ model Milestone {
   events Event[]
 
   // Numéro de version attribué par un déclencheur (spec 007) : sert à la synchronisation.
+  // Horloge hybride de chaque champ (synchronisation, spec 007) : sert à trancher les conflits.
+  fieldClocks   Json     @default("{}") @map("field_clocks")
   serverVersion BigInt   @default(0) @map("server_version")
   updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   userId        String   @map("user_id") @db.Uuid
@@ -181,6 +186,8 @@ model GoalReading {
   goal Goal @relation(fields: [goalId], references: [id], onDelete: Cascade)
 
   // Numéro de version attribué par un déclencheur (spec 007) : sert à la synchronisation.
+  // Horloge hybride de chaque champ (synchronisation, spec 007) : sert à trancher les conflits.
+  fieldClocks   Json     @default("{}") @map("field_clocks")
   serverVersion BigInt   @default(0) @map("server_version")
   updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   userId        String   @map("user_id") @db.Uuid
@@ -246,6 +253,8 @@ model Event {
   tasks     Task[]
 
   // Numéro de version attribué par un déclencheur (spec 007) : sert à la synchronisation.
+  // Horloge hybride de chaque champ (synchronisation, spec 007) : sert à trancher les conflits.
+  fieldClocks   Json   @default("{}") @map("field_clocks")
   serverVersion BigInt @default(0) @map("server_version")
 
   @@index([userId, serverVersion])
@@ -286,6 +295,8 @@ model Task {
   event     Event?     @relation(fields: [eventId], references: [id], onDelete: SetNull)
 
   // Numéro de version attribué par un déclencheur (spec 007) : sert à la synchronisation.
+  // Horloge hybride de chaque champ (synchronisation, spec 007) : sert à trancher les conflits.
+  fieldClocks   Json   @default("{}") @map("field_clocks")
   serverVersion BigInt @default(0) @map("server_version")
 
   @@index([userId, serverVersion])
@@ -341,6 +352,8 @@ model Account {
   // Évite le doublon créé par un double appui sur « Démarrer mon budget ».
 
   // Numéro de version attribué par un déclencheur (spec 007) : sert à la synchronisation.
+  // Horloge hybride de chaque champ (synchronisation, spec 007) : sert à trancher les conflits.
+  fieldClocks   Json     @default("{}") @map("field_clocks")
   serverVersion BigInt   @default(0) @map("server_version")
   updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 
@@ -363,6 +376,8 @@ model BudgetCategory {
   transactions Transaction[]
 
   // Numéro de version attribué par un déclencheur (spec 007) : sert à la synchronisation.
+  // Horloge hybride de chaque champ (synchronisation, spec 007) : sert à trancher les conflits.
+  fieldClocks   Json     @default("{}") @map("field_clocks")
   serverVersion BigInt   @default(0) @map("server_version")
   updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 
@@ -383,6 +398,8 @@ model Envelope {
   category BudgetCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
 
   // Numéro de version attribué par un déclencheur (spec 007) : sert à la synchronisation.
+  // Horloge hybride de chaque champ (synchronisation, spec 007) : sert à trancher les conflits.
+  fieldClocks   Json     @default("{}") @map("field_clocks")
   serverVersion BigInt   @default(0) @map("server_version")
   updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 
@@ -414,6 +431,8 @@ model PlannedOperation {
   transactions Transaction[]
 
   // Numéro de version attribué par un déclencheur (spec 007) : sert à la synchronisation.
+  // Horloge hybride de chaque champ (synchronisation, spec 007) : sert à trancher les conflits.
+  fieldClocks   Json   @default("{}") @map("field_clocks")
   serverVersion BigInt @default(0) @map("server_version")
 
   @@index([userId, serverVersion])
@@ -442,6 +461,8 @@ model Transaction {
   plannedOperation PlannedOperation? @relation(fields: [plannedOperationId], references: [id], onDelete: SetNull)
 
   // Numéro de version attribué par un déclencheur (spec 007) : sert à la synchronisation.
+  // Horloge hybride de chaque champ (synchronisation, spec 007) : sert à trancher les conflits.
+  fieldClocks   Json     @default("{}") @map("field_clocks")
   serverVersion BigInt   @default(0) @map("server_version")
   updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 
@@ -490,4 +511,20 @@ model ServerMeta {
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
   @@map("server_meta")
+}
+
+// Modifications déjà traitées, pour qu'un envoi rejoué (réponse perdue) ne change rien et renvoie le même résultat.
+model SyncMutation {
+  userId     String   @map("user_id") @db.Uuid
+  mutationId String   @map("mutation_id") @db.Uuid
+  status     String   @db.VarChar(16)
+  reason     String?  @db.VarChar(40)
+  message    String?  @db.VarChar(300)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, mutationId])
+  @@index([createdAt])
+  @@map("sync_mutations")
 }

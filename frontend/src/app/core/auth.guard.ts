@@ -16,5 +16,6 @@ export const guestGuard: CanActivateFn = async () => {
   const auth = inject(AuthService);
   const router = inject(Router);
   await auth.restore();
-  return auth.isLoggedIn() ? router.createUrlTree(['/app/aujourdhui']) : true;
+  // Session expirée : l'écran de connexion reste accessible pour se reconnecter sans perdre les données locales.
+  return auth.isLoggedIn() && !auth.sessionExpired() ? router.createUrlTree(['/app/aujourdhui']) : true;
 };

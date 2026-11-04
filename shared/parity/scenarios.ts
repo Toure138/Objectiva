@@ -248,4 +248,71 @@ export const budgetMensuel: Scenario = {
   ],
 };
 
-export const SCENARIOS: Scenario[] = [tachesEtBilan, progressionMesuree, evenements, budgetMensuel];
+
+// ---------------------------------------------------------------------------------------------
+// 5. Ordre des listes : mêmes tris et mêmes départages sur le serveur et sur le téléphone
+
+const [GA, GB, GC, GM] = [uid(51), uid(52), uid(53), uid(54)];
+const [MS1, MS2, MS3, MS4] = [uid(55), uid(56), uid(57), uid(58)];
+const T = (n: number): string => uid(60 + n);
+
+export const ordreDesListes: Scenario = {
+  name: 'ordre-des-listes',
+  timezone: 'Africa/Abidjan',
+  steps: [
+    // Objectifs : tri par échéance, puis par création (GA et GC ont la même échéance).
+    post('/api/goals', { id: GB, title: 'Zoologie', category: 'ETUDES', status: 'EN_COURS', startDate: '2026-10-01', endDate: '2027-03-01' }),
+    post('/api/goals', { id: GA, title: 'Algèbre', category: 'ETUDES', status: 'EN_COURS', startDate: '2026-10-01', endDate: '2027-01-01' }),
+    post('/api/goals', { id: GC, title: 'Chimie', category: 'SANTE', status: 'A_DEMARRER', startDate: '2026-10-01', endDate: '2027-01-01' }),
+    post('/api/goals', { id: GM, title: 'Courir', category: 'SANTE', status: 'EN_PAUSE', startDate: '2026-10-01', endDate: '2027-02-01', progressMode: 'MESURE', measureUnit: 'km', startValue: 0, targetValue: 10 }),
+    // Jalons : échéance croissante, sans échéance en dernier, puis création.
+    post(`/api/goals/${GA}/milestones`, { id: MS1, title: 'Sans date (premier)' }),
+    post(`/api/goals/${GA}/milestones`, { id: MS2, title: 'Décembre', dueDate: '2026-12-01' }),
+    post(`/api/goals/${GA}/milestones`, { id: MS3, title: 'Novembre', dueDate: '2026-11-01' }),
+    post(`/api/goals/${GA}/milestones`, { id: MS4, title: 'Sans date (second)' }),
+    // Relevés : date décroissante, puis création décroissante.
+    post(`/api/goals/${GM}/readings`, { id: uid(70), value: 2, readOn: '2026-11-01' }),
+    post(`/api/goals/${GM}/readings`, { id: uid(71), value: 5, readOn: '2026-11-03' }),
+    post(`/api/goals/${GM}/readings`, { id: uid(72), value: 4, readOn: '2026-11-03' }),
+    post(`/api/goals/${GM}/readings`, { id: uid(73), value: 3, readOn: '2026-11-02' }),
+    // Tâches du jour : l'ordre alphabétique n'est PAS l'ordre de création.
+    post('/api/tasks', { id: T(1), title: 'Zèbre', workDate: '2026-11-04', goalId: GA }),
+    post('/api/tasks', { id: T(2), title: 'Abeille', workDate: '2026-11-04' }),
+    post('/api/tasks', { id: T(3), title: 'Mouette', workDate: '2026-11-04' }),
+    post('/api/tasks', { id: T(4), title: 'Sans date 1' }),
+    post('/api/tasks', { id: T(5), title: 'Sans date 2', goalId: GA }),
+    // À replanifier : date de travail croissante, puis création.
+    post('/api/tasks', { id: T(6), title: 'Hier B', workDate: '2026-11-03' }),
+    post('/api/tasks', { id: T(7), title: 'Avant-hier', workDate: '2026-11-02' }),
+    post('/api/tasks', { id: T(8), title: 'Hier A', workDate: '2026-11-03' }),
+    // En retard : échéance croissante, puis création (deux échéances identiques).
+    post('/api/tasks', { id: T(9), title: 'Retard 1er nov. (A)', dueDate: '2026-11-01' }),
+    post('/api/tasks', { id: T(10), title: 'Retard 30 oct.', dueDate: '2026-10-30', workDate: '2026-11-09' }),
+    post('/api/tasks', { id: T(11), title: 'Retard 1er nov. (B)', dueDate: '2026-11-01' }),
+    // Prochaine action de GA : la plus proche, les tâches sans date après.
+    post('/api/tasks', { id: T(12), title: 'GA lointaine', goalId: GA, workDate: '2026-12-20' }),
+    post('/api/tasks', { id: T(13), title: 'GA proche', goalId: GA, workDate: '2026-11-06' }),
+    // Terminées dans le désordre : tri par heure de réalisation.
+    post(`/api/tasks/${T(3)}/complete`),
+    post(`/api/tasks/${T(1)}/complete`),
+    post(`/api/tasks/${T(2)}/complete`),
+    get('/api/today'),
+    get('/api/today?date=2026-11-09'),
+    get('/api/tasks'),
+    get('/api/tasks?limit=4&offset=0'),
+    get('/api/tasks?limit=4&offset=4'),
+    get('/api/tasks?status=TODO&limit=5&offset=5'),
+    get('/api/tasks?from=2026-11-02&to=2026-11-04'),
+    get('/api/tasks?unscheduled=true'),
+    get(`/api/tasks?goalId=${GA}`),
+    get('/api/goals'),
+    get('/api/goals?status=EN_COURS'),
+    get('/api/goals?category=SANTE'),
+    get(`/api/goals/${GA}`),
+    get(`/api/goals/${GM}`),
+    get('/api/reviews?period=week&date=2026-11-04'),
+    { method: 'GET', path: '/api/tasks?limit=0', expect: 400 },
+  ],
+};
+
+export const SCENARIOS: Scenario[] = [tachesEtBilan, progressionMesuree, evenements, budgetMensuel, ordreDesListes];

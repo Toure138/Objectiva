@@ -10,6 +10,7 @@ import { authRouter } from './modules/auth/auth.routes.ts';
 import { budgetRouter } from './modules/budget/budget.routes.ts';
 import { eventsRouter } from './modules/events/events.routes.ts';
 import { goalsRouter, milestonesRouter, readingsRouter } from './modules/goals/goals.routes.ts';
+import { syncRouter } from './modules/sync/sync.routes.ts';
 import { reviewsRouter } from './modules/reviews/reviews.routes.ts';
 import { tasksRouter } from './modules/tasks/tasks.routes.ts';
 import { todayRouter } from './modules/today/today.routes.ts';
@@ -29,6 +30,8 @@ export function createApp() {
       },
     }),
   );
+  // Les envois de synchronisation peuvent contenir jusqu'à 200 modifications : limite plus large, sur cette route seulement.
+  app.use('/api/sync', express.json({ limit: '1mb' }));
   app.use(express.json({ limit: '100kb' }));
 
   app.get('/health', (_req, res) => {
@@ -58,6 +61,7 @@ export function createApp() {
   app.use('/api/readings', requireAuth, readingsRouter);
   app.use('/api/budget', requireAuth, budgetRouter);
   app.use('/api/events', requireAuth, eventsRouter);
+  app.use('/api/sync', requireAuth, syncRouter);
   app.use('/api/tasks', requireAuth, tasksRouter);
   app.use('/api/today', requireAuth, todayRouter);
   app.use('/api/reviews', requireAuth, reviewsRouter);

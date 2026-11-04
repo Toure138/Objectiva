@@ -2,6 +2,9 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Preferences } from '@capacitor/preferences';
 
+import { OfflineService } from '../offline/offline.service';
+import { SyncService } from '../offline/sync.service';
+
 import { ApiService, type AuthSession } from './api.service';
 import type { User } from './models';
 import { SettingsService } from './settings.service';
@@ -18,10 +21,17 @@ export class AuthService {
   private readonly api = inject(ApiService);
   private readonly router = inject(Router);
   private readonly settings = inject(SettingsService);
+  private readonly offline = inject(OfflineService);
+  private readonly sync = inject(SyncService);
 
   readonly token = signal<string | null>(null);
   readonly user = signal<User | null>(null);
   readonly isLoggedIn = computed(() => this.token() !== null);
+  /**
+   * Le serveur a refusé le jeton (expiré ou révoqué) mais des données locales existent : on ne déconnecte pas,
+   * pour ne pas bloquer l'accès aux données du téléphone. Se reconnecter reprend la synchronisation.
+   */
+  readonly sessionExpired = signal(false);
 
   private restored: Promise<void> | null = null;
 
@@ -36,6 +46,7 @@ export class AuthService {
       if (token) {
         this.token.set(token);
         this.user.set(user ? (JSON.parse(user) as User) : null);
+        await this.startOffline();
       }
     })();
     return this.restored;
@@ -56,6 +67,8 @@ export class AuthService {
     } catch {
       // Hors connexion : on oublie quand même la session localement.
     }
+    this.sync.stop();
+    await this.offline.detach();
     await this.clearSession();
     await this.router.navigateByUrl('/connexion', { replaceUrl: true });
   }
@@ -63,6 +76,13 @@ export class AuthService {
   /** Session refusée par le serveur (expirée ou révoquée). */
   async handleExpired(): Promise<void> {
     if (!this.token()) return;
+    // Des données locales existent : on les garde accessibles, la synchronisation attend une reconnexion.
+    if (this.offline.ready()) {
+      this.sessionExpired.set(true);
+      return;
+    }
+    this.sync.stop();
+    await this.offline.detach();
     await this.clearSession();
     await this.router.navigateByUrl('/connexion', { replaceUrl: true });
   }
@@ -75,6 +95,20 @@ export class AuthService {
       Preferences.set({ key: TOKEN_KEY, value: session.token }),
       Preferences.set({ key: USER_KEY, value: JSON.stringify(session.user) }),
     ]);
+    this.sessionExpired.set(false);
+    await this.startOffline();
+  }
+
+  /** Ouvre la base locale de l'utilisateur et lance la synchronisation (jamais bloquant, ni sans réseau). */
+  private async startOffline(): Promise<void> {
+    const user = this.user();
+    if (!user) return;
+    try {
+      await this.offline.attach({ id: user.id, timezone: user.timezone });
+      this.sync.start();
+    } catch {
+      // Stockage indisponible : l'application continue en mode connecté classique.
+    }
   }
 
   private async clearSession(): Promise<void> {

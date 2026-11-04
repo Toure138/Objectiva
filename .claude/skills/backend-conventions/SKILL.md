@@ -5,6 +5,11 @@ description: Conventions du backend Objectiva (Express 5 + TypeScript + Prisma 7
 
 # Conventions backend Objectiva
 
+## Logique métier partagée (spec 007)
+Les commandes et vues des tâches, objectifs, jalons, relevés, today et bilan sont dans `shared/src/domain/`
+(interface `Repo`) : une route appelle la commande avec `prismaRepo(userId)` et `ctxFor(timezone)`, sans règle.
+Corriger un bug de calcul sur ces entités = modifier `shared/`, puis relire les références de parité.
+
 ## Code partagé et synchronisation (spec 007)
 - Règles et schémas vivent dans `shared/src/` ; `<domaine>.rules.ts` et `<domaine>.schemas.ts` du backend
   sont de simples **façades** (`export *`). Une nouvelle règle de calcul ou un nouveau schéma de saisie se

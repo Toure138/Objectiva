@@ -32,9 +32,8 @@ progression mesurée, événements, budget mensuel, scénario EcoleSaaS. Suite e
 - **Sessions** : table `sessions` ; le JWT porte `sid`, vérifié en base à chaque requête →
   déconnexion = révocation immédiate.
 - Les **règles de calcul** (progression, report, taux du bilan, soldes, règlement, fuseaux…) vivent
-  dans `shared/` (voir ci-dessous), jamais en double. Tant que le moteur local n'existe pas (spec
-  007, phase 1), le frontend affiche les valeurs de l'API et ne recalcule pas ; ensuite il utilise
-  le même module `shared/`, jamais une copie.
+  dans `shared/` (voir ci-dessous), jamais en double. Le frontend n'en écrit aucune : il affiche les
+  valeurs de l'API ou du moteur local, qui exécutent le même code partagé.
 
 ### Code partagé (`shared/`) et synchronisation hors connexion (spec 007)
 - `shared/src/` : règles (`*.rules.ts`), schémas zod (`*.schemas.ts`), `dates.ts`, `ids.ts`,
@@ -53,6 +52,24 @@ progression mesurée, événements, budget mensuel, scénario EcoleSaaS. Suite e
   **volontaire** de comportement : `cd backend && UPDATE_GOLDEN=1 npx vitest run tests/parity`, puis
   relire le diff Git (les références sont la vérité du calcul, ne pas les régénérer à la légère).
 - Toute création accepte un `id` fourni par l'appareil (collision → 409 uniforme, sans fuite).
+- **Logique métier unique** (`shared/src/domain/`) : commandes et vues des tâches, objectifs, jalons,
+  relevés, « Aujourd'hui » et bilan, écrites une fois au-dessus de l'interface `Repo` (`repo.ts`). Serveur :
+  `backend/src/core/repo.prisma.ts` ; téléphone : `frontend/src/app/offline/local-repo.ts`. **Toute
+  modification du comportement de ces fonctions se fait dans `shared/`**, pas dans les routes. Les deux
+  implémentations de `Repo` doivent respecter les mêmes tris (voir le contrat dans `repo.ts`).
+- **Synchronisation** : `backend/src/modules/sync/` (`POST /api/sync/push`, `GET /api/sync/pull`, garde de
+  protocole). Arbitrage champ par champ par horloge hybride (`shared/src/hlc.ts`, colonne `field_clocks`),
+  suppression prioritaire, identifiants de modification mémorisés (`sync_mutations`).
+- **Téléphone** (`frontend/src/app/offline/`) : `local-db.ts` (Dexie, une base par utilisateur, schéma
+  versionné : ajouter une `version(n)`, ne jamais modifier la précédente), `local-engine.ts` (mêmes chemins que
+  l'API, transaction et journal d'envoi atomiques), `offline.service.ts` (porte d'entrée, `ready` = données
+  complètes), `sync.service.ts` (boucle, états, réessais). `ApiService` route vers le moteur local quand `ready`,
+  sinon vers HTTP. `AuthService` démarre la synchronisation ; une session expirée ne déconnecte pas tant que
+  des données locales existent (bandeau « Reconnecte-toi »).
+- **Rendez-vous et budget** ne sont pas encore locaux (phases 2 et 3) : ils exigent le réseau. Ajouter une
+  entité synchronisable = table (`user_id`, `server_version`, `updated_at`, `field_clocks`, déclencheurs),
+  `Repo`, schéma de champs dans `shared/src/sync.schemas.ts`, gestionnaire dans `sync.service.ts`, table
+  Dexie, routes du moteur local, et un scénario de parité.
 
 ### Frontend
 - `src/app/core/` : `api.service.ts` (**seul point d'appel HTTP**), `auth.service.ts` (session

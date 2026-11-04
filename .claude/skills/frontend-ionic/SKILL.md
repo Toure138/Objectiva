@@ -45,6 +45,14 @@ chargement et l'erreur avec « Réessayer », message explicite pour une liste v
   `--ok|--warn|--danger|--primary`, toujours avec libellé (et icône).
 - Vérifier chaque écran en clair **et** en sombre à 360×740 (captures Playwright).
 
+## Données : moteur local et synchronisation (spec 007)
+Les écrans appellent toujours `ApiService` (jamais `HttpClient`, jamais Dexie). Pour les entités déjà locales
+(tâches, objectifs, jalons, relevés, today, reviews), `ApiService` répond depuis le téléphone, avec ou sans
+réseau : un écran ne doit donc **jamais supposer le réseau** pour ces données ni afficher d'erreur réseau.
+L'état de synchronisation s'affiche par `app-sync-status` (déjà dans `app-page-header`). Nouvelle route locale :
+l'ajouter à `ROUTES` dans `offline/local-engine.ts` (mêmes chemins, statuts et messages que l'API) et à un
+scénario de parité.
+
 ## Code partagé (`shared/`)
 Les règles de calcul et schémas de `shared/src/` s'importent par chemin relatif **sans extension**
 (`'../../../../shared/src/goals.rules'`). Ne jamais copier une règle dans le frontend : l'importer.

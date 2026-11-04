@@ -1,6 +1,6 @@
 # 007 — Fonctionnement complet hors connexion (offline-first)
 
-> **Statut : décisions du § 6 validées le 2026-11-04 ; phase 0 terminée, phase 1 à venir.**
+> **Statut : décisions du § 6 validées le 2026-11-04 ; phases 0 et 1 terminées, phase 2 (événements) à venir.**
 > Cette fiche change l'architecture de l'application (le téléphone devient la référence des données).
 
 ## 1. Objectif
@@ -136,13 +136,61 @@ manuelle des conflits ; partage de données entre utilisateurs ; plusieurs compt
 ## 10. Tâches
 - [x] T0 Valider les décisions du § 6
 - [x] T1 P0 Fondations
-- [ ] T2 P1 Noyau
+- [x] T2 P1 Noyau
 - [ ] T3 P2 Événements
 - [ ] T4 P3 Budget
 - [ ] T5 P4 Robustesse
 - [ ] T6 Mettre à jour CLAUDE.md et les skills (règle de calcul partagé)
 
 ## 11. Revue
+### Phase 1 — Noyau (terminée)
+- Livré :
+  - **Logique métier unique** (`shared/src/domain/`) : commandes et vues des tâches, objectifs, jalons,
+    relevés, « Aujourd'hui » et bilan, écrites une seule fois au-dessus d'une interface de stockage
+    (`Repo`). Le serveur la branche sur Prisma (`backend/src/core/repo.prisma.ts`), le téléphone sur
+    IndexedDB (`frontend/src/app/offline/local-repo.ts`). Les anciens services du serveur ont disparu.
+  - **Protocole** : `POST /api/sync/push` (modifications idempotentes, arbitrage **champ par champ** par
+    horloge hybride, suppression prioritaire, références d'objectif détachées si le parent a disparu,
+    refus uniforme pour les données d'autrui) et `GET /api/sync/pull` (changements par pages, curseur
+    sûr même quand plusieurs tables sont tronquées, pierres tombales). Garde de version (426).
+  - **Téléphone** : base IndexedDB par utilisateur (Dexie), moteur local qui répond aux mêmes chemins
+    que l'API, journal d'envoi atomique avec chaque écriture, horloge hybride, application des changements
+    reçus, service de synchronisation (lots de 200, réessais 5 s → 5 min, retour du réseau, retour au
+    premier plan, toutes les 60 s) et pastille d'état (« Hors ligne · 2 », « Reconnecte-toi », « Mise à
+    jour », « Synchro en pause »). Un compte neuf ou un nouvel appareil télécharge tout une fois, puis
+    fonctionne sans réseau.
+  - **Session expirée** : si des données locales existent, l'utilisateur n'est pas déconnecté (sinon il
+    perdrait l'accès à ses propres données) : bandeau « Reconnecte-toi pour synchroniser », journal et
+    données intacts.
+- Vérifications exécutées :
+  - Backend `npx vitest run` : 178/178 (dont 24 tests du protocole, 3 de l'horloge, parité sur 5
+    scénarios) ; frontend `ng test` : 42/42 dont **3 scénarios de parité rejoués sur le moteur local**
+    (taches-et-bilan, progression-mesuree, ordre-des-listes) à l'identique des références du serveur, et
+    17 tests de synchronisation (messages valides pour les schémas du serveur, horloge croissante même si
+    l'heure recule, arbitrage champ par champ, suppression non envoyée jamais ressuscitée, lots de 200,
+    coupure en plein envoi, 401, 426, serveur restauré, une seule synchronisation à la fois).
+  - **e2e réel** (`frontend/e2e/hors-connexion.spec.ts`, navigateur 360×740, vraie API) : inscription,
+    données téléchargées, **serveur coupé**, création de tâches et d'un objectif, cochage, bilan,
+    « Hors ligne », **redémarrage de l'application serveur toujours coupé** : tout est là, retour du
+    serveur, synchronisation, le serveur contient tout, un **second appareil** retrouve tout.
+  - **Contrôles par mutation** : serveur (plafond de pagination supprimé, arbitrage par horloge supprimé)
+    et téléphone (tri inversé, « sans date en premier », serveur qui écrase toujours le local, suppression
+    locale ressuscitée) : tous détectés. Un trou de couverture sur les tris a été comblé par le scénario
+    `ordre-des-listes`.
+- Écarts restants (phase 1) :
+  - **Rendez-vous et budget ne sont pas encore sur le téléphone** (phases 2 et 3) : ils exigent le réseau.
+    « Aujourd'hui » et le bilan les demandent au serveur quand il répond (liste vide sinon).
+  - **Web** : hors connexion, une page déjà ouverte continue de fonctionner, mais recharger l'application
+    web sans réseau échoue (pas de service worker). L'application Android embarque ses fichiers : pas
+    concernée. À traiter si le web hors connexion devient un objectif.
+  - **Session** : le serveur expire toujours les sessions à 30 jours ; le glissant à 12 mois est prévu en
+    phase 4. Sans effet sur les données (jamais effacées), mais la synchronisation attend une reconnexion.
+  - Les modifications faites par l'API REST sur des données synchronisées n'ont pas d'horloge : elles
+    cèdent devant toute modification d'un appareil (acceptable tant que l'application n'utilise que la
+    synchronisation pour ces données).
+  - Deux copies de `zod` (shared/ et backend) : sans effet constaté.
+  - Pas de test sur un vrai téléphone Android (stockage de la WebView, application en arrière-plan).
+
 ### Phase 0 — Fondations (terminée)
 - Livré :
   - `shared/` : règles de calcul, schémas de validation, dates et protocole, partagés par l'API et
