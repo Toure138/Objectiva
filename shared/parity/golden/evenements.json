@@ -1,0 +1,1219 @@
+{
+  "02 POST /api/goals": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000001f",
+        "title": "Présenter EcoleSaaS",
+        "description": null,
+        "motivation": null,
+        "category": "CARRIERE",
+        "horizon": "PERSONNALISEE",
+        "startDate": "2026-10-01",
+        "endDate": "2027-06-30",
+        "priority": "MOYENNE",
+        "status": "EN_COURS",
+        "progressMode": "JALONS",
+        "measureUnit": null,
+        "startValue": null,
+        "targetValue": null,
+        "progress": {
+          "mode": "JALONS",
+          "done": 0,
+          "total": 0,
+          "percent": null,
+          "label": "Ajoute un premier jalon"
+        },
+        "nextAction": null,
+        "needsNextAction": true
+      }
+    }
+  },
+  "03 POST /api/events": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000020",
+        "type": "REUNION",
+        "title": "Démonstration au collège Les Palmiers",
+        "date": "2026-11-05",
+        "startTime": "10:00",
+        "endTime": "11:30",
+        "startsAt": "2026-11-05T09:00:00.000Z",
+        "endsAt": "2026-11-05T10:30:00.000Z",
+        "location": "Collège Les Palmiers",
+        "link": null,
+        "participants": [
+          "M. Koné (directeur)",
+          "Mme Traoré"
+        ],
+        "agenda": "Présenter EcoleSaaS",
+        "decisions": null,
+        "status": "PREVU",
+        "goalId": "00000000-0000-4000-8000-00000000001f",
+        "milestoneId": null,
+        "travelBeforeMinutes": 45,
+        "prepBeforeMinutes": 30,
+        "blockedMinutes": 75,
+        "blockedFrom": "2026-11-05T07:45:00.000Z",
+        "blockedFromTime": "08:45",
+        "leaveAtTime": "09:15",
+        "completedAt": null
+      }
+    }
+  },
+  "04 POST /api/events": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000021",
+        "type": "APPEL",
+        "title": "Appel avec le comptable",
+        "date": "2026-11-04",
+        "startTime": "17:00",
+        "endTime": "17:30",
+        "startsAt": "2026-11-04T16:00:00.000Z",
+        "endsAt": "2026-11-04T16:30:00.000Z",
+        "location": null,
+        "link": null,
+        "participants": [],
+        "agenda": null,
+        "decisions": null,
+        "status": "PREVU",
+        "goalId": null,
+        "milestoneId": null,
+        "travelBeforeMinutes": 0,
+        "prepBeforeMinutes": 0,
+        "blockedMinutes": 0,
+        "blockedFrom": "2026-11-04T16:00:00.000Z",
+        "blockedFromTime": "17:00",
+        "leaveAtTime": null,
+        "completedAt": null
+      }
+    }
+  },
+  "05 POST /api/events": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000022",
+        "type": "VISIO",
+        "title": "Visio de nuit",
+        "date": "2026-11-06",
+        "startTime": "00:30",
+        "endTime": "01:00",
+        "startsAt": "2026-11-05T23:30:00.000Z",
+        "endsAt": "2026-11-06T00:00:00.000Z",
+        "location": null,
+        "link": "https://meet.exemple.fr/salle-12",
+        "participants": [],
+        "agenda": null,
+        "decisions": null,
+        "status": "PREVU",
+        "goalId": null,
+        "milestoneId": null,
+        "travelBeforeMinutes": 0,
+        "prepBeforeMinutes": 0,
+        "blockedMinutes": 0,
+        "blockedFrom": "2026-11-05T23:30:00.000Z",
+        "blockedFromTime": "00:30",
+        "leaveAtTime": null,
+        "completedAt": null
+      }
+    }
+  },
+  "06 POST /api/events": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000023",
+        "type": "RENDEZ_VOUS",
+        "title": "Avant le changement d’heure",
+        "date": "2027-03-28",
+        "startTime": "01:30",
+        "endTime": "01:45",
+        "startsAt": "2027-03-28T00:30:00.000Z",
+        "endsAt": "2027-03-28T00:45:00.000Z",
+        "location": null,
+        "link": null,
+        "participants": [],
+        "agenda": null,
+        "decisions": null,
+        "status": "PREVU",
+        "goalId": null,
+        "milestoneId": null,
+        "travelBeforeMinutes": 0,
+        "prepBeforeMinutes": 0,
+        "blockedMinutes": 0,
+        "blockedFrom": "2027-03-28T00:30:00.000Z",
+        "blockedFromTime": "01:30",
+        "leaveAtTime": null,
+        "completedAt": null
+      }
+    }
+  },
+  "07 POST /api/events": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000024",
+        "type": "RENCONTRE",
+        "title": "Après le changement d’heure",
+        "date": "2027-03-28",
+        "startTime": "03:30",
+        "endTime": "04:00",
+        "startsAt": "2027-03-28T01:30:00.000Z",
+        "endsAt": "2027-03-28T02:00:00.000Z",
+        "location": null,
+        "link": null,
+        "participants": [],
+        "agenda": null,
+        "decisions": null,
+        "status": "PREVU",
+        "goalId": null,
+        "milestoneId": null,
+        "travelBeforeMinutes": 0,
+        "prepBeforeMinutes": 0,
+        "blockedMinutes": 0,
+        "blockedFrom": "2027-03-28T01:30:00.000Z",
+        "blockedFromTime": "03:30",
+        "leaveAtTime": null,
+        "completedAt": null
+      }
+    }
+  },
+  "08 POST /api/events": {
+    "status": 400,
+    "body": {
+      "success": false,
+      "code": "VALIDATION_ERROR",
+      "message": "Certaines informations sont invalides",
+      "details": [
+        {
+          "field": "endTime",
+          "message": "L'heure de fin doit suivre l'heure de début"
+        }
+      ]
+    }
+  },
+  "09 POST /api/events": {
+    "status": 400,
+    "body": {
+      "success": false,
+      "code": "VALIDATION_ERROR",
+      "message": "Certaines informations sont invalides",
+      "details": [
+        {
+          "field": "link",
+          "message": "Le lien doit commencer par http:// ou https://"
+        }
+      ]
+    }
+  },
+  "10 POST /api/events/00000000-0000-4000-8000-000000000020/tasks": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "<uuid#1>",
+        "title": "Préparer : Démonstration au collège Les Palmiers",
+        "notes": null,
+        "goalId": "00000000-0000-4000-8000-00000000001f",
+        "milestoneId": null,
+        "eventId": "00000000-0000-4000-8000-000000000020",
+        "eventRole": "PREPARATION",
+        "workDate": "2026-11-04",
+        "dueDate": null,
+        "originalDate": "2026-11-04",
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "11 POST /api/events/00000000-0000-4000-8000-000000000020/tasks": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "<uuid#2>",
+        "title": "Envoyer le devis",
+        "notes": null,
+        "goalId": "00000000-0000-4000-8000-00000000001f",
+        "milestoneId": null,
+        "eventId": "00000000-0000-4000-8000-000000000020",
+        "eventRole": "SUIVI",
+        "workDate": null,
+        "dueDate": null,
+        "originalDate": null,
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": true,
+        "suggestSplit": false
+      }
+    }
+  },
+  "12 POST /api/events/00000000-0000-4000-8000-000000000021/tasks": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "<uuid#3>",
+        "title": "Préparer : Appel avec le comptable",
+        "notes": null,
+        "goalId": null,
+        "milestoneId": null,
+        "eventId": "00000000-0000-4000-8000-000000000021",
+        "eventRole": "PREPARATION",
+        "workDate": "2026-11-04",
+        "dueDate": null,
+        "originalDate": "2026-11-04",
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "13 POST /api/events/00000000-0000-4000-8000-000000000020/complete": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000020",
+        "type": "REUNION",
+        "title": "Démonstration au collège Les Palmiers",
+        "date": "2026-11-05",
+        "startTime": "10:00",
+        "endTime": "11:30",
+        "startsAt": "2026-11-05T09:00:00.000Z",
+        "endsAt": "2026-11-05T10:30:00.000Z",
+        "location": "Collège Les Palmiers",
+        "link": null,
+        "participants": [
+          "M. Koné (directeur)",
+          "Mme Traoré"
+        ],
+        "agenda": "Présenter EcoleSaaS",
+        "decisions": "Pilote validé pour janvier. Envoyer le devis.",
+        "status": "REALISE",
+        "goalId": "00000000-0000-4000-8000-00000000001f",
+        "milestoneId": null,
+        "travelBeforeMinutes": 45,
+        "prepBeforeMinutes": 30,
+        "blockedMinutes": 75,
+        "blockedFrom": "2026-11-05T07:45:00.000Z",
+        "blockedFromTime": "08:45",
+        "leaveAtTime": "09:15",
+        "completedAt": "2026-11-04T09:00:13.000Z"
+      }
+    }
+  },
+  "14 POST /api/events/00000000-0000-4000-8000-000000000020/complete": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000020",
+        "type": "REUNION",
+        "title": "Démonstration au collège Les Palmiers",
+        "date": "2026-11-05",
+        "startTime": "10:00",
+        "endTime": "11:30",
+        "startsAt": "2026-11-05T09:00:00.000Z",
+        "endsAt": "2026-11-05T10:30:00.000Z",
+        "location": "Collège Les Palmiers",
+        "link": null,
+        "participants": [
+          "M. Koné (directeur)",
+          "Mme Traoré"
+        ],
+        "agenda": "Présenter EcoleSaaS",
+        "decisions": "Pilote validé pour janvier. Envoyer le devis.",
+        "status": "REALISE",
+        "goalId": "00000000-0000-4000-8000-00000000001f",
+        "milestoneId": null,
+        "travelBeforeMinutes": 45,
+        "prepBeforeMinutes": 30,
+        "blockedMinutes": 75,
+        "blockedFrom": "2026-11-05T07:45:00.000Z",
+        "blockedFromTime": "08:45",
+        "leaveAtTime": "09:15",
+        "completedAt": "2026-11-04T09:00:13.000Z"
+      }
+    }
+  },
+  "15 POST /api/events/00000000-0000-4000-8000-000000000020/cancel": {
+    "status": 409,
+    "body": {
+      "success": false,
+      "code": "CONFLICT",
+      "message": "Un événement réalisé ne peut pas être annulé : rouvre-le d’abord"
+    }
+  },
+  "16 POST /api/events/00000000-0000-4000-8000-000000000022/cancel": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000022",
+        "type": "VISIO",
+        "title": "Visio de nuit",
+        "date": "2026-11-06",
+        "startTime": "00:30",
+        "endTime": "01:00",
+        "startsAt": "2026-11-05T23:30:00.000Z",
+        "endsAt": "2026-11-06T00:00:00.000Z",
+        "location": null,
+        "link": "https://meet.exemple.fr/salle-12",
+        "participants": [],
+        "agenda": null,
+        "decisions": null,
+        "status": "ANNULE",
+        "goalId": null,
+        "milestoneId": null,
+        "travelBeforeMinutes": 0,
+        "prepBeforeMinutes": 0,
+        "blockedMinutes": 0,
+        "blockedFrom": "2026-11-05T23:30:00.000Z",
+        "blockedFromTime": "00:30",
+        "leaveAtTime": null,
+        "completedAt": null
+      }
+    }
+  },
+  "17 POST /api/events/00000000-0000-4000-8000-000000000022/cancel": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000022",
+        "type": "VISIO",
+        "title": "Visio de nuit",
+        "date": "2026-11-06",
+        "startTime": "00:30",
+        "endTime": "01:00",
+        "startsAt": "2026-11-05T23:30:00.000Z",
+        "endsAt": "2026-11-06T00:00:00.000Z",
+        "location": null,
+        "link": "https://meet.exemple.fr/salle-12",
+        "participants": [],
+        "agenda": null,
+        "decisions": null,
+        "status": "ANNULE",
+        "goalId": null,
+        "milestoneId": null,
+        "travelBeforeMinutes": 0,
+        "prepBeforeMinutes": 0,
+        "blockedMinutes": 0,
+        "blockedFrom": "2026-11-05T23:30:00.000Z",
+        "blockedFromTime": "00:30",
+        "leaveAtTime": null,
+        "completedAt": null
+      }
+    }
+  },
+  "18 POST /api/events/00000000-0000-4000-8000-000000000022/complete": {
+    "status": 409,
+    "body": {
+      "success": false,
+      "code": "CONFLICT",
+      "message": "Un événement annulé ne peut pas être réalisé : rouvre-le d’abord"
+    }
+  },
+  "19 POST /api/events/00000000-0000-4000-8000-000000000022/reopen": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000022",
+        "type": "VISIO",
+        "title": "Visio de nuit",
+        "date": "2026-11-06",
+        "startTime": "00:30",
+        "endTime": "01:00",
+        "startsAt": "2026-11-05T23:30:00.000Z",
+        "endsAt": "2026-11-06T00:00:00.000Z",
+        "location": null,
+        "link": "https://meet.exemple.fr/salle-12",
+        "participants": [],
+        "agenda": null,
+        "decisions": null,
+        "status": "PREVU",
+        "goalId": null,
+        "milestoneId": null,
+        "travelBeforeMinutes": 0,
+        "prepBeforeMinutes": 0,
+        "blockedMinutes": 0,
+        "blockedFrom": "2026-11-05T23:30:00.000Z",
+        "blockedFromTime": "00:30",
+        "leaveAtTime": null,
+        "completedAt": null
+      }
+    }
+  },
+  "20 PATCH /api/events/00000000-0000-4000-8000-000000000021": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000021",
+        "type": "APPEL",
+        "title": "Appel avec le comptable (avancé)",
+        "date": "2026-11-04",
+        "startTime": "16:00",
+        "endTime": "16:45",
+        "startsAt": "2026-11-04T15:00:00.000Z",
+        "endsAt": "2026-11-04T15:45:00.000Z",
+        "location": null,
+        "link": null,
+        "participants": [],
+        "agenda": null,
+        "decisions": null,
+        "status": "PREVU",
+        "goalId": null,
+        "milestoneId": null,
+        "travelBeforeMinutes": 0,
+        "prepBeforeMinutes": 0,
+        "blockedMinutes": 0,
+        "blockedFrom": "2026-11-04T15:00:00.000Z",
+        "blockedFromTime": "16:00",
+        "leaveAtTime": null,
+        "completedAt": null
+      }
+    }
+  },
+  "21 PATCH /api/events/00000000-0000-4000-8000-000000000021": {
+    "status": 400,
+    "body": {
+      "success": false,
+      "code": "VALIDATION_ERROR",
+      "message": "L'heure de fin doit suivre l'heure de début",
+      "details": [
+        {
+          "field": "endTime",
+          "message": "L'heure de fin doit suivre l'heure de début"
+        }
+      ]
+    }
+  },
+  "22 GET /api/events?from=2026-11-01&to=2026-11-30": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": [
+        {
+          "id": "00000000-0000-4000-8000-000000000021",
+          "type": "APPEL",
+          "title": "Appel avec le comptable (avancé)",
+          "date": "2026-11-04",
+          "startTime": "16:00",
+          "endTime": "16:45",
+          "startsAt": "2026-11-04T15:00:00.000Z",
+          "endsAt": "2026-11-04T15:45:00.000Z",
+          "location": null,
+          "link": null,
+          "participants": [],
+          "agenda": null,
+          "decisions": null,
+          "status": "PREVU",
+          "goalId": null,
+          "milestoneId": null,
+          "travelBeforeMinutes": 0,
+          "prepBeforeMinutes": 0,
+          "blockedMinutes": 0,
+          "blockedFrom": "2026-11-04T15:00:00.000Z",
+          "blockedFromTime": "16:00",
+          "leaveAtTime": null,
+          "completedAt": null
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000020",
+          "type": "REUNION",
+          "title": "Démonstration au collège Les Palmiers",
+          "date": "2026-11-05",
+          "startTime": "10:00",
+          "endTime": "11:30",
+          "startsAt": "2026-11-05T09:00:00.000Z",
+          "endsAt": "2026-11-05T10:30:00.000Z",
+          "location": "Collège Les Palmiers",
+          "link": null,
+          "participants": [
+            "M. Koné (directeur)",
+            "Mme Traoré"
+          ],
+          "agenda": "Présenter EcoleSaaS",
+          "decisions": "Pilote validé pour janvier. Envoyer le devis.",
+          "status": "REALISE",
+          "goalId": "00000000-0000-4000-8000-00000000001f",
+          "milestoneId": null,
+          "travelBeforeMinutes": 45,
+          "prepBeforeMinutes": 30,
+          "blockedMinutes": 75,
+          "blockedFrom": "2026-11-05T07:45:00.000Z",
+          "blockedFromTime": "08:45",
+          "leaveAtTime": "09:15",
+          "completedAt": "2026-11-04T09:00:13.000Z"
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000022",
+          "type": "VISIO",
+          "title": "Visio de nuit",
+          "date": "2026-11-06",
+          "startTime": "00:30",
+          "endTime": "01:00",
+          "startsAt": "2026-11-05T23:30:00.000Z",
+          "endsAt": "2026-11-06T00:00:00.000Z",
+          "location": null,
+          "link": "https://meet.exemple.fr/salle-12",
+          "participants": [],
+          "agenda": null,
+          "decisions": null,
+          "status": "PREVU",
+          "goalId": null,
+          "milestoneId": null,
+          "travelBeforeMinutes": 0,
+          "prepBeforeMinutes": 0,
+          "blockedMinutes": 0,
+          "blockedFrom": "2026-11-05T23:30:00.000Z",
+          "blockedFromTime": "00:30",
+          "leaveAtTime": null,
+          "completedAt": null
+        }
+      ]
+    }
+  },
+  "23 GET /api/events?status=PREVU": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": [
+        {
+          "id": "00000000-0000-4000-8000-000000000021",
+          "type": "APPEL",
+          "title": "Appel avec le comptable (avancé)",
+          "date": "2026-11-04",
+          "startTime": "16:00",
+          "endTime": "16:45",
+          "startsAt": "2026-11-04T15:00:00.000Z",
+          "endsAt": "2026-11-04T15:45:00.000Z",
+          "location": null,
+          "link": null,
+          "participants": [],
+          "agenda": null,
+          "decisions": null,
+          "status": "PREVU",
+          "goalId": null,
+          "milestoneId": null,
+          "travelBeforeMinutes": 0,
+          "prepBeforeMinutes": 0,
+          "blockedMinutes": 0,
+          "blockedFrom": "2026-11-04T15:00:00.000Z",
+          "blockedFromTime": "16:00",
+          "leaveAtTime": null,
+          "completedAt": null
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000022",
+          "type": "VISIO",
+          "title": "Visio de nuit",
+          "date": "2026-11-06",
+          "startTime": "00:30",
+          "endTime": "01:00",
+          "startsAt": "2026-11-05T23:30:00.000Z",
+          "endsAt": "2026-11-06T00:00:00.000Z",
+          "location": null,
+          "link": "https://meet.exemple.fr/salle-12",
+          "participants": [],
+          "agenda": null,
+          "decisions": null,
+          "status": "PREVU",
+          "goalId": null,
+          "milestoneId": null,
+          "travelBeforeMinutes": 0,
+          "prepBeforeMinutes": 0,
+          "blockedMinutes": 0,
+          "blockedFrom": "2026-11-05T23:30:00.000Z",
+          "blockedFromTime": "00:30",
+          "leaveAtTime": null,
+          "completedAt": null
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000023",
+          "type": "RENDEZ_VOUS",
+          "title": "Avant le changement d’heure",
+          "date": "2027-03-28",
+          "startTime": "01:30",
+          "endTime": "01:45",
+          "startsAt": "2027-03-28T00:30:00.000Z",
+          "endsAt": "2027-03-28T00:45:00.000Z",
+          "location": null,
+          "link": null,
+          "participants": [],
+          "agenda": null,
+          "decisions": null,
+          "status": "PREVU",
+          "goalId": null,
+          "milestoneId": null,
+          "travelBeforeMinutes": 0,
+          "prepBeforeMinutes": 0,
+          "blockedMinutes": 0,
+          "blockedFrom": "2027-03-28T00:30:00.000Z",
+          "blockedFromTime": "01:30",
+          "leaveAtTime": null,
+          "completedAt": null
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000024",
+          "type": "RENCONTRE",
+          "title": "Après le changement d’heure",
+          "date": "2027-03-28",
+          "startTime": "03:30",
+          "endTime": "04:00",
+          "startsAt": "2027-03-28T01:30:00.000Z",
+          "endsAt": "2027-03-28T02:00:00.000Z",
+          "location": null,
+          "link": null,
+          "participants": [],
+          "agenda": null,
+          "decisions": null,
+          "status": "PREVU",
+          "goalId": null,
+          "milestoneId": null,
+          "travelBeforeMinutes": 0,
+          "prepBeforeMinutes": 0,
+          "blockedMinutes": 0,
+          "blockedFrom": "2027-03-28T01:30:00.000Z",
+          "blockedFromTime": "03:30",
+          "leaveAtTime": null,
+          "completedAt": null
+        }
+      ]
+    }
+  },
+  "24 GET /api/events?from=2027-03-28&to=2027-03-28": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": [
+        {
+          "id": "00000000-0000-4000-8000-000000000023",
+          "type": "RENDEZ_VOUS",
+          "title": "Avant le changement d’heure",
+          "date": "2027-03-28",
+          "startTime": "01:30",
+          "endTime": "01:45",
+          "startsAt": "2027-03-28T00:30:00.000Z",
+          "endsAt": "2027-03-28T00:45:00.000Z",
+          "location": null,
+          "link": null,
+          "participants": [],
+          "agenda": null,
+          "decisions": null,
+          "status": "PREVU",
+          "goalId": null,
+          "milestoneId": null,
+          "travelBeforeMinutes": 0,
+          "prepBeforeMinutes": 0,
+          "blockedMinutes": 0,
+          "blockedFrom": "2027-03-28T00:30:00.000Z",
+          "blockedFromTime": "01:30",
+          "leaveAtTime": null,
+          "completedAt": null
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000024",
+          "type": "RENCONTRE",
+          "title": "Après le changement d’heure",
+          "date": "2027-03-28",
+          "startTime": "03:30",
+          "endTime": "04:00",
+          "startsAt": "2027-03-28T01:30:00.000Z",
+          "endsAt": "2027-03-28T02:00:00.000Z",
+          "location": null,
+          "link": null,
+          "participants": [],
+          "agenda": null,
+          "decisions": null,
+          "status": "PREVU",
+          "goalId": null,
+          "milestoneId": null,
+          "travelBeforeMinutes": 0,
+          "prepBeforeMinutes": 0,
+          "blockedMinutes": 0,
+          "blockedFrom": "2027-03-28T01:30:00.000Z",
+          "blockedFromTime": "03:30",
+          "leaveAtTime": null,
+          "completedAt": null
+        }
+      ]
+    }
+  },
+  "25 GET /api/events/00000000-0000-4000-8000-000000000020": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000020",
+        "type": "REUNION",
+        "title": "Démonstration au collège Les Palmiers",
+        "date": "2026-11-05",
+        "startTime": "10:00",
+        "endTime": "11:30",
+        "startsAt": "2026-11-05T09:00:00.000Z",
+        "endsAt": "2026-11-05T10:30:00.000Z",
+        "location": "Collège Les Palmiers",
+        "link": null,
+        "participants": [
+          "M. Koné (directeur)",
+          "Mme Traoré"
+        ],
+        "agenda": "Présenter EcoleSaaS",
+        "decisions": "Pilote validé pour janvier. Envoyer le devis.",
+        "status": "REALISE",
+        "goalId": "00000000-0000-4000-8000-00000000001f",
+        "milestoneId": null,
+        "travelBeforeMinutes": 45,
+        "prepBeforeMinutes": 30,
+        "blockedMinutes": 75,
+        "blockedFrom": "2026-11-05T07:45:00.000Z",
+        "blockedFromTime": "08:45",
+        "leaveAtTime": "09:15",
+        "completedAt": "2026-11-04T09:00:13.000Z",
+        "tasks": [
+          {
+            "id": "<uuid#1>",
+            "title": "Préparer : Démonstration au collège Les Palmiers",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-00000000001f",
+            "milestoneId": null,
+            "eventId": "00000000-0000-4000-8000-000000000020",
+            "eventRole": "PREPARATION",
+            "workDate": "2026-11-04",
+            "dueDate": null,
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "<uuid#2>",
+            "title": "Envoyer le devis",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-00000000001f",
+            "milestoneId": null,
+            "eventId": "00000000-0000-4000-8000-000000000020",
+            "eventRole": "SUIVI",
+            "workDate": null,
+            "dueDate": null,
+            "originalDate": null,
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": true,
+            "suggestSplit": false
+          }
+        ]
+      }
+    }
+  },
+  "26 GET /api/today?date=2026-11-05": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "date": "2026-11-05",
+        "events": [
+          {
+            "id": "00000000-0000-4000-8000-000000000020",
+            "type": "REUNION",
+            "title": "Démonstration au collège Les Palmiers",
+            "date": "2026-11-05",
+            "startTime": "10:00",
+            "endTime": "11:30",
+            "startsAt": "2026-11-05T09:00:00.000Z",
+            "endsAt": "2026-11-05T10:30:00.000Z",
+            "location": "Collège Les Palmiers",
+            "link": null,
+            "participants": [
+              "M. Koné (directeur)",
+              "Mme Traoré"
+            ],
+            "agenda": "Présenter EcoleSaaS",
+            "decisions": "Pilote validé pour janvier. Envoyer le devis.",
+            "status": "REALISE",
+            "goalId": "00000000-0000-4000-8000-00000000001f",
+            "milestoneId": null,
+            "travelBeforeMinutes": 45,
+            "prepBeforeMinutes": 30,
+            "blockedMinutes": 75,
+            "blockedFrom": "2026-11-05T07:45:00.000Z",
+            "blockedFromTime": "08:45",
+            "leaveAtTime": "09:15",
+            "completedAt": "2026-11-04T09:00:13.000Z"
+          }
+        ],
+        "planned": [],
+        "done": [],
+        "toReschedule": [
+          {
+            "id": "<uuid#1>",
+            "title": "Préparer : Démonstration au collège Les Palmiers",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-00000000001f",
+            "milestoneId": null,
+            "eventId": "00000000-0000-4000-8000-000000000020",
+            "eventRole": "PREPARATION",
+            "workDate": "2026-11-04",
+            "dueDate": null,
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": true,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "<uuid#3>",
+            "title": "Préparer : Appel avec le comptable",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": "00000000-0000-4000-8000-000000000021",
+            "eventRole": "PREPARATION",
+            "workDate": "2026-11-04",
+            "dueDate": null,
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": true,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          }
+        ],
+        "overdue": [],
+        "goalsWithoutNextAction": [],
+        "emptyMessage": "Aucune action prévue"
+      }
+    }
+  },
+  "27 GET /api/today": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "date": "2026-11-04",
+        "events": [
+          {
+            "id": "00000000-0000-4000-8000-000000000021",
+            "type": "APPEL",
+            "title": "Appel avec le comptable (avancé)",
+            "date": "2026-11-04",
+            "startTime": "16:00",
+            "endTime": "16:45",
+            "startsAt": "2026-11-04T15:00:00.000Z",
+            "endsAt": "2026-11-04T15:45:00.000Z",
+            "location": null,
+            "link": null,
+            "participants": [],
+            "agenda": null,
+            "decisions": null,
+            "status": "PREVU",
+            "goalId": null,
+            "milestoneId": null,
+            "travelBeforeMinutes": 0,
+            "prepBeforeMinutes": 0,
+            "blockedMinutes": 0,
+            "blockedFrom": "2026-11-04T15:00:00.000Z",
+            "blockedFromTime": "16:00",
+            "leaveAtTime": null,
+            "completedAt": null
+          }
+        ],
+        "planned": [
+          {
+            "id": "<uuid#1>",
+            "title": "Préparer : Démonstration au collège Les Palmiers",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-00000000001f",
+            "milestoneId": null,
+            "eventId": "00000000-0000-4000-8000-000000000020",
+            "eventRole": "PREPARATION",
+            "workDate": "2026-11-04",
+            "dueDate": null,
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "<uuid#3>",
+            "title": "Préparer : Appel avec le comptable",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": "00000000-0000-4000-8000-000000000021",
+            "eventRole": "PREPARATION",
+            "workDate": "2026-11-04",
+            "dueDate": null,
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          }
+        ],
+        "done": [],
+        "toReschedule": [],
+        "overdue": [],
+        "goalsWithoutNextAction": [],
+        "emptyMessage": null
+      }
+    }
+  },
+  "28 GET /api/reviews?period=day&date=2026-11-05": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "from": "2026-11-05",
+        "to": "2026-11-05",
+        "tasks": {
+          "expected": 0,
+          "done": 0,
+          "pending": 0,
+          "rescheduledOut": 0,
+          "cancelled": 0,
+          "plannedAtStart": 0,
+          "addedDuringPeriod": 0,
+          "executionRate": null
+        },
+        "events": {
+          "planned": 0,
+          "done": 1,
+          "cancelled": 0,
+          "expected": 1
+        },
+        "goals": [
+          {
+            "id": "00000000-0000-4000-8000-00000000001f",
+            "title": "Présenter EcoleSaaS",
+            "progress": {
+              "mode": "JALONS",
+              "done": 0,
+              "total": 0,
+              "percent": null,
+              "label": "Ajoute un premier jalon"
+            },
+            "milestonesDoneInPeriod": 0
+          }
+        ],
+        "questions": [
+          "Qu'ai-je accompli ?",
+          "Qu'est-ce qui m'a bloqué ?",
+          "Quelle est ma prochaine priorité ?"
+        ]
+      }
+    }
+  },
+  "29 GET /api/reviews?period=month&date=2026-11-04": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "from": "2026-11-01",
+        "to": "2026-11-30",
+        "tasks": {
+          "expected": 2,
+          "done": 0,
+          "pending": 2,
+          "rescheduledOut": 0,
+          "cancelled": 0,
+          "plannedAtStart": 0,
+          "addedDuringPeriod": 2,
+          "executionRate": {
+            "numerator": 0,
+            "denominator": 2,
+            "percent": 0
+          }
+        },
+        "events": {
+          "planned": 2,
+          "done": 1,
+          "cancelled": 0,
+          "expected": 3
+        },
+        "goals": [
+          {
+            "id": "00000000-0000-4000-8000-00000000001f",
+            "title": "Présenter EcoleSaaS",
+            "progress": {
+              "mode": "JALONS",
+              "done": 0,
+              "total": 0,
+              "percent": null,
+              "label": "Ajoute un premier jalon"
+            },
+            "milestonesDoneInPeriod": 0
+          }
+        ],
+        "questions": [
+          "Qu'ai-je accompli ?",
+          "Qu'est-ce qui m'a bloqué ?",
+          "Quelle est ma prochaine priorité ?"
+        ]
+      }
+    }
+  },
+  "30 DELETE /api/events/00000000-0000-4000-8000-000000000023": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "message": "Événement supprimé"
+    }
+  },
+  "31 GET /api/events": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": [
+        {
+          "id": "00000000-0000-4000-8000-000000000021",
+          "type": "APPEL",
+          "title": "Appel avec le comptable (avancé)",
+          "date": "2026-11-04",
+          "startTime": "16:00",
+          "endTime": "16:45",
+          "startsAt": "2026-11-04T15:00:00.000Z",
+          "endsAt": "2026-11-04T15:45:00.000Z",
+          "location": null,
+          "link": null,
+          "participants": [],
+          "agenda": null,
+          "decisions": null,
+          "status": "PREVU",
+          "goalId": null,
+          "milestoneId": null,
+          "travelBeforeMinutes": 0,
+          "prepBeforeMinutes": 0,
+          "blockedMinutes": 0,
+          "blockedFrom": "2026-11-04T15:00:00.000Z",
+          "blockedFromTime": "16:00",
+          "leaveAtTime": null,
+          "completedAt": null
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000020",
+          "type": "REUNION",
+          "title": "Démonstration au collège Les Palmiers",
+          "date": "2026-11-05",
+          "startTime": "10:00",
+          "endTime": "11:30",
+          "startsAt": "2026-11-05T09:00:00.000Z",
+          "endsAt": "2026-11-05T10:30:00.000Z",
+          "location": "Collège Les Palmiers",
+          "link": null,
+          "participants": [
+            "M. Koné (directeur)",
+            "Mme Traoré"
+          ],
+          "agenda": "Présenter EcoleSaaS",
+          "decisions": "Pilote validé pour janvier. Envoyer le devis.",
+          "status": "REALISE",
+          "goalId": "00000000-0000-4000-8000-00000000001f",
+          "milestoneId": null,
+          "travelBeforeMinutes": 45,
+          "prepBeforeMinutes": 30,
+          "blockedMinutes": 75,
+          "blockedFrom": "2026-11-05T07:45:00.000Z",
+          "blockedFromTime": "08:45",
+          "leaveAtTime": "09:15",
+          "completedAt": "2026-11-04T09:00:13.000Z"
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000022",
+          "type": "VISIO",
+          "title": "Visio de nuit",
+          "date": "2026-11-06",
+          "startTime": "00:30",
+          "endTime": "01:00",
+          "startsAt": "2026-11-05T23:30:00.000Z",
+          "endsAt": "2026-11-06T00:00:00.000Z",
+          "location": null,
+          "link": "https://meet.exemple.fr/salle-12",
+          "participants": [],
+          "agenda": null,
+          "decisions": null,
+          "status": "PREVU",
+          "goalId": null,
+          "milestoneId": null,
+          "travelBeforeMinutes": 0,
+          "prepBeforeMinutes": 0,
+          "blockedMinutes": 0,
+          "blockedFrom": "2026-11-05T23:30:00.000Z",
+          "blockedFromTime": "00:30",
+          "leaveAtTime": null,
+          "completedAt": null
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000024",
+          "type": "RENCONTRE",
+          "title": "Après le changement d’heure",
+          "date": "2027-03-28",
+          "startTime": "03:30",
+          "endTime": "04:00",
+          "startsAt": "2027-03-28T01:30:00.000Z",
+          "endsAt": "2027-03-28T02:00:00.000Z",
+          "location": null,
+          "link": null,
+          "participants": [],
+          "agenda": null,
+          "decisions": null,
+          "status": "PREVU",
+          "goalId": null,
+          "milestoneId": null,
+          "travelBeforeMinutes": 0,
+          "prepBeforeMinutes": 0,
+          "blockedMinutes": 0,
+          "blockedFrom": "2027-03-28T01:30:00.000Z",
+          "blockedFromTime": "03:30",
+          "leaveAtTime": null,
+          "completedAt": null
+        }
+      ]
+    }
+  }
+}

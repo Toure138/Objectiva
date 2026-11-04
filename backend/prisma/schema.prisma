@@ -28,6 +28,10 @@ model User {
   events   Event[]
   sessions Session[]
 
+  milestones        Milestone[]
+  goalReadings      GoalReading[]
+  syncState         SyncState?
+  tombstones        Tombstone[]
   accounts          Account[]
   budgetCategories  BudgetCategory[]
   envelopes         Envelope[]
@@ -134,6 +138,10 @@ model Goal {
   readings   GoalReading[]
   events     Event[]
 
+  // Numéro de version attribué par un déclencheur (spec 007) : sert à la synchronisation.
+  serverVersion BigInt @default(0) @map("server_version")
+
+  @@index([userId, serverVersion])
   @@index([userId, status])
   @@map("goals")
 }
@@ -150,6 +158,13 @@ model Milestone {
   tasks  Task[]
   events Event[]
 
+  // Numéro de version attribué par un déclencheur (spec 007) : sert à la synchronisation.
+  serverVersion BigInt   @default(0) @map("server_version")
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  userId        String   @map("user_id") @db.Uuid
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, serverVersion])
   @@index([goalId])
   @@map("milestones")
 }
@@ -165,6 +180,13 @@ model GoalReading {
 
   goal Goal @relation(fields: [goalId], references: [id], onDelete: Cascade)
 
+  // Numéro de version attribué par un déclencheur (spec 007) : sert à la synchronisation.
+  serverVersion BigInt   @default(0) @map("server_version")
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  userId        String   @map("user_id") @db.Uuid
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, serverVersion])
   @@index([goalId, readOn])
   @@map("goal_readings")
 }
@@ -223,6 +245,10 @@ model Event {
   milestone Milestone? @relation(fields: [milestoneId], references: [id], onDelete: SetNull)
   tasks     Task[]
 
+  // Numéro de version attribué par un déclencheur (spec 007) : sert à la synchronisation.
+  serverVersion BigInt @default(0) @map("server_version")
+
+  @@index([userId, serverVersion])
   @@index([userId, startsAt])
   @@index([userId, status])
   @@map("events")
@@ -259,6 +285,10 @@ model Task {
   milestone Milestone? @relation(fields: [milestoneId], references: [id], onDelete: SetNull)
   event     Event?     @relation(fields: [eventId], references: [id], onDelete: SetNull)
 
+  // Numéro de version attribué par un déclencheur (spec 007) : sert à la synchronisation.
+  serverVersion BigInt @default(0) @map("server_version")
+
+  @@index([userId, serverVersion])
   @@index([userId, workDate])
   @@index([eventId])
   @@index([userId, status])
@@ -309,7 +339,13 @@ model Account {
   operations   PlannedOperation[]
 
   // Évite le doublon créé par un double appui sur « Démarrer mon budget ».
+
+  // Numéro de version attribué par un déclencheur (spec 007) : sert à la synchronisation.
+  serverVersion BigInt   @default(0) @map("server_version")
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
   @@unique([userId, name])
+  @@index([userId, serverVersion])
   @@map("accounts")
 }
 
@@ -326,7 +362,12 @@ model BudgetCategory {
   operations   PlannedOperation[]
   transactions Transaction[]
 
+  // Numéro de version attribué par un déclencheur (spec 007) : sert à la synchronisation.
+  serverVersion BigInt   @default(0) @map("server_version")
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
   @@unique([userId, type, name])
+  @@index([userId, serverVersion])
   @@map("budget_categories")
 }
 
@@ -341,7 +382,12 @@ model Envelope {
   user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   category BudgetCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
 
+  // Numéro de version attribué par un déclencheur (spec 007) : sert à la synchronisation.
+  serverVersion BigInt   @default(0) @map("server_version")
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
   @@unique([userId, categoryId, month])
+  @@index([userId, serverVersion])
   @@index([userId, month])
   @@map("envelopes")
 }
@@ -367,6 +413,10 @@ model PlannedOperation {
   account      Account?        @relation(fields: [accountId], references: [id], onDelete: Restrict)
   transactions Transaction[]
 
+  // Numéro de version attribué par un déclencheur (spec 007) : sert à la synchronisation.
+  serverVersion BigInt @default(0) @map("server_version")
+
+  @@index([userId, serverVersion])
   @@index([userId, dueDate])
   @@map("planned_operations")
 }
@@ -391,9 +441,53 @@ model Transaction {
   category         BudgetCategory?   @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   plannedOperation PlannedOperation? @relation(fields: [plannedOperationId], references: [id], onDelete: SetNull)
 
+  // Numéro de version attribué par un déclencheur (spec 007) : sert à la synchronisation.
+  serverVersion BigInt   @default(0) @map("server_version")
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
   @@unique([userId, idempotencyKey])
+  @@index([userId, serverVersion])
   @@index([userId, date])
   @@index([accountId])
   @@index([plannedOperationId])
   @@map("transactions")
+}
+
+// ---------------------------------------------------------------------------------------------
+// Synchronisation hors connexion (spec 007). Alimentées par des déclencheurs PostgreSQL
+// (voir la migration) : aucune écriture, même en cascade, n'échappe au journal.
+
+// Dernier numéro de version attribué à un utilisateur.
+model SyncState {
+  userId  String @id @map("user_id") @db.Uuid
+  version BigInt @default(0)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sync_state")
+}
+
+// Trace d'une suppression, pour que les appareils absents ne ressuscitent pas la donnée.
+model Tombstone {
+  userId        String   @map("user_id") @db.Uuid
+  entity        String   @db.VarChar(40)
+  entityId      String   @map("entity_id") @db.Uuid
+  serverVersion BigInt   @map("server_version")
+  deletedAt     DateTime @default(now()) @map("deleted_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, entity, entityId])
+  @@index([userId, serverVersion])
+  @@map("tombstones")
+}
+
+// Une seule ligne. L'« époque » change quand la base est restaurée depuis une sauvegarde :
+// les appareils le détectent et peuvent reconstruire le serveur.
+model ServerMeta {
+  id        Int      @id @default(1)
+  epoch     String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("server_meta")
 }

@@ -1,0 +1,589 @@
+{
+  "01 POST /api/goals": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000015",
+        "title": "Présenter EcoleSaaS à trois établissements",
+        "description": null,
+        "motivation": null,
+        "category": "CARRIERE",
+        "horizon": "PERSONNALISEE",
+        "startDate": "2026-10-01",
+        "endDate": "2027-06-30",
+        "priority": "MOYENNE",
+        "status": "EN_COURS",
+        "progressMode": "MESURE",
+        "measureUnit": "démonstrations",
+        "startValue": 0,
+        "targetValue": 3,
+        "progress": {
+          "mode": "MESURE",
+          "current": 0,
+          "start": 0,
+          "target": 3,
+          "unit": "démonstrations",
+          "percent": 0,
+          "reached": false,
+          "label": "0 sur 3 démonstrations"
+        },
+        "nextAction": null,
+        "needsNextAction": true
+      }
+    }
+  },
+  "02 GET /api/goals/00000000-0000-4000-8000-000000000015": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000015",
+        "title": "Présenter EcoleSaaS à trois établissements",
+        "description": null,
+        "motivation": null,
+        "category": "CARRIERE",
+        "horizon": "PERSONNALISEE",
+        "startDate": "2026-10-01",
+        "endDate": "2027-06-30",
+        "priority": "MOYENNE",
+        "status": "EN_COURS",
+        "progressMode": "MESURE",
+        "measureUnit": "démonstrations",
+        "startValue": 0,
+        "targetValue": 3,
+        "progress": {
+          "mode": "MESURE",
+          "current": 0,
+          "start": 0,
+          "target": 3,
+          "unit": "démonstrations",
+          "percent": 0,
+          "reached": false,
+          "label": "0 sur 3 démonstrations"
+        },
+        "nextAction": null,
+        "needsNextAction": true,
+        "milestones": [],
+        "readings": [],
+        "tasks": []
+      }
+    }
+  },
+  "03 POST /api/goals/00000000-0000-4000-8000-000000000015/readings": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "reading": {
+          "id": "00000000-0000-4000-8000-000000000016",
+          "goalId": "00000000-0000-4000-8000-000000000015",
+          "value": 1,
+          "readOn": "2026-11-02",
+          "note": "Collège Les Palmiers"
+        },
+        "progress": {
+          "mode": "MESURE",
+          "current": 1,
+          "start": 0,
+          "target": 3,
+          "unit": "démonstrations",
+          "percent": 33,
+          "reached": false,
+          "label": "1 sur 3 démonstrations"
+        }
+      }
+    }
+  },
+  "04 POST /api/goals/00000000-0000-4000-8000-000000000015/readings": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "reading": {
+          "id": "00000000-0000-4000-8000-000000000017",
+          "goalId": "00000000-0000-4000-8000-000000000015",
+          "value": 2,
+          "readOn": "2026-11-03",
+          "note": null
+        },
+        "progress": {
+          "mode": "MESURE",
+          "current": 2,
+          "start": 0,
+          "target": 3,
+          "unit": "démonstrations",
+          "percent": 67,
+          "reached": false,
+          "label": "2 sur 3 démonstrations"
+        }
+      }
+    }
+  },
+  "05 POST /api/goals/00000000-0000-4000-8000-000000000015/readings": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "reading": {
+          "id": "00000000-0000-4000-8000-000000000018",
+          "goalId": "00000000-0000-4000-8000-000000000015",
+          "value": 3,
+          "readOn": "2026-11-04",
+          "note": null
+        },
+        "progress": {
+          "mode": "MESURE",
+          "current": 3,
+          "start": 0,
+          "target": 3,
+          "unit": "démonstrations",
+          "percent": 100,
+          "reached": true,
+          "label": "3 sur 3 démonstrations"
+        }
+      }
+    }
+  },
+  "06 GET /api/goals/00000000-0000-4000-8000-000000000015": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000015",
+        "title": "Présenter EcoleSaaS à trois établissements",
+        "description": null,
+        "motivation": null,
+        "category": "CARRIERE",
+        "horizon": "PERSONNALISEE",
+        "startDate": "2026-10-01",
+        "endDate": "2027-06-30",
+        "priority": "MOYENNE",
+        "status": "EN_COURS",
+        "progressMode": "MESURE",
+        "measureUnit": "démonstrations",
+        "startValue": 0,
+        "targetValue": 3,
+        "progress": {
+          "mode": "MESURE",
+          "current": 3,
+          "start": 0,
+          "target": 3,
+          "unit": "démonstrations",
+          "percent": 100,
+          "reached": true,
+          "label": "3 sur 3 démonstrations"
+        },
+        "nextAction": null,
+        "needsNextAction": true,
+        "milestones": [],
+        "readings": [
+          {
+            "id": "00000000-0000-4000-8000-000000000018",
+            "goalId": "00000000-0000-4000-8000-000000000015",
+            "value": 3,
+            "readOn": "2026-11-04",
+            "note": null
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000017",
+            "goalId": "00000000-0000-4000-8000-000000000015",
+            "value": 2,
+            "readOn": "2026-11-03",
+            "note": null
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000016",
+            "goalId": "00000000-0000-4000-8000-000000000015",
+            "value": 1,
+            "readOn": "2026-11-02",
+            "note": "Collège Les Palmiers"
+          }
+        ],
+        "tasks": []
+      }
+    }
+  },
+  "07 DELETE /api/readings/00000000-0000-4000-8000-000000000018": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "progress": {
+          "mode": "MESURE",
+          "current": 2,
+          "start": 0,
+          "target": 3,
+          "unit": "démonstrations",
+          "percent": 67,
+          "reached": false,
+          "label": "2 sur 3 démonstrations"
+        }
+      }
+    }
+  },
+  "08 GET /api/goals": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": [
+        {
+          "id": "00000000-0000-4000-8000-000000000015",
+          "title": "Présenter EcoleSaaS à trois établissements",
+          "description": null,
+          "motivation": null,
+          "category": "CARRIERE",
+          "horizon": "PERSONNALISEE",
+          "startDate": "2026-10-01",
+          "endDate": "2027-06-30",
+          "priority": "MOYENNE",
+          "status": "EN_COURS",
+          "progressMode": "MESURE",
+          "measureUnit": "démonstrations",
+          "startValue": 0,
+          "targetValue": 3,
+          "progress": {
+            "mode": "MESURE",
+            "current": 2,
+            "start": 0,
+            "target": 3,
+            "unit": "démonstrations",
+            "percent": 67,
+            "reached": false,
+            "label": "2 sur 3 démonstrations"
+          },
+          "nextAction": null,
+          "needsNextAction": true
+        }
+      ]
+    }
+  },
+  "09 PATCH /api/goals/00000000-0000-4000-8000-000000000015": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000015",
+        "title": "Présenter EcoleSaaS à trois établissements",
+        "description": null,
+        "motivation": null,
+        "category": "CARRIERE",
+        "horizon": "PERSONNALISEE",
+        "startDate": "2026-10-01",
+        "endDate": "2027-06-30",
+        "priority": "MOYENNE",
+        "status": "EN_COURS",
+        "progressMode": "JALONS",
+        "measureUnit": "démonstrations",
+        "startValue": 0,
+        "targetValue": 3,
+        "progress": {
+          "mode": "JALONS",
+          "done": 0,
+          "total": 0,
+          "percent": null,
+          "label": "Ajoute un premier jalon"
+        },
+        "nextAction": null,
+        "needsNextAction": true
+      }
+    }
+  },
+  "10 GET /api/goals/00000000-0000-4000-8000-000000000015": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000015",
+        "title": "Présenter EcoleSaaS à trois établissements",
+        "description": null,
+        "motivation": null,
+        "category": "CARRIERE",
+        "horizon": "PERSONNALISEE",
+        "startDate": "2026-10-01",
+        "endDate": "2027-06-30",
+        "priority": "MOYENNE",
+        "status": "EN_COURS",
+        "progressMode": "JALONS",
+        "measureUnit": "démonstrations",
+        "startValue": 0,
+        "targetValue": 3,
+        "progress": {
+          "mode": "JALONS",
+          "done": 0,
+          "total": 0,
+          "percent": null,
+          "label": "Ajoute un premier jalon"
+        },
+        "nextAction": null,
+        "needsNextAction": true,
+        "milestones": [],
+        "readings": [
+          {
+            "id": "00000000-0000-4000-8000-000000000017",
+            "goalId": "00000000-0000-4000-8000-000000000015",
+            "value": 2,
+            "readOn": "2026-11-03",
+            "note": null
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000016",
+            "goalId": "00000000-0000-4000-8000-000000000015",
+            "value": 1,
+            "readOn": "2026-11-02",
+            "note": "Collège Les Palmiers"
+          }
+        ],
+        "tasks": []
+      }
+    }
+  },
+  "11 PATCH /api/goals/00000000-0000-4000-8000-000000000015": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000015",
+        "title": "Présenter EcoleSaaS à trois établissements",
+        "description": null,
+        "motivation": null,
+        "category": "CARRIERE",
+        "horizon": "PERSONNALISEE",
+        "startDate": "2026-10-01",
+        "endDate": "2027-06-30",
+        "priority": "MOYENNE",
+        "status": "EN_COURS",
+        "progressMode": "MESURE",
+        "measureUnit": "démonstrations",
+        "startValue": 0,
+        "targetValue": 3,
+        "progress": {
+          "mode": "MESURE",
+          "current": 2,
+          "start": 0,
+          "target": 3,
+          "unit": "démonstrations",
+          "percent": 67,
+          "reached": false,
+          "label": "2 sur 3 démonstrations"
+        },
+        "nextAction": null,
+        "needsNextAction": true
+      }
+    }
+  },
+  "12 POST /api/goals": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000019",
+        "title": "Perdre du poids",
+        "description": null,
+        "motivation": null,
+        "category": "SANTE",
+        "horizon": "PERSONNALISEE",
+        "startDate": "2026-10-01",
+        "endDate": "2027-02-01",
+        "priority": "MOYENNE",
+        "status": "A_DEMARRER",
+        "progressMode": "MESURE",
+        "measureUnit": "kg",
+        "startValue": 80,
+        "targetValue": 72,
+        "progress": {
+          "mode": "MESURE",
+          "current": 80,
+          "start": 80,
+          "target": 72,
+          "unit": "kg",
+          "percent": 0,
+          "reached": false,
+          "label": "80 sur 72 kg"
+        },
+        "nextAction": null,
+        "needsNextAction": true
+      }
+    }
+  },
+  "13 POST /api/goals/00000000-0000-4000-8000-000000000019/readings": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "reading": {
+          "id": "00000000-0000-4000-8000-00000000001a",
+          "goalId": "00000000-0000-4000-8000-000000000019",
+          "value": 76,
+          "readOn": "2026-11-01",
+          "note": null
+        },
+        "progress": {
+          "mode": "MESURE",
+          "current": 76,
+          "start": 80,
+          "target": 72,
+          "unit": "kg",
+          "percent": 50,
+          "reached": false,
+          "label": "76 sur 72 kg"
+        }
+      }
+    }
+  },
+  "14 GET /api/goals": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": [
+        {
+          "id": "00000000-0000-4000-8000-000000000019",
+          "title": "Perdre du poids",
+          "description": null,
+          "motivation": null,
+          "category": "SANTE",
+          "horizon": "PERSONNALISEE",
+          "startDate": "2026-10-01",
+          "endDate": "2027-02-01",
+          "priority": "MOYENNE",
+          "status": "A_DEMARRER",
+          "progressMode": "MESURE",
+          "measureUnit": "kg",
+          "startValue": 80,
+          "targetValue": 72,
+          "progress": {
+            "mode": "MESURE",
+            "current": 76,
+            "start": 80,
+            "target": 72,
+            "unit": "kg",
+            "percent": 50,
+            "reached": false,
+            "label": "76 sur 72 kg"
+          },
+          "nextAction": null,
+          "needsNextAction": true
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000015",
+          "title": "Présenter EcoleSaaS à trois établissements",
+          "description": null,
+          "motivation": null,
+          "category": "CARRIERE",
+          "horizon": "PERSONNALISEE",
+          "startDate": "2026-10-01",
+          "endDate": "2027-06-30",
+          "priority": "MOYENNE",
+          "status": "EN_COURS",
+          "progressMode": "MESURE",
+          "measureUnit": "démonstrations",
+          "startValue": 0,
+          "targetValue": 3,
+          "progress": {
+            "mode": "MESURE",
+            "current": 2,
+            "start": 0,
+            "target": 3,
+            "unit": "démonstrations",
+            "percent": 67,
+            "reached": false,
+            "label": "2 sur 3 démonstrations"
+          },
+          "nextAction": null,
+          "needsNextAction": true
+        }
+      ]
+    }
+  },
+  "15 GET /api/reviews?period=month&date=2026-11-04": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "from": "2026-11-01",
+        "to": "2026-11-30",
+        "tasks": {
+          "expected": 0,
+          "done": 0,
+          "pending": 0,
+          "rescheduledOut": 0,
+          "cancelled": 0,
+          "plannedAtStart": 0,
+          "addedDuringPeriod": 0,
+          "executionRate": null
+        },
+        "events": {
+          "planned": 0,
+          "done": 0,
+          "cancelled": 0,
+          "expected": 0
+        },
+        "goals": [
+          {
+            "id": "00000000-0000-4000-8000-000000000019",
+            "title": "Perdre du poids",
+            "progress": {
+              "mode": "MESURE",
+              "current": 76,
+              "start": 80,
+              "target": 72,
+              "unit": "kg",
+              "percent": 50,
+              "reached": false,
+              "label": "76 sur 72 kg"
+            },
+            "milestonesDoneInPeriod": 0
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000015",
+            "title": "Présenter EcoleSaaS à trois établissements",
+            "progress": {
+              "mode": "MESURE",
+              "current": 2,
+              "start": 0,
+              "target": 3,
+              "unit": "démonstrations",
+              "percent": 67,
+              "reached": false,
+              "label": "2 sur 3 démonstrations"
+            },
+            "milestonesDoneInPeriod": 0
+          }
+        ],
+        "questions": [
+          "Qu'ai-je accompli ?",
+          "Qu'est-ce qui m'a bloqué ?",
+          "Quelle est ma prochaine priorité ?"
+        ]
+      }
+    }
+  },
+  "16 POST /api/goals": {
+    "status": 400,
+    "body": {
+      "success": false,
+      "code": "VALIDATION_ERROR",
+      "message": "Certaines informations sont invalides",
+      "details": [
+        {
+          "field": "targetValue",
+          "message": "La cible doit différer de la valeur de départ"
+        }
+      ]
+    }
+  },
+  "17 POST /api/goals/00000000-0000-4000-8000-000000000019/readings": {
+    "status": 400,
+    "body": {
+      "success": false,
+      "code": "VALIDATION_ERROR",
+      "message": "Certaines informations sont invalides",
+      "details": [
+        {
+          "field": "value",
+          "message": "Un nombre entier est attendu"
+        }
+      ]
+    }
+  }
+}

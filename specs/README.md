@@ -11,6 +11,7 @@ d'acceptation, plan, tâches et revue). Le modèle est dans [_template.md](_temp
 | 004 | [004-evenements](004-evenements/spec.md) | terminée (2026-11-03) |
 | 005 | [005-budget-mensuel](005-budget-mensuel/spec.md) | terminée (2026-11-03) |
 | 006 | [006-scenario-ecolesaas](006-scenario-ecolesaas/spec.md) | terminée (2026-11-03) |
+| 007 | [007-hors-connexion](007-hors-connexion/spec.md) | en cours : phase 0 terminée (2026-11-04) |
 
 Les fiches 003 à 006 découpent l'étape 2 de [docs/feuille-de-route.md](../docs/feuille-de-route.md).
 

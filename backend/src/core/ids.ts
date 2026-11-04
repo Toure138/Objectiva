@@ -1,7 +1,7 @@
-import { z } from 'zod';
 import { notFound } from './errors.ts';
+import { uuid } from '../../../shared/src/ids.ts';
 
-const uuid = z.string().uuid();
+export { optionalId, clientId } from '../../../shared/src/ids.ts';
 
 // Un identifiant mal formé est traité comme introuvable : même réponse qu'un id inconnu.
 export function idParam(value: unknown, what?: string): string {
@@ -9,5 +9,3 @@ export function idParam(value: unknown, what?: string): string {
   if (!r.success) throw notFound(what);
   return r.data;
 }
-
-export const optionalId = z.string().uuid('Identifiant invalide').nullable().optional();

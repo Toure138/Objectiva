@@ -1,0 +1,1215 @@
+{
+  "01 POST /api/budget/accounts": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000029",
+        "name": "Espèces",
+        "kind": "ESPECES",
+        "openingBalance": 150000,
+        "balance": 150000,
+        "archived": false
+      }
+    }
+  },
+  "02 POST /api/budget/accounts": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000002a",
+        "name": "Orange Money",
+        "kind": "MOBILE_MONEY",
+        "openingBalance": 25000,
+        "balance": 25000,
+        "archived": false
+      }
+    }
+  },
+  "03 POST /api/budget/categories": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000002b",
+        "name": "Transport",
+        "type": "DEPENSE",
+        "archived": false
+      }
+    }
+  },
+  "04 POST /api/budget/categories": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000002c",
+        "name": "Alimentation",
+        "type": "DEPENSE",
+        "archived": false
+      }
+    }
+  },
+  "05 POST /api/budget/categories": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000002d",
+        "name": "Activité",
+        "type": "REVENU",
+        "archived": false
+      }
+    }
+  },
+  "06 POST /api/budget/categories": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000002e",
+        "name": "Épargne",
+        "type": "EPARGNE",
+        "archived": false
+      }
+    }
+  },
+  "07 POST /api/budget/accounts": {
+    "status": 409,
+    "body": {
+      "success": false,
+      "code": "CONFLICT",
+      "message": "Un compte porte déjà ce nom"
+    }
+  },
+  "08 POST /api/budget/operations": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000002f",
+        "type": "DEPENSE",
+        "label": "Transport et impression",
+        "plannedAmount": 15000,
+        "dueDate": "2026-11-05",
+        "categoryId": "00000000-0000-4000-8000-00000000002b",
+        "accountId": null,
+        "status": "PREVUE",
+        "paid": 0,
+        "remaining": 15000,
+        "economy": 0,
+        "overrun": 0,
+        "closedAt": null
+      }
+    }
+  },
+  "09 POST /api/budget/operations": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000030",
+        "type": "REVENU",
+        "label": "Facture école pilote",
+        "plannedAmount": 200000,
+        "dueDate": "2026-11-25",
+        "categoryId": "00000000-0000-4000-8000-00000000002d",
+        "accountId": "00000000-0000-4000-8000-00000000002a",
+        "status": "PREVUE",
+        "paid": 0,
+        "remaining": 200000,
+        "economy": 0,
+        "overrun": 0,
+        "closedAt": null
+      }
+    }
+  },
+  "10 POST /api/budget/operations": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000031",
+        "type": "EPARGNE",
+        "label": "Épargne projet",
+        "plannedAmount": 20000,
+        "dueDate": "2026-11-28",
+        "categoryId": "00000000-0000-4000-8000-00000000002e",
+        "accountId": null,
+        "status": "PREVUE",
+        "paid": 0,
+        "remaining": 20000,
+        "economy": 0,
+        "overrun": 0,
+        "closedAt": null
+      }
+    }
+  },
+  "11 POST /api/budget/operations": {
+    "status": 400,
+    "body": {
+      "success": false,
+      "code": "VALIDATION_ERROR",
+      "message": "Certaines informations sont invalides",
+      "details": [
+        {
+          "field": "plannedAmount",
+          "message": "Un montant entier est attendu"
+        }
+      ]
+    }
+  },
+  "12 POST /api/budget/operations": {
+    "status": 400,
+    "body": {
+      "success": false,
+      "code": "VALIDATION_ERROR",
+      "message": "Cette catégorie ne correspond pas au type de l'opération",
+      "details": [
+        {
+          "field": "categoryId",
+          "message": "Cette catégorie ne correspond pas au type de l'opération"
+        }
+      ]
+    }
+  },
+  "13 POST /api/budget/operations/00000000-0000-4000-8000-00000000002f/settle": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "operation": {
+          "id": "00000000-0000-4000-8000-00000000002f",
+          "type": "DEPENSE",
+          "label": "Transport et impression",
+          "plannedAmount": 15000,
+          "dueDate": "2026-11-05",
+          "categoryId": "00000000-0000-4000-8000-00000000002b",
+          "accountId": null,
+          "status": "PARTIELLE",
+          "paid": 9000,
+          "remaining": 6000,
+          "economy": 0,
+          "overrun": 0,
+          "closedAt": null
+        },
+        "transaction": {
+          "id": "{{tx1}}",
+          "type": "DEPENSE",
+          "amount": 9000,
+          "date": "2026-11-05",
+          "accountId": "00000000-0000-4000-8000-000000000029",
+          "categoryId": "00000000-0000-4000-8000-00000000002b",
+          "plannedOperationId": "00000000-0000-4000-8000-00000000002f",
+          "label": "Transport et impression"
+        },
+        "replayed": false
+      }
+    }
+  },
+  "14 POST /api/budget/operations/00000000-0000-4000-8000-00000000002f/settle": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "operation": {
+          "id": "00000000-0000-4000-8000-00000000002f",
+          "type": "DEPENSE",
+          "label": "Transport et impression",
+          "plannedAmount": 15000,
+          "dueDate": "2026-11-05",
+          "categoryId": "00000000-0000-4000-8000-00000000002b",
+          "accountId": null,
+          "status": "PARTIELLE",
+          "paid": 9000,
+          "remaining": 6000,
+          "economy": 0,
+          "overrun": 0,
+          "closedAt": null
+        },
+        "transaction": {
+          "id": "{{tx1}}",
+          "type": "DEPENSE",
+          "amount": 9000,
+          "date": "2026-11-05",
+          "accountId": "00000000-0000-4000-8000-000000000029",
+          "categoryId": "00000000-0000-4000-8000-00000000002b",
+          "plannedOperationId": "00000000-0000-4000-8000-00000000002f",
+          "label": "Transport et impression"
+        },
+        "replayed": true
+      }
+    }
+  },
+  "15 POST /api/budget/operations/00000000-0000-4000-8000-00000000002f/settle": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "operation": {
+          "id": "00000000-0000-4000-8000-00000000002f",
+          "type": "DEPENSE",
+          "label": "Transport et impression",
+          "plannedAmount": 15000,
+          "dueDate": "2026-11-05",
+          "categoryId": "00000000-0000-4000-8000-00000000002b",
+          "accountId": null,
+          "status": "SOLDEE",
+          "paid": 12000,
+          "remaining": 0,
+          "economy": 3000,
+          "overrun": 0,
+          "closedAt": "2026-11-04T09:00:15.000Z"
+        },
+        "transaction": {
+          "id": "{{tx2}}",
+          "type": "DEPENSE",
+          "amount": 3000,
+          "date": "2026-11-06",
+          "accountId": "00000000-0000-4000-8000-000000000029",
+          "categoryId": "00000000-0000-4000-8000-00000000002b",
+          "plannedOperationId": "00000000-0000-4000-8000-00000000002f",
+          "label": "Transport et impression"
+        },
+        "replayed": false
+      }
+    }
+  },
+  "16 POST /api/budget/operations/00000000-0000-4000-8000-00000000002f/settle": {
+    "status": 409,
+    "body": {
+      "success": false,
+      "code": "CONFLICT",
+      "message": "Cette prévision est déjà soldée"
+    }
+  },
+  "17 POST /api/budget/operations/00000000-0000-4000-8000-000000000030/settle": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "operation": {
+          "id": "00000000-0000-4000-8000-000000000030",
+          "type": "REVENU",
+          "label": "Facture école pilote",
+          "plannedAmount": 200000,
+          "dueDate": "2026-11-25",
+          "categoryId": "00000000-0000-4000-8000-00000000002d",
+          "accountId": "00000000-0000-4000-8000-00000000002a",
+          "status": "PARTIELLE",
+          "paid": 120000,
+          "remaining": 80000,
+          "economy": 0,
+          "overrun": 0,
+          "closedAt": null
+        },
+        "transaction": {
+          "id": "<uuid#1>",
+          "type": "REVENU",
+          "amount": 120000,
+          "date": "2026-11-20",
+          "accountId": "00000000-0000-4000-8000-00000000002a",
+          "categoryId": "00000000-0000-4000-8000-00000000002d",
+          "plannedOperationId": "00000000-0000-4000-8000-000000000030",
+          "label": "Facture école pilote"
+        },
+        "replayed": false
+      }
+    }
+  },
+  "18 POST /api/budget/transactions": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "transaction": {
+          "id": "<uuid#2>",
+          "type": "DEPENSE",
+          "amount": 12500,
+          "date": "2026-11-02",
+          "accountId": "00000000-0000-4000-8000-000000000029",
+          "categoryId": "00000000-0000-4000-8000-00000000002c",
+          "plannedOperationId": null,
+          "label": "Courses"
+        },
+        "replayed": false
+      }
+    }
+  },
+  "19 POST /api/budget/transactions": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "transaction": {
+          "id": "<uuid#2>",
+          "type": "DEPENSE",
+          "amount": 12500,
+          "date": "2026-11-02",
+          "accountId": "00000000-0000-4000-8000-000000000029",
+          "categoryId": "00000000-0000-4000-8000-00000000002c",
+          "plannedOperationId": null,
+          "label": "Courses"
+        },
+        "replayed": true
+      }
+    }
+  },
+  "20 POST /api/budget/transactions": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "transaction": {
+          "id": "<uuid#3>",
+          "type": "EPARGNE",
+          "amount": 20000,
+          "date": "2026-11-03",
+          "accountId": "00000000-0000-4000-8000-00000000002a",
+          "categoryId": "00000000-0000-4000-8000-00000000002e",
+          "plannedOperationId": null,
+          "label": null
+        },
+        "replayed": false
+      }
+    }
+  },
+  "21 PUT /api/budget/envelopes": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "month": "2026-11",
+        "categoryId": "00000000-0000-4000-8000-00000000002b",
+        "plannedAmount": 50000
+      }
+    }
+  },
+  "22 PUT /api/budget/envelopes": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "month": "2026-11",
+        "categoryId": "00000000-0000-4000-8000-00000000002c",
+        "plannedAmount": 8000
+      }
+    }
+  },
+  "23 GET /api/budget/months/2026-11": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "month": "2026-11",
+        "currency": "XOF",
+        "needsSetup": false,
+        "summary": {
+          "plannedIncome": 200000,
+          "plannedExpense": 15000,
+          "plannedSaving": 20000,
+          "realIncome": 120000,
+          "realExpense": 24500,
+          "realSaving": 20000,
+          "remainingToSpend": -9500,
+          "overspent": true,
+          "expensePercent": 163,
+          "economy": 3000,
+          "plannedNet": 165000,
+          "realNet": 75500
+        },
+        "accounts": [
+          {
+            "id": "00000000-0000-4000-8000-000000000029",
+            "name": "Espèces",
+            "kind": "ESPECES",
+            "openingBalance": 150000,
+            "balance": 125500,
+            "archived": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000002a",
+            "name": "Orange Money",
+            "kind": "MOBILE_MONEY",
+            "openingBalance": 25000,
+            "balance": 125000,
+            "archived": false
+          }
+        ],
+        "totalBalance": 250500,
+        "categories": [
+          {
+            "id": "00000000-0000-4000-8000-00000000002d",
+            "name": "Activité",
+            "type": "REVENU",
+            "archived": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000002c",
+            "name": "Alimentation",
+            "type": "DEPENSE",
+            "archived": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000002b",
+            "name": "Transport",
+            "type": "DEPENSE",
+            "archived": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000002e",
+            "name": "Épargne",
+            "type": "EPARGNE",
+            "archived": false
+          }
+        ],
+        "envelopes": [
+          {
+            "categoryId": "00000000-0000-4000-8000-00000000002c",
+            "categoryName": "Alimentation",
+            "type": "DEPENSE",
+            "planned": 8000,
+            "spent": 12500,
+            "remaining": -4500,
+            "percent": 156,
+            "overspent": true
+          },
+          {
+            "categoryId": "00000000-0000-4000-8000-00000000002e",
+            "categoryName": "Épargne",
+            "type": "EPARGNE",
+            "planned": 0,
+            "spent": 20000,
+            "remaining": -20000,
+            "percent": null,
+            "overspent": false
+          },
+          {
+            "categoryId": "00000000-0000-4000-8000-00000000002b",
+            "categoryName": "Transport",
+            "type": "DEPENSE",
+            "planned": 50000,
+            "spent": 12000,
+            "remaining": 38000,
+            "percent": 24,
+            "overspent": false
+          }
+        ],
+        "operations": [
+          {
+            "id": "00000000-0000-4000-8000-00000000002f",
+            "type": "DEPENSE",
+            "label": "Transport et impression",
+            "plannedAmount": 15000,
+            "dueDate": "2026-11-05",
+            "categoryId": "00000000-0000-4000-8000-00000000002b",
+            "accountId": null,
+            "status": "SOLDEE",
+            "paid": 12000,
+            "remaining": 0,
+            "economy": 3000,
+            "overrun": 0,
+            "closedAt": "2026-11-04T09:00:15.000Z"
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000030",
+            "type": "REVENU",
+            "label": "Facture école pilote",
+            "plannedAmount": 200000,
+            "dueDate": "2026-11-25",
+            "categoryId": "00000000-0000-4000-8000-00000000002d",
+            "accountId": "00000000-0000-4000-8000-00000000002a",
+            "status": "PARTIELLE",
+            "paid": 120000,
+            "remaining": 80000,
+            "economy": 0,
+            "overrun": 0,
+            "closedAt": null
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000031",
+            "type": "EPARGNE",
+            "label": "Épargne projet",
+            "plannedAmount": 20000,
+            "dueDate": "2026-11-28",
+            "categoryId": "00000000-0000-4000-8000-00000000002e",
+            "accountId": null,
+            "status": "PREVUE",
+            "paid": 0,
+            "remaining": 20000,
+            "economy": 0,
+            "overrun": 0,
+            "closedAt": null
+          }
+        ],
+        "transactions": [
+          {
+            "id": "<uuid#1>",
+            "type": "REVENU",
+            "amount": 120000,
+            "date": "2026-11-20",
+            "accountId": "00000000-0000-4000-8000-00000000002a",
+            "categoryId": "00000000-0000-4000-8000-00000000002d",
+            "plannedOperationId": "00000000-0000-4000-8000-000000000030",
+            "label": "Facture école pilote"
+          },
+          {
+            "id": "{{tx2}}",
+            "type": "DEPENSE",
+            "amount": 3000,
+            "date": "2026-11-06",
+            "accountId": "00000000-0000-4000-8000-000000000029",
+            "categoryId": "00000000-0000-4000-8000-00000000002b",
+            "plannedOperationId": "00000000-0000-4000-8000-00000000002f",
+            "label": "Transport et impression"
+          },
+          {
+            "id": "{{tx1}}",
+            "type": "DEPENSE",
+            "amount": 9000,
+            "date": "2026-11-05",
+            "accountId": "00000000-0000-4000-8000-000000000029",
+            "categoryId": "00000000-0000-4000-8000-00000000002b",
+            "plannedOperationId": "00000000-0000-4000-8000-00000000002f",
+            "label": "Transport et impression"
+          },
+          {
+            "id": "<uuid#3>",
+            "type": "EPARGNE",
+            "amount": 20000,
+            "date": "2026-11-03",
+            "accountId": "00000000-0000-4000-8000-00000000002a",
+            "categoryId": "00000000-0000-4000-8000-00000000002e",
+            "plannedOperationId": null,
+            "label": null
+          },
+          {
+            "id": "<uuid#2>",
+            "type": "DEPENSE",
+            "amount": 12500,
+            "date": "2026-11-02",
+            "accountId": "00000000-0000-4000-8000-000000000029",
+            "categoryId": "00000000-0000-4000-8000-00000000002c",
+            "plannedOperationId": null,
+            "label": "Courses"
+          }
+        ]
+      }
+    }
+  },
+  "24 GET /api/budget/accounts": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": [
+        {
+          "id": "00000000-0000-4000-8000-000000000029",
+          "name": "Espèces",
+          "kind": "ESPECES",
+          "openingBalance": 150000,
+          "balance": 125500,
+          "archived": false
+        },
+        {
+          "id": "00000000-0000-4000-8000-00000000002a",
+          "name": "Orange Money",
+          "kind": "MOBILE_MONEY",
+          "openingBalance": 25000,
+          "balance": 125000,
+          "archived": false
+        }
+      ]
+    }
+  },
+  "25 PATCH /api/budget/operations/00000000-0000-4000-8000-000000000031": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000031",
+        "type": "EPARGNE",
+        "label": "Épargne projet (relevée)",
+        "plannedAmount": 25000,
+        "dueDate": "2026-11-28",
+        "categoryId": "00000000-0000-4000-8000-00000000002e",
+        "accountId": null,
+        "status": "PREVUE",
+        "paid": 0,
+        "remaining": 25000,
+        "economy": 0,
+        "overrun": 0,
+        "closedAt": null
+      }
+    }
+  },
+  "26 PATCH /api/budget/operations/00000000-0000-4000-8000-000000000031": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000031",
+        "type": "EPARGNE",
+        "label": "Épargne projet (relevée)",
+        "plannedAmount": 25000,
+        "dueDate": "2026-11-28",
+        "categoryId": "00000000-0000-4000-8000-00000000002e",
+        "accountId": null,
+        "status": "ANNULEE",
+        "paid": 0,
+        "remaining": 0,
+        "economy": 0,
+        "overrun": 0,
+        "closedAt": null
+      }
+    }
+  },
+  "27 PATCH /api/budget/operations/00000000-0000-4000-8000-000000000031": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000031",
+        "type": "EPARGNE",
+        "label": "Épargne projet (relevée)",
+        "plannedAmount": 25000,
+        "dueDate": "2026-11-28",
+        "categoryId": "00000000-0000-4000-8000-00000000002e",
+        "accountId": null,
+        "status": "PREVUE",
+        "paid": 0,
+        "remaining": 25000,
+        "economy": 0,
+        "overrun": 0,
+        "closedAt": null
+      }
+    }
+  },
+  "28 DELETE /api/budget/transactions/{{tx2}}": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "operation": {
+          "id": "00000000-0000-4000-8000-00000000002f",
+          "type": "DEPENSE",
+          "label": "Transport et impression",
+          "plannedAmount": 15000,
+          "dueDate": "2026-11-05",
+          "categoryId": "00000000-0000-4000-8000-00000000002b",
+          "accountId": null,
+          "status": "PARTIELLE",
+          "paid": 9000,
+          "remaining": 6000,
+          "economy": 0,
+          "overrun": 0,
+          "closedAt": null
+        }
+      }
+    }
+  },
+  "29 GET /api/budget/months/2026-11": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "month": "2026-11",
+        "currency": "XOF",
+        "needsSetup": false,
+        "summary": {
+          "plannedIncome": 200000,
+          "plannedExpense": 15000,
+          "plannedSaving": 25000,
+          "realIncome": 120000,
+          "realExpense": 21500,
+          "realSaving": 20000,
+          "remainingToSpend": -6500,
+          "overspent": true,
+          "expensePercent": 143,
+          "economy": 0,
+          "plannedNet": 160000,
+          "realNet": 78500
+        },
+        "accounts": [
+          {
+            "id": "00000000-0000-4000-8000-000000000029",
+            "name": "Espèces",
+            "kind": "ESPECES",
+            "openingBalance": 150000,
+            "balance": 128500,
+            "archived": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000002a",
+            "name": "Orange Money",
+            "kind": "MOBILE_MONEY",
+            "openingBalance": 25000,
+            "balance": 125000,
+            "archived": false
+          }
+        ],
+        "totalBalance": 253500,
+        "categories": [
+          {
+            "id": "00000000-0000-4000-8000-00000000002d",
+            "name": "Activité",
+            "type": "REVENU",
+            "archived": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000002c",
+            "name": "Alimentation",
+            "type": "DEPENSE",
+            "archived": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000002b",
+            "name": "Transport",
+            "type": "DEPENSE",
+            "archived": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000002e",
+            "name": "Épargne",
+            "type": "EPARGNE",
+            "archived": false
+          }
+        ],
+        "envelopes": [
+          {
+            "categoryId": "00000000-0000-4000-8000-00000000002c",
+            "categoryName": "Alimentation",
+            "type": "DEPENSE",
+            "planned": 8000,
+            "spent": 12500,
+            "remaining": -4500,
+            "percent": 156,
+            "overspent": true
+          },
+          {
+            "categoryId": "00000000-0000-4000-8000-00000000002e",
+            "categoryName": "Épargne",
+            "type": "EPARGNE",
+            "planned": 0,
+            "spent": 20000,
+            "remaining": -20000,
+            "percent": null,
+            "overspent": false
+          },
+          {
+            "categoryId": "00000000-0000-4000-8000-00000000002b",
+            "categoryName": "Transport",
+            "type": "DEPENSE",
+            "planned": 50000,
+            "spent": 9000,
+            "remaining": 41000,
+            "percent": 18,
+            "overspent": false
+          }
+        ],
+        "operations": [
+          {
+            "id": "00000000-0000-4000-8000-00000000002f",
+            "type": "DEPENSE",
+            "label": "Transport et impression",
+            "plannedAmount": 15000,
+            "dueDate": "2026-11-05",
+            "categoryId": "00000000-0000-4000-8000-00000000002b",
+            "accountId": null,
+            "status": "PARTIELLE",
+            "paid": 9000,
+            "remaining": 6000,
+            "economy": 0,
+            "overrun": 0,
+            "closedAt": null
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000030",
+            "type": "REVENU",
+            "label": "Facture école pilote",
+            "plannedAmount": 200000,
+            "dueDate": "2026-11-25",
+            "categoryId": "00000000-0000-4000-8000-00000000002d",
+            "accountId": "00000000-0000-4000-8000-00000000002a",
+            "status": "PARTIELLE",
+            "paid": 120000,
+            "remaining": 80000,
+            "economy": 0,
+            "overrun": 0,
+            "closedAt": null
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000031",
+            "type": "EPARGNE",
+            "label": "Épargne projet (relevée)",
+            "plannedAmount": 25000,
+            "dueDate": "2026-11-28",
+            "categoryId": "00000000-0000-4000-8000-00000000002e",
+            "accountId": null,
+            "status": "PREVUE",
+            "paid": 0,
+            "remaining": 25000,
+            "economy": 0,
+            "overrun": 0,
+            "closedAt": null
+          }
+        ],
+        "transactions": [
+          {
+            "id": "<uuid#1>",
+            "type": "REVENU",
+            "amount": 120000,
+            "date": "2026-11-20",
+            "accountId": "00000000-0000-4000-8000-00000000002a",
+            "categoryId": "00000000-0000-4000-8000-00000000002d",
+            "plannedOperationId": "00000000-0000-4000-8000-000000000030",
+            "label": "Facture école pilote"
+          },
+          {
+            "id": "{{tx1}}",
+            "type": "DEPENSE",
+            "amount": 9000,
+            "date": "2026-11-05",
+            "accountId": "00000000-0000-4000-8000-000000000029",
+            "categoryId": "00000000-0000-4000-8000-00000000002b",
+            "plannedOperationId": "00000000-0000-4000-8000-00000000002f",
+            "label": "Transport et impression"
+          },
+          {
+            "id": "<uuid#3>",
+            "type": "EPARGNE",
+            "amount": 20000,
+            "date": "2026-11-03",
+            "accountId": "00000000-0000-4000-8000-00000000002a",
+            "categoryId": "00000000-0000-4000-8000-00000000002e",
+            "plannedOperationId": null,
+            "label": null
+          },
+          {
+            "id": "<uuid#2>",
+            "type": "DEPENSE",
+            "amount": 12500,
+            "date": "2026-11-02",
+            "accountId": "00000000-0000-4000-8000-000000000029",
+            "categoryId": "00000000-0000-4000-8000-00000000002c",
+            "plannedOperationId": null,
+            "label": "Courses"
+          }
+        ]
+      }
+    }
+  },
+  "30 DELETE /api/budget/transactions/{{tx1}}": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "operation": {
+          "id": "00000000-0000-4000-8000-00000000002f",
+          "type": "DEPENSE",
+          "label": "Transport et impression",
+          "plannedAmount": 15000,
+          "dueDate": "2026-11-05",
+          "categoryId": "00000000-0000-4000-8000-00000000002b",
+          "accountId": null,
+          "status": "PREVUE",
+          "paid": 0,
+          "remaining": 15000,
+          "economy": 0,
+          "overrun": 0,
+          "closedAt": null
+        }
+      }
+    }
+  },
+  "31 GET /api/budget/months/2026-11": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "month": "2026-11",
+        "currency": "XOF",
+        "needsSetup": false,
+        "summary": {
+          "plannedIncome": 200000,
+          "plannedExpense": 15000,
+          "plannedSaving": 25000,
+          "realIncome": 120000,
+          "realExpense": 12500,
+          "realSaving": 20000,
+          "remainingToSpend": 2500,
+          "overspent": false,
+          "expensePercent": 83,
+          "economy": 0,
+          "plannedNet": 160000,
+          "realNet": 87500
+        },
+        "accounts": [
+          {
+            "id": "00000000-0000-4000-8000-000000000029",
+            "name": "Espèces",
+            "kind": "ESPECES",
+            "openingBalance": 150000,
+            "balance": 137500,
+            "archived": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000002a",
+            "name": "Orange Money",
+            "kind": "MOBILE_MONEY",
+            "openingBalance": 25000,
+            "balance": 125000,
+            "archived": false
+          }
+        ],
+        "totalBalance": 262500,
+        "categories": [
+          {
+            "id": "00000000-0000-4000-8000-00000000002d",
+            "name": "Activité",
+            "type": "REVENU",
+            "archived": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000002c",
+            "name": "Alimentation",
+            "type": "DEPENSE",
+            "archived": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000002b",
+            "name": "Transport",
+            "type": "DEPENSE",
+            "archived": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000002e",
+            "name": "Épargne",
+            "type": "EPARGNE",
+            "archived": false
+          }
+        ],
+        "envelopes": [
+          {
+            "categoryId": "00000000-0000-4000-8000-00000000002c",
+            "categoryName": "Alimentation",
+            "type": "DEPENSE",
+            "planned": 8000,
+            "spent": 12500,
+            "remaining": -4500,
+            "percent": 156,
+            "overspent": true
+          },
+          {
+            "categoryId": "00000000-0000-4000-8000-00000000002e",
+            "categoryName": "Épargne",
+            "type": "EPARGNE",
+            "planned": 0,
+            "spent": 20000,
+            "remaining": -20000,
+            "percent": null,
+            "overspent": false
+          },
+          {
+            "categoryId": "00000000-0000-4000-8000-00000000002b",
+            "categoryName": "Transport",
+            "type": "DEPENSE",
+            "planned": 50000,
+            "spent": 0,
+            "remaining": 50000,
+            "percent": 0,
+            "overspent": false
+          }
+        ],
+        "operations": [
+          {
+            "id": "00000000-0000-4000-8000-00000000002f",
+            "type": "DEPENSE",
+            "label": "Transport et impression",
+            "plannedAmount": 15000,
+            "dueDate": "2026-11-05",
+            "categoryId": "00000000-0000-4000-8000-00000000002b",
+            "accountId": null,
+            "status": "PREVUE",
+            "paid": 0,
+            "remaining": 15000,
+            "economy": 0,
+            "overrun": 0,
+            "closedAt": null
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000030",
+            "type": "REVENU",
+            "label": "Facture école pilote",
+            "plannedAmount": 200000,
+            "dueDate": "2026-11-25",
+            "categoryId": "00000000-0000-4000-8000-00000000002d",
+            "accountId": "00000000-0000-4000-8000-00000000002a",
+            "status": "PARTIELLE",
+            "paid": 120000,
+            "remaining": 80000,
+            "economy": 0,
+            "overrun": 0,
+            "closedAt": null
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000031",
+            "type": "EPARGNE",
+            "label": "Épargne projet (relevée)",
+            "plannedAmount": 25000,
+            "dueDate": "2026-11-28",
+            "categoryId": "00000000-0000-4000-8000-00000000002e",
+            "accountId": null,
+            "status": "PREVUE",
+            "paid": 0,
+            "remaining": 25000,
+            "economy": 0,
+            "overrun": 0,
+            "closedAt": null
+          }
+        ],
+        "transactions": [
+          {
+            "id": "<uuid#1>",
+            "type": "REVENU",
+            "amount": 120000,
+            "date": "2026-11-20",
+            "accountId": "00000000-0000-4000-8000-00000000002a",
+            "categoryId": "00000000-0000-4000-8000-00000000002d",
+            "plannedOperationId": "00000000-0000-4000-8000-000000000030",
+            "label": "Facture école pilote"
+          },
+          {
+            "id": "<uuid#3>",
+            "type": "EPARGNE",
+            "amount": 20000,
+            "date": "2026-11-03",
+            "accountId": "00000000-0000-4000-8000-00000000002a",
+            "categoryId": "00000000-0000-4000-8000-00000000002e",
+            "plannedOperationId": null,
+            "label": null
+          },
+          {
+            "id": "<uuid#2>",
+            "type": "DEPENSE",
+            "amount": 12500,
+            "date": "2026-11-02",
+            "accountId": "00000000-0000-4000-8000-000000000029",
+            "categoryId": "00000000-0000-4000-8000-00000000002c",
+            "plannedOperationId": null,
+            "label": "Courses"
+          }
+        ]
+      }
+    }
+  },
+  "32 PATCH /api/budget/accounts/00000000-0000-4000-8000-00000000002a": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000002a",
+        "name": "Orange Money",
+        "kind": "MOBILE_MONEY",
+        "openingBalance": 25000,
+        "balance": 125000,
+        "archived": true
+      }
+    }
+  },
+  "33 GET /api/budget/accounts": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": [
+        {
+          "id": "00000000-0000-4000-8000-000000000029",
+          "name": "Espèces",
+          "kind": "ESPECES",
+          "openingBalance": 150000,
+          "balance": 137500,
+          "archived": false
+        }
+      ]
+    }
+  },
+  "34 GET /api/budget/months/2026-12": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "month": "2026-12",
+        "currency": "XOF",
+        "needsSetup": false,
+        "summary": {
+          "plannedIncome": 0,
+          "plannedExpense": 0,
+          "plannedSaving": 0,
+          "realIncome": 0,
+          "realExpense": 0,
+          "realSaving": 0,
+          "remainingToSpend": 0,
+          "overspent": false,
+          "expensePercent": null,
+          "economy": 0,
+          "plannedNet": 0,
+          "realNet": 0
+        },
+        "accounts": [
+          {
+            "id": "00000000-0000-4000-8000-000000000029",
+            "name": "Espèces",
+            "kind": "ESPECES",
+            "openingBalance": 150000,
+            "balance": 137500,
+            "archived": false
+          }
+        ],
+        "totalBalance": 137500,
+        "categories": [
+          {
+            "id": "00000000-0000-4000-8000-00000000002d",
+            "name": "Activité",
+            "type": "REVENU",
+            "archived": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000002c",
+            "name": "Alimentation",
+            "type": "DEPENSE",
+            "archived": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000002b",
+            "name": "Transport",
+            "type": "DEPENSE",
+            "archived": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000002e",
+            "name": "Épargne",
+            "type": "EPARGNE",
+            "archived": false
+          }
+        ],
+        "envelopes": [],
+        "operations": [],
+        "transactions": []
+      }
+    }
+  },
+  "35 GET /api/budget/months/2026-13": {
+    "status": 400,
+    "body": {
+      "success": false,
+      "code": "VALIDATION_ERROR",
+      "message": "Certaines informations sont invalides",
+      "details": [
+        {
+          "field": "month",
+          "message": "Mois attendu : AAAA-MM"
+        }
+      ]
+    }
+  }
+}

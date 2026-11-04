@@ -1,0 +1,1260 @@
+{
+  "01 POST /api/goals": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000001",
+        "title": "Présenter EcoleSaaS à trois établissements",
+        "description": null,
+        "motivation": null,
+        "category": "CARRIERE",
+        "horizon": "PERSONNALISEE",
+        "startDate": "2026-10-01",
+        "endDate": "2027-06-30",
+        "priority": "HAUTE",
+        "status": "EN_COURS",
+        "progressMode": "JALONS",
+        "measureUnit": null,
+        "startValue": null,
+        "targetValue": null,
+        "progress": {
+          "mode": "JALONS",
+          "done": 0,
+          "total": 0,
+          "percent": null,
+          "label": "Ajoute un premier jalon"
+        },
+        "nextAction": null,
+        "needsNextAction": true
+      }
+    }
+  },
+  "02 POST /api/goals/00000000-0000-4000-8000-000000000001/milestones": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000002",
+        "goalId": "00000000-0000-4000-8000-000000000001",
+        "title": "Première démonstration",
+        "dueDate": "2026-11-20",
+        "completed": false,
+        "completedAt": null
+      }
+    }
+  },
+  "03 POST /api/goals/00000000-0000-4000-8000-000000000001/milestones": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000003",
+        "goalId": "00000000-0000-4000-8000-000000000001",
+        "title": "Deuxième démonstration",
+        "dueDate": "2026-12-20",
+        "completed": false,
+        "completedAt": null
+      }
+    }
+  },
+  "04 POST /api/tasks": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000000b",
+        "title": "Préparer les comptes de démonstration",
+        "notes": null,
+        "goalId": "00000000-0000-4000-8000-000000000001",
+        "milestoneId": "00000000-0000-4000-8000-000000000002",
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-04",
+        "dueDate": null,
+        "originalDate": "2026-11-04",
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "05 POST /api/tasks": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000000c",
+        "title": "Appeler le directeur",
+        "notes": null,
+        "goalId": "00000000-0000-4000-8000-000000000001",
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-05",
+        "dueDate": "2026-11-07",
+        "originalDate": "2026-11-05",
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "06 POST /api/tasks": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000000d",
+        "title": "Footing 5 km",
+        "notes": null,
+        "goalId": null,
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-03",
+        "dueDate": null,
+        "originalDate": "2026-11-03",
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": true,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "07 POST /api/tasks": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000000e",
+        "title": "Trier les photos",
+        "notes": null,
+        "goalId": null,
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": null,
+        "dueDate": null,
+        "originalDate": null,
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": true,
+        "suggestSplit": false
+      }
+    }
+  },
+  "08 POST /api/tasks": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000000f",
+        "title": "Payer la facture d’électricité",
+        "notes": null,
+        "goalId": null,
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-04",
+        "dueDate": "2026-11-02",
+        "originalDate": "2026-11-04",
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": true,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "09 POST /api/tasks/00000000-0000-4000-8000-00000000000b/complete": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000000b",
+        "title": "Préparer les comptes de démonstration",
+        "notes": null,
+        "goalId": "00000000-0000-4000-8000-000000000001",
+        "milestoneId": "00000000-0000-4000-8000-000000000002",
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-04",
+        "dueDate": null,
+        "originalDate": "2026-11-04",
+        "rescheduleCount": 0,
+        "status": "DONE",
+        "completedAt": "2026-11-04T09:00:09.000Z",
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "10 POST /api/tasks/00000000-0000-4000-8000-00000000000c/reschedule": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000000c",
+        "title": "Appeler le directeur",
+        "notes": null,
+        "goalId": "00000000-0000-4000-8000-000000000001",
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-06",
+        "dueDate": "2026-11-07",
+        "originalDate": "2026-11-05",
+        "rescheduleCount": 1,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "11 POST /api/tasks/00000000-0000-4000-8000-00000000000c/reschedule": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000000c",
+        "title": "Appeler le directeur",
+        "notes": null,
+        "goalId": "00000000-0000-4000-8000-000000000001",
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-09",
+        "dueDate": "2026-11-07",
+        "originalDate": "2026-11-05",
+        "rescheduleCount": 2,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "12 POST /api/tasks/00000000-0000-4000-8000-00000000000c/reschedule": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000000c",
+        "title": "Appeler le directeur",
+        "notes": null,
+        "goalId": "00000000-0000-4000-8000-000000000001",
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-10",
+        "dueDate": "2026-11-07",
+        "originalDate": "2026-11-05",
+        "rescheduleCount": 3,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": true
+      }
+    }
+  },
+  "13 POST /api/tasks/00000000-0000-4000-8000-00000000000e/cancel": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000000e",
+        "title": "Trier les photos",
+        "notes": null,
+        "goalId": null,
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": null,
+        "dueDate": null,
+        "originalDate": null,
+        "rescheduleCount": 0,
+        "status": "CANCELLED",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "14 PATCH /api/milestones/00000000-0000-4000-8000-000000000002": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000002",
+        "goalId": "00000000-0000-4000-8000-000000000001",
+        "title": "Première démonstration",
+        "dueDate": "2026-11-20",
+        "completed": true,
+        "completedAt": "2026-11-04T09:00:14.000Z"
+      }
+    }
+  },
+  "15 POST /api/tasks/00000000-0000-4000-8000-00000000000b/reopen": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000000b",
+        "title": "Préparer les comptes de démonstration",
+        "notes": null,
+        "goalId": "00000000-0000-4000-8000-000000000001",
+        "milestoneId": "00000000-0000-4000-8000-000000000002",
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-04",
+        "dueDate": null,
+        "originalDate": "2026-11-04",
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "16 POST /api/tasks/00000000-0000-4000-8000-00000000000b/complete": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000000b",
+        "title": "Préparer les comptes de démonstration",
+        "notes": null,
+        "goalId": "00000000-0000-4000-8000-000000000001",
+        "milestoneId": "00000000-0000-4000-8000-000000000002",
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-04",
+        "dueDate": null,
+        "originalDate": "2026-11-04",
+        "rescheduleCount": 0,
+        "status": "DONE",
+        "completedAt": "2026-11-04T09:00:16.000Z",
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "17 POST /api/tasks/00000000-0000-4000-8000-00000000000b/complete": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000000b",
+        "title": "Préparer les comptes de démonstration",
+        "notes": null,
+        "goalId": "00000000-0000-4000-8000-000000000001",
+        "milestoneId": "00000000-0000-4000-8000-000000000002",
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-04",
+        "dueDate": null,
+        "originalDate": "2026-11-04",
+        "rescheduleCount": 0,
+        "status": "DONE",
+        "completedAt": "2026-11-04T09:00:16.000Z",
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "18 PATCH /api/tasks/00000000-0000-4000-8000-00000000000f": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000000f",
+        "title": "Payer la facture d’électricité (urgent)",
+        "notes": null,
+        "goalId": null,
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": null,
+        "dueDate": "2026-11-02",
+        "originalDate": "2026-11-04",
+        "rescheduleCount": 1,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": true,
+        "unscheduled": true,
+        "suggestSplit": false
+      }
+    }
+  },
+  "19 GET /api/today": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "date": "2026-11-04",
+        "events": [],
+        "planned": [],
+        "done": [
+          {
+            "id": "00000000-0000-4000-8000-00000000000b",
+            "title": "Préparer les comptes de démonstration",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000001",
+            "milestoneId": "00000000-0000-4000-8000-000000000002",
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-04",
+            "dueDate": null,
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 0,
+            "status": "DONE",
+            "completedAt": "2026-11-04T09:00:16.000Z",
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          }
+        ],
+        "toReschedule": [
+          {
+            "id": "00000000-0000-4000-8000-00000000000d",
+            "title": "Footing 5 km",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-03",
+            "dueDate": null,
+            "originalDate": "2026-11-03",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": true,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          }
+        ],
+        "overdue": [
+          {
+            "id": "00000000-0000-4000-8000-00000000000f",
+            "title": "Payer la facture d’électricité (urgent)",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": null,
+            "dueDate": "2026-11-02",
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 1,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": true,
+            "unscheduled": true,
+            "suggestSplit": false
+          }
+        ],
+        "goalsWithoutNextAction": [],
+        "emptyMessage": null
+      }
+    }
+  },
+  "20 GET /api/today?date=2026-11-05": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "date": "2026-11-05",
+        "events": [],
+        "planned": [],
+        "done": [],
+        "toReschedule": [
+          {
+            "id": "00000000-0000-4000-8000-00000000000d",
+            "title": "Footing 5 km",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-03",
+            "dueDate": null,
+            "originalDate": "2026-11-03",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": true,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          }
+        ],
+        "overdue": [
+          {
+            "id": "00000000-0000-4000-8000-00000000000f",
+            "title": "Payer la facture d’électricité (urgent)",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": null,
+            "dueDate": "2026-11-02",
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 1,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": true,
+            "unscheduled": true,
+            "suggestSplit": false
+          }
+        ],
+        "goalsWithoutNextAction": [],
+        "emptyMessage": "Aucune action prévue"
+      }
+    }
+  },
+  "21 GET /api/tasks?status=TODO": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "items": [
+          {
+            "id": "00000000-0000-4000-8000-00000000000d",
+            "title": "Footing 5 km",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-03",
+            "dueDate": null,
+            "originalDate": "2026-11-03",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": true,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000000c",
+            "title": "Appeler le directeur",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000001",
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-10",
+            "dueDate": "2026-11-07",
+            "originalDate": "2026-11-05",
+            "rescheduleCount": 3,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": true
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000000f",
+            "title": "Payer la facture d’électricité (urgent)",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": null,
+            "dueDate": "2026-11-02",
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 1,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": true,
+            "unscheduled": true,
+            "suggestSplit": false
+          }
+        ],
+        "total": 3,
+        "limit": 50,
+        "offset": 0
+      }
+    }
+  },
+  "22 GET /api/tasks?unscheduled=true": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "items": [
+          {
+            "id": "00000000-0000-4000-8000-00000000000e",
+            "title": "Trier les photos",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": null,
+            "dueDate": null,
+            "originalDate": null,
+            "rescheduleCount": 0,
+            "status": "CANCELLED",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000000f",
+            "title": "Payer la facture d’électricité (urgent)",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": null,
+            "dueDate": "2026-11-02",
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 1,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": true,
+            "unscheduled": true,
+            "suggestSplit": false
+          }
+        ],
+        "total": 2,
+        "limit": 50,
+        "offset": 0
+      }
+    }
+  },
+  "23 GET /api/tasks?goalId=00000000-0000-4000-8000-000000000001": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "items": [
+          {
+            "id": "00000000-0000-4000-8000-00000000000b",
+            "title": "Préparer les comptes de démonstration",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000001",
+            "milestoneId": "00000000-0000-4000-8000-000000000002",
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-04",
+            "dueDate": null,
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 0,
+            "status": "DONE",
+            "completedAt": "2026-11-04T09:00:16.000Z",
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000000c",
+            "title": "Appeler le directeur",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000001",
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-10",
+            "dueDate": "2026-11-07",
+            "originalDate": "2026-11-05",
+            "rescheduleCount": 3,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": true
+          }
+        ],
+        "total": 2,
+        "limit": 50,
+        "offset": 0
+      }
+    }
+  },
+  "24 GET /api/tasks?from=2026-11-03&to=2026-11-05": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "items": [
+          {
+            "id": "00000000-0000-4000-8000-00000000000d",
+            "title": "Footing 5 km",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-03",
+            "dueDate": null,
+            "originalDate": "2026-11-03",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": true,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000000b",
+            "title": "Préparer les comptes de démonstration",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000001",
+            "milestoneId": "00000000-0000-4000-8000-000000000002",
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-04",
+            "dueDate": null,
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 0,
+            "status": "DONE",
+            "completedAt": "2026-11-04T09:00:16.000Z",
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          }
+        ],
+        "total": 2,
+        "limit": 50,
+        "offset": 0
+      }
+    }
+  },
+  "25 GET /api/goals": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": [
+        {
+          "id": "00000000-0000-4000-8000-000000000001",
+          "title": "Présenter EcoleSaaS à trois établissements",
+          "description": null,
+          "motivation": null,
+          "category": "CARRIERE",
+          "horizon": "PERSONNALISEE",
+          "startDate": "2026-10-01",
+          "endDate": "2027-06-30",
+          "priority": "HAUTE",
+          "status": "EN_COURS",
+          "progressMode": "JALONS",
+          "measureUnit": null,
+          "startValue": null,
+          "targetValue": null,
+          "progress": {
+            "mode": "JALONS",
+            "done": 1,
+            "total": 2,
+            "percent": 50,
+            "label": "1 jalon terminé sur 2"
+          },
+          "nextAction": {
+            "id": "00000000-0000-4000-8000-00000000000c",
+            "title": "Appeler le directeur",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000001",
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-10",
+            "dueDate": "2026-11-07",
+            "originalDate": "2026-11-05",
+            "rescheduleCount": 3,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": true
+          },
+          "needsNextAction": false
+        }
+      ]
+    }
+  },
+  "26 GET /api/goals/00000000-0000-4000-8000-000000000001": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000001",
+        "title": "Présenter EcoleSaaS à trois établissements",
+        "description": null,
+        "motivation": null,
+        "category": "CARRIERE",
+        "horizon": "PERSONNALISEE",
+        "startDate": "2026-10-01",
+        "endDate": "2027-06-30",
+        "priority": "HAUTE",
+        "status": "EN_COURS",
+        "progressMode": "JALONS",
+        "measureUnit": null,
+        "startValue": null,
+        "targetValue": null,
+        "progress": {
+          "mode": "JALONS",
+          "done": 1,
+          "total": 2,
+          "percent": 50,
+          "label": "1 jalon terminé sur 2"
+        },
+        "nextAction": {
+          "id": "00000000-0000-4000-8000-00000000000c",
+          "title": "Appeler le directeur",
+          "notes": null,
+          "goalId": "00000000-0000-4000-8000-000000000001",
+          "milestoneId": null,
+          "eventId": null,
+          "eventRole": null,
+          "workDate": "2026-11-10",
+          "dueDate": "2026-11-07",
+          "originalDate": "2026-11-05",
+          "rescheduleCount": 3,
+          "status": "TODO",
+          "completedAt": null,
+          "needsRescheduling": false,
+          "overdue": false,
+          "unscheduled": false,
+          "suggestSplit": true
+        },
+        "needsNextAction": false,
+        "milestones": [
+          {
+            "id": "00000000-0000-4000-8000-000000000002",
+            "goalId": "00000000-0000-4000-8000-000000000001",
+            "title": "Première démonstration",
+            "dueDate": "2026-11-20",
+            "completed": true,
+            "completedAt": "2026-11-04T09:00:14.000Z"
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000003",
+            "goalId": "00000000-0000-4000-8000-000000000001",
+            "title": "Deuxième démonstration",
+            "dueDate": "2026-12-20",
+            "completed": false,
+            "completedAt": null
+          }
+        ],
+        "readings": [],
+        "tasks": [
+          {
+            "id": "00000000-0000-4000-8000-00000000000b",
+            "title": "Préparer les comptes de démonstration",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000001",
+            "milestoneId": "00000000-0000-4000-8000-000000000002",
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-04",
+            "dueDate": null,
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 0,
+            "status": "DONE",
+            "completedAt": "2026-11-04T09:00:16.000Z",
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000000c",
+            "title": "Appeler le directeur",
+            "notes": null,
+            "goalId": "00000000-0000-4000-8000-000000000001",
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-10",
+            "dueDate": "2026-11-07",
+            "originalDate": "2026-11-05",
+            "rescheduleCount": 3,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": true
+          }
+        ]
+      }
+    }
+  },
+  "27 GET /api/reviews?period=day&date=2026-11-04": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "from": "2026-11-04",
+        "to": "2026-11-04",
+        "tasks": {
+          "expected": 2,
+          "done": 1,
+          "pending": 0,
+          "rescheduledOut": 1,
+          "cancelled": 0,
+          "plannedAtStart": 0,
+          "addedDuringPeriod": 2,
+          "executionRate": {
+            "numerator": 1,
+            "denominator": 2,
+            "percent": 50
+          }
+        },
+        "events": {
+          "planned": 0,
+          "done": 0,
+          "cancelled": 0,
+          "expected": 0
+        },
+        "goals": [
+          {
+            "id": "00000000-0000-4000-8000-000000000001",
+            "title": "Présenter EcoleSaaS à trois établissements",
+            "progress": {
+              "mode": "JALONS",
+              "done": 1,
+              "total": 2,
+              "percent": 50,
+              "label": "1 jalon terminé sur 2"
+            },
+            "milestonesDoneInPeriod": 1
+          }
+        ],
+        "questions": [
+          "Qu'ai-je accompli ?",
+          "Qu'est-ce qui m'a bloqué ?",
+          "Quelle est ma prochaine priorité ?"
+        ]
+      }
+    }
+  },
+  "28 GET /api/reviews?period=week&date=2026-11-04": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "from": "2026-11-02",
+        "to": "2026-11-08",
+        "tasks": {
+          "expected": 4,
+          "done": 1,
+          "pending": 1,
+          "rescheduledOut": 2,
+          "cancelled": 0,
+          "plannedAtStart": 0,
+          "addedDuringPeriod": 4,
+          "executionRate": {
+            "numerator": 1,
+            "denominator": 4,
+            "percent": 25
+          }
+        },
+        "events": {
+          "planned": 0,
+          "done": 0,
+          "cancelled": 0,
+          "expected": 0
+        },
+        "goals": [
+          {
+            "id": "00000000-0000-4000-8000-000000000001",
+            "title": "Présenter EcoleSaaS à trois établissements",
+            "progress": {
+              "mode": "JALONS",
+              "done": 1,
+              "total": 2,
+              "percent": 50,
+              "label": "1 jalon terminé sur 2"
+            },
+            "milestonesDoneInPeriod": 1
+          }
+        ],
+        "questions": [
+          "Qu'ai-je accompli ?",
+          "Qu'est-ce qui m'a bloqué ?",
+          "Quelle est ma prochaine priorité ?"
+        ]
+      }
+    }
+  },
+  "29 GET /api/reviews?period=month&date=2026-11-04": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "from": "2026-11-01",
+        "to": "2026-11-30",
+        "tasks": {
+          "expected": 4,
+          "done": 1,
+          "pending": 2,
+          "rescheduledOut": 1,
+          "cancelled": 0,
+          "plannedAtStart": 0,
+          "addedDuringPeriod": 4,
+          "executionRate": {
+            "numerator": 1,
+            "denominator": 4,
+            "percent": 25
+          }
+        },
+        "events": {
+          "planned": 0,
+          "done": 0,
+          "cancelled": 0,
+          "expected": 0
+        },
+        "goals": [
+          {
+            "id": "00000000-0000-4000-8000-000000000001",
+            "title": "Présenter EcoleSaaS à trois établissements",
+            "progress": {
+              "mode": "JALONS",
+              "done": 1,
+              "total": 2,
+              "percent": 50,
+              "label": "1 jalon terminé sur 2"
+            },
+            "milestonesDoneInPeriod": 1
+          }
+        ],
+        "questions": [
+          "Qu'ai-je accompli ?",
+          "Qu'est-ce qui m'a bloqué ?",
+          "Quelle est ma prochaine priorité ?"
+        ]
+      }
+    }
+  },
+  "30 GET /api/reviews?from=2026-12-01&to=2026-12-31": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "from": "2026-12-01",
+        "to": "2026-12-31",
+        "tasks": {
+          "expected": 0,
+          "done": 0,
+          "pending": 0,
+          "rescheduledOut": 0,
+          "cancelled": 0,
+          "plannedAtStart": 0,
+          "addedDuringPeriod": 0,
+          "executionRate": null
+        },
+        "events": {
+          "planned": 0,
+          "done": 0,
+          "cancelled": 0,
+          "expected": 0
+        },
+        "goals": [
+          {
+            "id": "00000000-0000-4000-8000-000000000001",
+            "title": "Présenter EcoleSaaS à trois établissements",
+            "progress": {
+              "mode": "JALONS",
+              "done": 1,
+              "total": 2,
+              "percent": 50,
+              "label": "1 jalon terminé sur 2"
+            },
+            "milestonesDoneInPeriod": 0
+          }
+        ],
+        "questions": [
+          "Qu'ai-je accompli ?",
+          "Qu'est-ce qui m'a bloqué ?",
+          "Quelle est ma prochaine priorité ?"
+        ]
+      }
+    }
+  },
+  "31 DELETE /api/milestones/00000000-0000-4000-8000-000000000003": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "message": "Jalon supprimé"
+    }
+  },
+  "32 DELETE /api/goals/00000000-0000-4000-8000-000000000001": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "message": "Objectif supprimé"
+    }
+  },
+  "33 GET /api/tasks": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "items": [
+          {
+            "id": "00000000-0000-4000-8000-00000000000d",
+            "title": "Footing 5 km",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-03",
+            "dueDate": null,
+            "originalDate": "2026-11-03",
+            "rescheduleCount": 0,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": true,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000000b",
+            "title": "Préparer les comptes de démonstration",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-04",
+            "dueDate": null,
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 0,
+            "status": "DONE",
+            "completedAt": "2026-11-04T09:00:16.000Z",
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000000c",
+            "title": "Appeler le directeur",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": "2026-11-10",
+            "dueDate": "2026-11-07",
+            "originalDate": "2026-11-05",
+            "rescheduleCount": 3,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": true
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000000e",
+            "title": "Trier les photos",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": null,
+            "dueDate": null,
+            "originalDate": null,
+            "rescheduleCount": 0,
+            "status": "CANCELLED",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": false,
+            "unscheduled": false,
+            "suggestSplit": false
+          },
+          {
+            "id": "00000000-0000-4000-8000-00000000000f",
+            "title": "Payer la facture d’électricité (urgent)",
+            "notes": null,
+            "goalId": null,
+            "milestoneId": null,
+            "eventId": null,
+            "eventRole": null,
+            "workDate": null,
+            "dueDate": "2026-11-02",
+            "originalDate": "2026-11-04",
+            "rescheduleCount": 1,
+            "status": "TODO",
+            "completedAt": null,
+            "needsRescheduling": false,
+            "overdue": true,
+            "unscheduled": true,
+            "suggestSplit": false
+          }
+        ],
+        "total": 5,
+        "limit": 50,
+        "offset": 0
+      }
+    }
+  },
+  "34 GET /api/goals": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": []
+    }
+  }
+}

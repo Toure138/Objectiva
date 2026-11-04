@@ -144,7 +144,7 @@ export async function listAccounts(userId: string, q: z.infer<typeof listAccount
 export async function createAccount(userId: string, input: z.infer<typeof createAccountSchema>) {
   try {
     const a = await prisma.account.create({
-      data: { userId, name: input.name, kind: input.kind, openingBalance: input.openingBalance ?? 0 },
+      data: { id: input.id, userId, name: input.name, kind: input.kind, openingBalance: input.openingBalance ?? 0 },
     });
     return serializeAccount(a, []);
   } catch (e) {
@@ -190,7 +190,7 @@ export async function listCategories(userId: string, q: z.infer<typeof listCateg
 
 export async function createCategory(userId: string, input: z.infer<typeof createCategorySchema>) {
   try {
-    return serializeCategory(await prisma.budgetCategory.create({ data: { userId, name: input.name, type: input.type } }));
+    return serializeCategory(await prisma.budgetCategory.create({ data: { id: input.id, userId, name: input.name, type: input.type } }));
   } catch (e) {
     if (isUniqueViolation(e)) throw conflict('Une catégorie du même type porte déjà ce nom');
     throw e;

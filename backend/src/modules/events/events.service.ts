@@ -64,6 +64,7 @@ export async function createEvent(userId: string, timezone: string, input: z.inf
   const links = await resolveLinks(userId, input.goalId, input.milestoneId);
   const event = await prisma.event.create({
     data: {
+      id: input.id,
       userId,
       type: input.type,
       title: input.title,

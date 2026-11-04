@@ -5,6 +5,19 @@ description: Conventions du backend Objectiva (Express 5 + TypeScript + Prisma 7
 
 # Conventions backend Objectiva
 
+## Code partagé et synchronisation (spec 007)
+- Règles et schémas vivent dans `shared/src/` ; `<domaine>.rules.ts` et `<domaine>.schemas.ts` du backend
+  sont de simples **façades** (`export *`). Une nouvelle règle de calcul ou un nouveau schéma de saisie se
+  crée dans `shared/src/`, avec sa façade, pour pouvoir tourner aussi sur le téléphone.
+- Dans `shared/` : imports relatifs **sans extension**, aucune dépendance Node, Express ou Prisma.
+- Toute création accepte un `id` facultatif (`clientId` de `shared/src/ids.ts`) transmis tel quel à
+  Prisma ; une collision est un 409 uniforme (gestionnaire central).
+- Table synchronisable : `user_id`, `server_version`, `updated_at` + déclencheurs (voir la migration
+  `…_synchronisation`) ; jamais d'écriture manuelle de ces colonnes. Dates posées par l'application avec
+  `new Date()` quand une règle s'en sert (ex. `tasks.created_at`), pour rester déterministes.
+- Nouveau comportement visible par l'API : ajouter ou étendre un scénario de `shared/parity/` et relire
+  le diff des références.
+
 ## Structure d'un module (`backend/src/modules/<domaine>/`)
 - `<domaine>.schemas.ts` : schémas zod (messages d'erreur en français).
 - `<domaine>.rules.ts` : calculs purs (aucun accès base), testés dans `tests/unit/`.

@@ -1,0 +1,15 @@
+{
+  "name": "@objectiva/shared",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Règles de calcul et schémas de validation partagés entre l'API et l'application (TypeScript pur, sans accès base ni interface)",
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3"
+  }
+}

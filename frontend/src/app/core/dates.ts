@@ -1,3 +1,7 @@
+import { addDays } from '../../../../shared/src/dates';
+
+export { addDays, addMonths } from '../../../../shared/src/dates';
+
 // Affichage des dates de calendrier (AAAA-MM-JJ). Aucune conversion de fuseau :
 // une date sans heure reste la même partout.
 
@@ -13,12 +17,6 @@ export function localToday(now = new Date()): string {
   const m = String(now.getMonth() + 1).padStart(2, '0');
   const d = String(now.getDate()).padStart(2, '0');
   return `${y}-${m}-${d}`;
-}
-
-export function addDays(date: string, days: number): string {
-  const d = toUtc(date);
-  d.setUTCDate(d.getUTCDate() + days);
-  return d.toISOString().slice(0, 10);
 }
 
 /** « aujourd'hui », « demain », « hier » ou la date courte. */
@@ -40,13 +38,6 @@ export function shortDate(date: string | null): string {
 }
 
 const MONTH = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric', timeZone: 'UTC' });
-
-/** Mois « AAAA-MM » décalé de `n` mois (négatif pour reculer). */
-export function addMonths(month: string, n: number): string {
-  const [y, m] = month.split('-').map(Number) as [number, number];
-  const d = new Date(Date.UTC(y, m - 1 + n, 1));
-  return d.toISOString().slice(0, 7);
-}
 
 /** « Novembre 2026 ». */
 export function monthLabel(month: string): string {

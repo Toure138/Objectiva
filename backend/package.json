@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "API REST d'Objectiva (Express + TypeScript + Prisma)",
-  "main": "dist/server.js",
+  "main": "dist/backend/src/server.js",
   "engines": {
     "node": ">=22"
   },
@@ -11,14 +11,15 @@
     "postinstall": "prisma generate",
     "dev": "tsx watch src/server.ts",
     "build": "tsc -p tsconfig.json",
-    "start": "node dist/server.js",
+    "start": "node dist/backend/src/server.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
-    "seed": "tsx prisma/seed.ts"
+    "seed": "tsx prisma/seed.ts",
+    "db:new-epoch": "tsx scripts/new-epoch.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.0.0",

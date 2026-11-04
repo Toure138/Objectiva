@@ -45,6 +45,10 @@ chargement et l'erreur avec « Réessayer », message explicite pour une liste v
   `--ok|--warn|--danger|--primary`, toujours avec libellé (et icône).
 - Vérifier chaque écran en clair **et** en sombre à 360×740 (captures Playwright).
 
+## Code partagé (`shared/`)
+Les règles de calcul et schémas de `shared/src/` s'importent par chemin relatif **sans extension**
+(`'../../../../shared/src/goals.rules'`). Ne jamais copier une règle dans le frontend : l'importer.
+
 ## Argent, événements, formulaires à clé
 - Montants : `core/money.ts` (`formatMoney`, `formatSigned`, `parseMoney`, `toInputValue`,
   `newIdempotencyKey`). Le frontend n'additionne ni ne soustrait des montants : il affiche les valeurs de

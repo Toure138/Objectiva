@@ -2,8 +2,10 @@ import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 import { requireAuth } from './core/auth.middleware.ts';
+import { currentEpoch } from './core/epoch.ts';
 import { env } from './core/env.ts';
 import { errorHandler, notFoundRoute } from './core/errors.ts';
+import { checkProtocol, MIN_SYNC_PROTOCOL_VERSION, PROTOCOL_HEADER, SYNC_PROTOCOL_VERSION } from '../../shared/src/sync.ts';
 import { authRouter } from './modules/auth/auth.routes.ts';
 import { budgetRouter } from './modules/budget/budget.routes.ts';
 import { eventsRouter } from './modules/events/events.routes.ts';
@@ -31,6 +33,23 @@ export function createApp() {
 
   app.get('/health', (_req, res) => {
     res.json({ success: true, data: { status: 'ok' } });
+  });
+
+  // Point d'entrée public pour les appareils : version du protocole, époque du serveur et heure
+  // (pour repérer une horloge de téléphone fausse). Aucune donnée d'utilisateur.
+  app.get('/api/meta', async (req, res) => {
+    const announced = req.headers[PROTOCOL_HEADER];
+    res.json({
+      success: true,
+      data: {
+        protocolVersion: SYNC_PROTOCOL_VERSION,
+        minProtocolVersion: MIN_SYNC_PROTOCOL_VERSION,
+        epoch: await currentEpoch(),
+        serverTime: new Date().toISOString(),
+        // Renseigné seulement si le client annonce sa version.
+        compatible: announced === undefined ? undefined : checkProtocol(announced) === 'ok',
+      },
+    });
   });
 
   app.use('/api/auth', authRouter);

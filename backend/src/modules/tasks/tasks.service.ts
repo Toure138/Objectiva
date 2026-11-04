@@ -67,7 +67,10 @@ export async function createTask(userId: string, today: string, input: z.infer<t
   const workDate = input.workDate ?? null;
   const task = await prisma.task.create({
     data: {
+      id: input.id,
       userId,
+      // Horloge de l'application (pas de la base) : le bilan s'en sert, et un appareil hors connexion fait de même.
+      createdAt: new Date(),
       title: input.title,
       notes: input.notes ?? null,
       workDate: workDate ? toDbDate(workDate) : null,

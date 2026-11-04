@@ -45,6 +45,7 @@ export async function createOperation(userId: string, input: z.infer<typeof crea
   if (input.accountId) await requireAccount(userId, input.accountId);
   const op = await prisma.plannedOperation.create({
     data: {
+      id: input.id,
       userId,
       type: input.type,
       label: input.label,
@@ -172,6 +173,7 @@ export async function createTransaction(userId: string, today: string, input: z.
   try {
     const t = await prisma.transaction.create({
       data: {
+        id: input.id,
         userId,
         accountId: input.accountId,
         categoryId: input.categoryId ?? null,

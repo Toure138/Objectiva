@@ -48,9 +48,9 @@ async function main() {
       targetValue: 3,
       milestones: {
         create: [
-          { title: 'Réaliser la première démonstration', dueDate: day(14) },
-          { title: 'Réaliser la deuxième démonstration', dueDate: day(60) },
-          { title: 'Réaliser la troisième démonstration', dueDate: day(120) },
+          { userId, title: 'Réaliser la première démonstration', dueDate: day(14) },
+          { userId, title: 'Réaliser la deuxième démonstration', dueDate: day(60) },
+          { userId, title: 'Réaliser la troisième démonstration', dueDate: day(120) },
         ],
       },
     },
@@ -72,8 +72,8 @@ async function main() {
       status: 'EN_COURS',
       milestones: {
         create: [
-          { title: 'Terminer le module « Réunions »', dueDate: day(-5), completedAt: day(-6) },
-          { title: 'Présenter EcoleSaaS en anglais à un ami', dueDate: day(25) },
+          { userId, title: 'Terminer le module « Réunions »', dueDate: day(-5), completedAt: day(-6) },
+          { userId, title: 'Présenter EcoleSaaS en anglais à un ami', dueDate: day(25) },
         ],
       },
     },
@@ -90,7 +90,7 @@ async function main() {
       endDate: day(70),
       priority: 'MOYENNE',
       status: 'EN_COURS',
-      milestones: { create: [{ title: 'Courir 5 km', dueDate: day(10) }] },
+      milestones: { create: [{ userId, title: 'Courir 5 km', dueDate: day(10) }] },
     },
   });
 

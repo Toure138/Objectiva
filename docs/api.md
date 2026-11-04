@@ -166,3 +166,23 @@ requêtes simultanées restent cohérentes. Une clé déjà utilisée pour une a
 dépassement), `overspent`, `expensePercent` (`null` sans dépense prévue), `economy`, `plannedNet`,
 `realNet`. Une enveloppe : `planned`, `spent`, `remaining`, `percent` (`null` sans montant prévu),
 `overspent`. Solde d'un compte = ouverture + revenus − dépenses − épargne (transactions réelles).
+
+## Fondations de la synchronisation (spec 007, phase 0)
+
+Préparation du fonctionnement hors connexion. Aucune route de synchronisation n'existe encore (phase 1).
+
+- **Identifiants fournis par l'appareil** : toute création (objectif, jalon, relevé, tâche, événement,
+  compte, catégorie, prévision, transaction) accepte un `id` (UUID) facultatif. Sans `id`, le serveur
+  en génère un. Un `id` déjà utilisé renvoie `409 CONFLICT` « Cette donnée existe déjà », **que
+  l'identifiant appartienne à soi ou à un autre utilisateur** : la réponse ne révèle rien et rien n'est
+  écrasé. L'`id` d'une donnée existante ne peut pas être modifié.
+- **`GET /meta`** (public, sans authentification) : `{ protocolVersion, minProtocolVersion, epoch,
+  serverTime, compatible? }`. `epoch` change quand la base est restaurée (`npm run db:new-epoch`) ;
+  `serverTime` permet de repérer une horloge de téléphone fausse ; `compatible` n'est renseigné que si
+  la requête annonce l'en-tête `X-Objectiva-Protocol`.
+- **Protocole** : les futures routes `/sync/*` exigent l'en-tête `X-Objectiva-Protocol: <version>`.
+  Version trop ancienne, trop récente ou absente → `426 UPGRADE_REQUIRED` avec `details:
+  { protocolVersion, minProtocolVersion }`.
+- **Dans la base** (invisible de l'API) : chaque ligne synchronisable reçoit un `server_version` (compteur
+  par utilisateur) et un `updated_at` par déclencheur PostgreSQL, et chaque suppression, cascades
+  comprises, laisse une pierre tombale (`tombstones`).

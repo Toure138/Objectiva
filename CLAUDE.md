@@ -31,8 +31,28 @@ progression mesurée, événements, budget mensuel, scénario EcoleSaaS. Suite e
   `dates.ts`, `ids.ts` (`idParam` : uuid invalide → 404).
 - **Sessions** : table `sessions` ; le JWT porte `sid`, vérifié en base à chaque requête →
   déconnexion = révocation immédiate.
-- Les **règles de calcul** (progression, report, taux du bilan, et plus tard soldes et
-  disponibilité) vivent dans le backend. Le frontend affiche, il ne recalcule pas.
+- Les **règles de calcul** (progression, report, taux du bilan, soldes, règlement, fuseaux…) vivent
+  dans `shared/` (voir ci-dessous), jamais en double. Tant que le moteur local n'existe pas (spec
+  007, phase 1), le frontend affiche les valeurs de l'API et ne recalcule pas ; ensuite il utilise
+  le même module `shared/`, jamais une copie.
+
+### Code partagé (`shared/`) et synchronisation hors connexion (spec 007)
+- `shared/src/` : règles (`*.rules.ts`), schémas zod (`*.schemas.ts`), `dates.ts`, `ids.ts`,
+  `sync.ts` (version de protocole) en TypeScript pur, sans accès base ni interface. Le backend
+  garde des **façades** d'un fichier (`export * from '../../../../shared/src/…'`) : les imports
+  existants restent valables. Import par chemin relatif et **sans extension** dans `shared/`
+  (le build Angular refuse `.ts`).
+- Objectif de la spec 007 : fonctionnement complet hors connexion (le téléphone est la référence,
+  le serveur est un partenaire de synchronisation). Phase 0 faite : voir `specs/007-hors-connexion`.
+- **Base** : `server_version` et `updated_at` sont posés par des **déclencheurs** PostgreSQL sur toute
+  table synchronisable, et toute suppression (cascades comprises) laisse une ligne dans `tombstones`.
+  Ne jamais les écrire à la main. Une **nouvelle table synchronisable** doit avoir `user_id`,
+  `server_version`, `updated_at` et les deux déclencheurs (copier la migration `…_synchronisation`).
+- **Tests de parité** : `shared/parity/scenarios.ts` (données pures) joués contre l'API, réponses
+  figées dans `shared/parity/golden/`. Le moteur local devra les rejouer à l'identique. Changement
+  **volontaire** de comportement : `cd backend && UPDATE_GOLDEN=1 npx vitest run tests/parity`, puis
+  relire le diff Git (les références sont la vérité du calcul, ne pas les régénérer à la légère).
+- Toute création accepte un `id` fourni par l'appareil (collision → 409 uniforme, sans fuite).
 
 ### Frontend
 - `src/app/core/` : `api.service.ts` (**seul point d'appel HTTP**), `auth.service.ts` (session
@@ -141,5 +161,7 @@ dans le navigateur au format téléphone.
 - `npm run db:migrate` — applique les migrations ; `npm run db:seed` — données de démo
   (demo@objectiva.fr / objectiva123).
 - `npm run api` — API sur http://localhost:3100 ; `npm run web` — interface sur http://localhost:4200.
-- `npm test` — tests backend puis frontend ; `npm run lint` — types backend + lint frontend.
+- `npm test` — tests backend puis frontend ; `npm run lint` — types `shared/` et backend + lint frontend.
+- `npm run db:new-epoch` — à lancer après toute **restauration de sauvegarde** de la base (les appareils
+  détectent le changement d'époque).
 - Nouvelle migration : `cd backend && npx prisma migrate dev --name <nom>` puis `npx prisma generate`.

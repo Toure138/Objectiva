@@ -156,7 +156,7 @@ export async function deleteGoal(userId: string, goalId: string) {
 export async function createMilestone(userId: string, goalId: string, input: z.infer<typeof createMilestoneSchema>) {
   await findOwnedGoal(userId, goalId);
   const m = await prisma.milestone.create({
-    data: { goalId, title: input.title, dueDate: input.dueDate ? toDbDate(input.dueDate) : null },
+    data: { id: input.id, userId, goalId, title: input.title, dueDate: input.dueDate ? toDbDate(input.dueDate) : null },
   });
   return serializeMilestone(m);
 }
@@ -195,7 +195,7 @@ export async function createReading(userId: string, goalId: string, today: strin
     throw new AppError(409, 'CONFLICT', "Cet objectif n'est pas suivi par une mesure : passe-le en progression mesurée d'abord");
   }
   const reading = await prisma.goalReading.create({
-    data: { goalId, value: input.value, readOn: toDbDate(input.readOn ?? today), note: input.note ?? null },
+    data: { id: input.id, userId, goalId, value: input.value, readOn: toDbDate(input.readOn ?? today), note: input.note ?? null },
   });
   const fresh = await findOwnedGoal(userId, goalId);
   return { reading: serializeReading(reading), progress: serializeGoal(fresh, today).progress };
