@@ -18,6 +18,7 @@ import { todayRouter } from './modules/today/today.routes.ts';
 export function createApp() {
   const app = express();
   app.disable('x-powered-by');
+  app.set('trust proxy', env.TRUST_PROXY);
   app.use(helmet());
 
   const origins = env.CORS_ORIGIN.split(',').map((o) => o.trim()).filter(Boolean);

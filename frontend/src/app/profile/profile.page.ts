@@ -143,7 +143,7 @@ import { SegmentedComponent, type SegmentOption } from '../shared/segmented.comp
 
         <section class="ob-card">
           <h3 class="ob-eyebrow">Connexion au serveur</h3>
-          <p class="hint ob-muted">Sur téléphone : adresse IP du PC, ex. http://192.168.1.20:3100/api</p>
+          <p class="hint ob-muted">Sur téléphone : adresse de ton serveur, ex. https://objectiva-api.onrender.com</p>
           <ion-list class="ob-form" lines="none">
             <ion-item>
               <ion-input

@@ -1,0 +1,88 @@
+# Construit l'APK Android d'Objectiva, signé avec TA clé, prêt à installer à la main.
+# Lancer : GitHub > Actions > « APK Android » > Run workflow. Le fichier est ensuite dans « Artifacts ».
+# Mise en place (une fois) : docs/deploiement.md, section « Construire l'APK ».
+name: APK Android
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+      API_URL: ${{ vars.API_URL }}
+    steps:
+      # Sans clé de signature stable, chaque APK aurait une signature différente : Android refuserait
+      # l'installation par-dessus la version précédente, et la désinstaller EFFACE les données locales.
+      - name: Vérifier la clé de signature
+        run: |
+          missing=0
+          for v in ANDROID_KEYSTORE_BASE64 ANDROID_KEYSTORE_PASSWORD ANDROID_KEY_ALIAS ANDROID_KEY_PASSWORD; do
+            if [ -z "${!v}" ]; then echo "::error::Secret manquant : $v (voir docs/deploiement.md)"; missing=1; fi
+          done
+          exit $missing
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: |
+            shared/package-lock.json
+            frontend/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Dépendances
+        run: |
+          npm ci --prefix shared
+          npm ci --prefix frontend
+
+      - name: Adresse du serveur par défaut
+        run: node scripts/set-default-api-url.mjs
+
+      - name: Construire l'application web et la copier dans le projet Android
+        working-directory: frontend
+        run: |
+          npx ng build
+          npx cap sync android
+
+      - name: Compiler l'APK
+        working-directory: frontend/android
+        run: chmod +x gradlew && ./gradlew assembleRelease -PappVersionCode=${{ github.run_number }} -PappVersionName=1.0.${{ github.run_number }}
+
+      - name: Signer l'APK
+        run: |
+          BT="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -n 1)"
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+          mkdir -p out
+          "$BT/zipalign" -p -f 4 frontend/android/app/build/outputs/apk/release/app-release-unsigned.apk "$RUNNER_TEMP/aligned.apk"
+          "$BT/apksigner" sign --ks "$RUNNER_TEMP/release.jks" \
+            --ks-pass env:ANDROID_KEYSTORE_PASSWORD --key-pass env:ANDROID_KEY_PASSWORD \
+            --ks-key-alias "$ANDROID_KEY_ALIAS" --out out/Objectiva.apk "$RUNNER_TEMP/aligned.apk"
+          # L'empreinte doit rester identique d'une construction à l'autre.
+          "$BT/apksigner" verify --print-certs out/Objectiva.apk | grep -i "SHA-256"
+          rm -f "$RUNNER_TEMP/release.jks"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Objectiva-apk
+          path: out/Objectiva.apk
+          retention-days: 90
+          if-no-files-found: error

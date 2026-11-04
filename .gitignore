@@ -13,6 +13,10 @@ backend/src/generated/
 .angular/
 www/
 
+# Clés de signature Android : jamais dans le dépôt (voir docs/deploiement.md)
+*.jks
+*.keystore
+
 # Système et éditeurs
 .DS_Store
 Thumbs.db

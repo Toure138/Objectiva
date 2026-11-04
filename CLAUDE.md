@@ -6,7 +6,8 @@ semaine et par jour, cocher ce qui est réellement accompli, planifier le budget
 année), gérer réunions et rencontres, et faire le bilan. Voir [README.md](README.md).
 
 **État** : étapes 1 et 2 terminées (specs 001 à 006) : socle objectifs, refonte de l'interface,
-progression mesurée, événements, budget mensuel, scénario EcoleSaaS. Suite et éléments reportés :
+progression mesurée, événements, budget mensuel, scénario EcoleSaaS. Hors connexion : phases 0 et 1
+faites (spec 007). Mise en production préparée (spec 008). Suite et éléments reportés :
 [docs/feuille-de-route.md](docs/feuille-de-route.md). API : [docs/api.md](docs/api.md).
 
 ## Stack technique (versions vérifiées, voir `docs/versions.md`)
@@ -171,6 +172,19 @@ isolée, appliquer la démarche avec proportion.
 
 Avant de déclarer une étape finie : `npm test`, `npm run lint`, `ng build`, et un parcours réel
 dans le navigateur au format téléphone.
+
+## Production (spec 008)
+
+- API et base sur Render : `render.yaml` (Blueprint) + `Dockerfile` à la racine (contexte = racine, compile
+  `shared/`) ; migrations appliquées au démarrage. Guide : [docs/deploiement.md](docs/deploiement.md).
+- `TRUST_PROXY=1` derrière Render (sinon la limitation par IP vise le relais) ; en production l'API refuse un
+  `JWT_SECRET` d'exemple et `CORS_ORIGIN=*`. Origine de l'APK : `https://localhost`.
+- Application Android en HTTPS par défaut ; `OBJECTIVA_DEV_HTTP=1 npx cap sync android` pour viser l'API
+  du PC en HTTP. Adresse saisie normalisée par `core/api-url.ts`.
+- APK : `.github/workflows/android.yml`, signé avec une clé **stable** (secrets `ANDROID_*`) : une autre clé
+  forcerait une désinstallation, donc la perte des données locales. Ne jamais versionner de `.jks`.
+- **Ne pas recréer ni restaurer la base de production** tant que la phase 4 de la spec 007 (changement
+  d'époque) n'est pas faite : les téléphones mettraient la synchronisation en pause.
 
 ## Commandes (depuis la racine)
 

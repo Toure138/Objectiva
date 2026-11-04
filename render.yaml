@@ -1,0 +1,43 @@
+# Déploiement de l'API Objectiva sur Render (Blueprint). Pas à pas : docs/deploiement.md.
+#
+# Offre gratuite = essai : la base expire 30 jours après sa création et le service s'endort après
+# 15 minutes. Avant le 30e jour, passer la base sur une offre payante dans le tableau de bord
+# (plan de la base > Upgrade) : les données sont conservées. Ne rien saisir ici qui soit secret :
+# les valeurs sensibles sont générées par Render ou saisies dans son tableau de bord.
+
+services:
+  - type: web
+    name: objectiva-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    region: frankfurt
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: objectiva-db
+          property: connectionString
+      # Clé de signature des sessions : générée par Render, jamais écrite dans le dépôt.
+      - key: JWT_SECRET
+        generateValue: true
+      # Une seule couche de relais (Render) devant l'API : nécessaire à la limitation par adresse IP.
+      - key: TRUST_PROXY
+        value: "1"
+      # Origines de l'application Android (https://localhost) et iOS (capacitor://localhost).
+      - key: CORS_ORIGIN
+        value: https://localhost,capacitor://localhost
+      - key: SESSION_DAYS
+        value: "30"
+
+databases:
+  - name: objectiva-db
+    plan: free
+    region: frankfurt
+    databaseName: objectiva
+    user: objectiva
+    postgresMajorVersion: "16"
+    # Accessible seulement depuis l'API sur le réseau interne de Render. Pour une sauvegarde depuis ton
+    # PC, ajoute temporairement ton adresse IP dans le tableau de bord (voir docs/deploiement.md).
+    ipAllowList: []

@@ -163,6 +163,10 @@ New-NetFirewallRule -DisplayName "Objectiva API" -Direction Inbound -Protocol TC
 
 ### Option B — installer l'application Android (Capacitor)
 
+Pour un usage réel (API en ligne sur Render, APK construit par GitHub et installé à la main, sans
+Android Studio) : suivre **[docs/deploiement.md](docs/deploiement.md)**. Ce qui suit concerne le
+développement avec Android Studio.
+
 Prérequis : **Android Studio** installé, un téléphone en **mode développeur** avec le débogage
 USB activé (ou un émulateur).
 
@@ -171,14 +175,15 @@ Depuis le dossier `frontend` :
 cd frontend
 npx ng build
 npx cap add android      # une seule fois : crée le dossier android/
-npx cap sync android     # après chaque modification du code
+OBJECTIVA_DEV_HTTP=1 npx cap sync android   # après chaque modification (HTTP vers le PC)
 npx cap open android     # ouvre Android Studio
 ```
 Dans Android Studio, choisis ton téléphone et clique sur ▶ (Run). Dans l'application, saisis
 l'adresse `http://<IP-du-PC>:3100/api` dans « Adresse du serveur ».
 
-L'application Android parle à l'API en HTTP en développement (`capacitor.config.ts`,
-`cleartext: true`). Pour une vraie mise en ligne, il faudra une API en **HTTPS**.
+Par défaut, l'application Android est en HTTPS (production) et refuse une API en HTTP :
+`OBJECTIVA_DEV_HTTP=1` l'autorise pour le développement (sous PowerShell : `$env:OBJECTIVA_DEV_HTTP='1'`),
+et `http://localhost` doit alors figurer dans `CORS_ORIGIN` (`backend/.env`).
 
 ## 6. iOS (iPhone)
 

@@ -254,7 +254,7 @@ import { SegmentedComponent, type SegmentOption } from '../shared/segmented.comp
                   ></ion-input>
                 </ion-item>
               </ion-list>
-              <ion-note>Sur téléphone, indique l'adresse IP de ton PC, ex. http://192.168.1.20:3100/api</ion-note>
+              <ion-note>Sur téléphone, colle l'adresse de ton serveur, ex. https://objectiva-api.onrender.com</ion-note>
             </div>
           }
         </main>
