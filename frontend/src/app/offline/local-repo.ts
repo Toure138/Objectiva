@@ -1,16 +1,19 @@
 import type { Table } from 'dexie';
 
 import type {
+  EventQuery,
+  EventRepo,
   GoalQuery,
   GoalRepo,
   MilestoneRepo,
   ReadingRepo,
   Repo,
+  SeriesRepo,
   TaskQuery,
   TaskRepo,
 } from '../../../../shared/src/domain/repo';
 import { newId } from '../../../../shared/src/domain/repo';
-import type { GoalRow, ReadingRow, TaskRow } from '../../../../shared/src/domain/rows';
+import type { EventRow, GoalRow, ReadingRow, SeriesRow, TaskRow } from '../../../../shared/src/domain/rows';
 import { ACTIVE_GOAL_STATUSES } from '../../../../shared/src/domain/rows';
 import { sortTasksForList } from '../../../../shared/src/domain/views';
 import { DomainError } from '../../../../shared/src/errors';
@@ -47,6 +50,8 @@ export class LocalRepo implements Repo {
   readonly goals: GoalRepo;
   readonly milestones: MilestoneRepo;
   readonly readings: ReadingRepo;
+  readonly events: EventRepo;
+  readonly series: SeriesRepo;
 
   /**
    * @param clock fournit la prochaine valeur de l'horloge hybride de l'appareil
@@ -61,6 +66,8 @@ export class LocalRepo implements Repo {
     this.goals = this.buildGoals();
     this.milestones = this.buildMilestones();
     this.readings = this.buildReadings();
+    this.events = this.buildEvents();
+    this.series = this.buildSeries();
   }
 
   // --- Écriture générique
@@ -177,6 +184,7 @@ export class LocalRepo implements Repo {
         const inside = (d: string | null) => d !== null && d >= from && d <= to;
         return (await all()).filter((t) => inside(t.workDate) || inside(t.originalDate));
       },
+      byEvent: async (eventId) => (await all()).filter((t) => t.eventId === eventId).sort(byCreation),
       insert: (row) => this.insertRow(table, 'tasks', row),
       update: (id, patch) => this.updateRow(table, 'tasks', id, patch),
       remove: (id) => this.removeRow(table as unknown as Table<Stored<{ id: string }>, string>, 'tasks', id),
@@ -219,6 +227,8 @@ export class LocalRepo implements Repo {
         await this.db.milestones.where('goalId').equals(id).delete();
         await this.db.readings.where('goalId').equals(id).delete();
         await this.db.tasks.where('goalId').equals(id).modify({ goalId: null, milestoneId: null });
+        await this.db.events.where('goalId').equals(id).modify({ goalId: null, milestoneId: null });
+        await this.db.series.where('goalId').equals(id).modify({ goalId: null, milestoneId: null });
         await this.removeRow(table as unknown as Table<Stored<{ id: string }>, string>, 'goals', id);
       },
     };
@@ -237,7 +247,77 @@ export class LocalRepo implements Repo {
       update: (id, patch) => this.updateRow(table, 'milestones', id, patch),
       remove: async (id) => {
         await this.db.tasks.where('milestoneId').equals(id).modify({ milestoneId: null });
+        await this.db.events.where('milestoneId').equals(id).modify({ milestoneId: null });
+        await this.db.series.where('milestoneId').equals(id).modify({ milestoneId: null });
         await this.removeRow(table as unknown as Table<Stored<{ id: string }>, string>, 'milestones', id);
+      },
+    };
+  }
+
+  // --- Rendez-vous et réunions récurrentes (spec 009)
+
+  private buildEvents(): EventRepo {
+    const table = this.db.events;
+    const all = async (): Promise<EventRow[]> => (await table.toArray()).map((r) => clean(r));
+    const byStart = (a: EventRow, b: EventRow) =>
+      text(a.startsAt, b.startsAt) || text(a.createdAt, b.createdAt) || text(a.id, b.id);
+    return {
+      get: async (id) => {
+        const r = await table.get(id);
+        return r ? clean(r) : null;
+      },
+      list: async (q: EventQuery) => {
+        const rows = (await all())
+          .filter((e) => !q.status || e.status === q.status)
+          .filter((e) => !q.notStatus || e.status !== q.notStatus)
+          .filter((e) => !q.startFrom || e.startsAt >= q.startFrom)
+          .filter((e) => !q.startBefore || e.startsAt < q.startBefore)
+          .sort(byStart);
+        return q.limit === undefined ? rows : rows.slice(0, q.limit);
+      },
+      bySeries: async (seriesId) =>
+        (await table.where('seriesId').equals(seriesId).toArray())
+          .map((r) => clean(r))
+          .sort((a, b) => text(a.occurrenceDate ?? '', b.occurrenceDate ?? '')),
+      insert: (row) => this.insertRow(table, 'events', row),
+      insertIfAbsent: async (row) => {
+        if (await table.get(row.id)) return false;
+        await this.insertRow(table, 'events', row);
+        return true;
+      },
+      update: (id, patch) => this.updateRow(table, 'events', id, patch),
+      remove: async (id) => {
+        // Comme la base : les tâches liées sont conservées, sans lien (aucune modification à envoyer).
+        await this.db.tasks.where('eventId').equals(id).modify({ eventId: null });
+        await this.removeRow(table as unknown as Table<Stored<{ id: string }>, string>, 'events', id);
+      },
+    };
+  }
+
+  private buildSeries(): SeriesRepo {
+    const table = this.db.series;
+    return {
+      get: async (id) => {
+        const r = await table.get(id);
+        return r ? clean(r) : null;
+      },
+      list: async () =>
+        (await table.toArray())
+          .map((r) => clean(r))
+          .sort(
+            (a: SeriesRow, b: SeriesRow) =>
+              text(a.startDate, b.startDate) || text(a.createdAt, b.createdAt) || text(a.id, b.id),
+          ),
+      insert: (row) => this.insertRow(table, 'event_series', row),
+      update: (id, patch) => this.updateRow(table, 'event_series', id, patch),
+      remove: async (id) => {
+        // Comme la base : les occurrences disparaissent avec la série, leurs tâches sont détachées.
+        const occurrences = await this.db.events.where('seriesId').equals(id).primaryKeys();
+        if (occurrences.length > 0) {
+          await this.db.tasks.where('eventId').anyOf(occurrences).modify({ eventId: null });
+          await this.db.events.bulkDelete(occurrences);
+        }
+        await this.removeRow(table as unknown as Table<Stored<{ id: string }>, string>, 'event_series', id);
       },
     };
   }

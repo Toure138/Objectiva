@@ -4,6 +4,7 @@ import budgetGolden from '../../../../shared/parity/golden/budget-mensuel.json';
 import evenementsGolden from '../../../../shared/parity/golden/evenements.json';
 import ordreGolden from '../../../../shared/parity/golden/ordre-des-listes.json';
 import progressionGolden from '../../../../shared/parity/golden/progression-mesuree.json';
+import reunionsGolden from '../../../../shared/parity/golden/reunions-recurrentes.json';
 import tachesGolden from '../../../../shared/parity/golden/taches-et-bilan.json';
 import { fill, makeNormalizer, readPath } from '../../../../shared/parity/normalize';
 import { FROZEN_NOW, SCENARIOS, type Scenario } from '../../../../shared/parity/scenarios';
@@ -22,10 +23,11 @@ const GOLDEN: Record<string, unknown> = {
   evenements: evenementsGolden,
   'budget-mensuel': budgetGolden,
   'ordre-des-listes': ordreGolden,
+  'reunions-recurrentes': reunionsGolden,
 };
 
-/** Scénarios dont TOUS les appels sont gérés localement. Événements et budget : phases 2 et 3. */
-const LOCAL = ['taches-et-bilan', 'progression-mesuree', 'ordre-des-listes'];
+/** Scénarios dont TOUS les appels sont gérés localement. Budget : phase 3. */
+const LOCAL = ['taches-et-bilan', 'progression-mesuree', 'ordre-des-listes', 'evenements', 'reunions-recurrentes'];
 
 let counter = 0;
 
@@ -39,6 +41,11 @@ async function play(scenario: Scenario): Promise<Record<string, unknown>> {
     for (const [i, step] of scenario.steps.entries()) {
       vi.setSystemTime(new Date(start + (i + 1) * 1000));
       const label = `${String(i + 1).padStart(2, '0')} ${step.method} ${step.path}`;
+      // Compte (fuseau horaire) : le moteur local le reçoit directement ; étapes de mise en place seulement.
+      if (step.path.startsWith('/api/auth/')) {
+        expect(step.silent, `${label} : une étape de compte doit être silencieuse`).toBe(true);
+        continue;
+      }
       const path = fill(step.path, saved).replace(/^\/api/, '');
       const res = await engine.call(step.method, path, step.body === undefined ? undefined : fill(step.body, saved));
       expect(res, `${label} : appel non géré localement`).not.toBeNull();

@@ -1,6 +1,7 @@
 import type { Table } from 'dexie';
 
 import { todayIn } from '../../../../shared/src/dates';
+import * as events from '../../../../shared/src/domain/events';
 import * as goals from '../../../../shared/src/domain/goals';
 import type { Ctx, Repo } from '../../../../shared/src/domain/repo';
 import { newId } from '../../../../shared/src/domain/repo';
@@ -9,7 +10,13 @@ import { getReview, getToday } from '../../../../shared/src/domain/today';
 import { DomainError } from '../../../../shared/src/errors';
 import { formatHlc, initialHlc, parseHlc, receiveHlc, tickHlc, type Hlc } from '../../../../shared/src/hlc';
 import { idParam } from '../../../../shared/src/ids';
-import type { Mutation, MutationResult, SyncChange, SyncedEntity } from '../../../../shared/src/sync.schemas';
+import {
+  SYNCED_ENTITIES,
+  type Mutation,
+  type MutationResult,
+  type SyncChange,
+  type SyncedEntity,
+} from '../../../../shared/src/sync.schemas';
 
 import { META, type OfflineDb, type OutboxItem, type Stored } from './local-db';
 import { LocalRepo } from './local-repo';
@@ -187,20 +194,88 @@ const ROUTES: { method: string; pattern: string; write: boolean; handler: Handle
     handler: async (c) => ({ data: await tasks.cancelTask(c.repo, c.ctx, idParam(c.params['id'], 'Tâche')) }),
   },
 
-  // Rendez-vous : pas encore stockés sur le téléphone (phase 2) ; la vue du jour et le bilan les ignorent hors connexion.
+  // Rendez-vous et réunions récurrentes (spec 009). Les lectures par période créent les occurrences à venir
+  // (comme le serveur) : elles écrivent, donc dans une transaction d'écriture.
+  {
+    method: 'GET',
+    pattern: '/events',
+    write: true,
+    handler: async (c) => ({ data: await events.listEvents(c.repo, c.ctx, c.query) }),
+  },
+  {
+    method: 'POST',
+    pattern: '/events',
+    write: true,
+    handler: async (c) => ({ status: 201, data: await events.createEvent(c.repo, c.ctx, c.body) }),
+  },
+  {
+    method: 'GET',
+    pattern: '/events/:id',
+    write: false,
+    handler: async (c) => ({ data: await events.getEvent(c.repo, c.ctx, idParam(c.params['id'], 'Événement')) }),
+  },
+  {
+    method: 'PATCH',
+    pattern: '/events/:id',
+    write: true,
+    handler: async (c) => ({
+      data: await events.updateEvent(c.repo, c.ctx, idParam(c.params['id'], 'Événement'), c.body, c.query),
+    }),
+  },
+  {
+    method: 'DELETE',
+    pattern: '/events/:id',
+    write: true,
+    handler: async (c) => ({
+      message: await events.deleteEvent(c.repo, c.ctx, idParam(c.params['id'], 'Événement'), c.query),
+    }),
+  },
+  {
+    method: 'POST',
+    pattern: '/events/:id/complete',
+    write: true,
+    handler: async (c) => ({
+      data: await events.completeEvent(c.repo, c.ctx, idParam(c.params['id'], 'Événement'), c.body),
+    }),
+  },
+  {
+    method: 'POST',
+    pattern: '/events/:id/reopen',
+    write: true,
+    handler: async (c) => ({ data: await events.reopenEvent(c.repo, c.ctx, idParam(c.params['id'], 'Événement')) }),
+  },
+  {
+    method: 'POST',
+    pattern: '/events/:id/cancel',
+    write: true,
+    handler: async (c) => ({ data: await events.cancelEvent(c.repo, c.ctx, idParam(c.params['id'], 'Événement')) }),
+  },
+  {
+    method: 'POST',
+    pattern: '/events/:id/tasks',
+    write: true,
+    handler: async (c) => ({
+      status: 201,
+      data: await events.createEventTask(c.repo, c.ctx, idParam(c.params['id'], 'Événement'), c.body),
+    }),
+  },
+  {
+    method: 'GET',
+    pattern: '/agenda',
+    write: true,
+    handler: async (c) => ({ data: await events.getAgenda(c.repo, c.ctx, c.query) }),
+  },
   {
     method: 'GET',
     pattern: '/today',
-    write: false,
-    handler: async (c) => ({ data: await getToday(c.repo, c.ctx, c.query, async () => []) }),
+    write: true,
+    handler: async (c) => ({ data: await getToday(c.repo, c.ctx, c.query) }),
   },
   {
     method: 'GET',
     pattern: '/reviews',
-    write: false,
-    handler: async (c) => ({
-      data: await getReview(c.repo, c.ctx, c.query, async () => ({ planned: 0, done: 0, cancelled: 0, expected: 0 })),
-    }),
+    write: true,
+    handler: async (c) => ({ data: await getReview(c.repo, c.ctx, c.query) }),
   },
 ];
 
@@ -224,6 +299,11 @@ export class LocalEngine {
   /** `true` si cet appel peut être traité localement (sinon l'appelant passe par le réseau). */
   handles(method: string, path: string): boolean {
     return this.match(method, path) !== null;
+  }
+
+  /** `true` si cet appel peut écrire (y compris une lecture qui crée les occurrences à venir). */
+  writes(method: string, path: string): boolean {
+    return this.match(method, path)?.route.write === true;
   }
 
   private match(method: string, path: string) {
@@ -347,12 +427,11 @@ export class LocalEngine {
    */
   async snapshot(): Promise<Mutation[]> {
     const floor = formatHlc(initialHlc(await this.deviceId()));
-    const sources: [SyncedEntity, Table<Stored<{ id: string; createdAt: string }>, string>][] = [
-      ['goals', this.db.goals as unknown as Table<Stored<{ id: string; createdAt: string }>, string>],
-      ['milestones', this.db.milestones as unknown as Table<Stored<{ id: string; createdAt: string }>, string>],
-      ['goal_readings', this.db.readings as unknown as Table<Stored<{ id: string; createdAt: string }>, string>],
-      ['tasks', this.db.tasks as unknown as Table<Stored<{ id: string; createdAt: string }>, string>],
-    ];
+    // Parents d'abord (ordre du protocole) : objectifs, jalons, relevés, séries, rendez-vous, tâches.
+    const sources = SYNCED_ENTITIES.map(
+      (entity) =>
+        [entity, this.tableFor(entity)] as [SyncedEntity, Table<Stored<{ id: string; createdAt: string }>, string>],
+    );
     const out: Mutation[] = [];
     for (const [entity, table] of sources) {
       // Ordre de création : un jalon créé avant un autre garde sa place sur le serveur reconstruit.
@@ -411,6 +490,8 @@ export class LocalEngine {
           if (change.entity === 'goals') await remote.goals.remove(change.id);
           else if (change.entity === 'milestones') await remote.milestones.remove(change.id);
           else if (change.entity === 'goal_readings') await remote.readings.remove(change.id);
+          else if (change.entity === 'event_series') await remote.series.remove(change.id);
+          else if (change.entity === 'events') await remote.events.remove(change.id);
           else await remote.tasks.remove(change.id);
           continue;
         }
@@ -430,14 +511,18 @@ export class LocalEngine {
     });
   }
 
-  private tableFor(entity: SyncChange['entity']): Table<Stored<{ id: string; updatedAt: string }>, string> {
+  private tableFor(
+    entity: SyncChange['entity'],
+  ): Table<Stored<{ id: string; createdAt: string; updatedAt: string }>, string> {
     const tables = {
       goals: this.db.goals,
       milestones: this.db.milestones,
       goal_readings: this.db.readings,
+      event_series: this.db.series,
+      events: this.db.events,
       tasks: this.db.tasks,
     };
-    return tables[entity] as unknown as Table<Stored<{ id: string; updatedAt: string }>, string>;
+    return tables[entity] as unknown as Table<Stored<{ id: string; createdAt: string; updatedAt: string }>, string>;
   }
 
   private async upsert(

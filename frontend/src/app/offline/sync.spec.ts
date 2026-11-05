@@ -546,3 +546,72 @@ describe('serveur remplacé ou restauré (changement d’époque)', () => {
     expect(server.pushed.flat().filter((m) => m.id === uuid(96))).toHaveLength(1);
   });
 });
+
+describe('rendez-vous et réunions récurrentes sur le téléphone (spec 009)', () => {
+  const series = (id: string) => ({
+    id,
+    type: 'REUNION',
+    title: 'Point quotidien',
+    date: '2026-11-04',
+    startTime: '09:00',
+    endTime: '09:15',
+    repeat: { weekdays: [1, 2, 3, 4, 5] },
+  });
+
+  it('une réunion récurrente créée hors ligne : la série puis ses occurrences partent, messages valides pour le serveur', async () => {
+    await setup();
+    vi.setSystemTime(new Date('2026-11-04T08:00:00.000Z'));
+    const res = await call('POST', '/events', series(uuid(300)));
+    expect(res.status).toBe(201);
+    const pending = (await offline.current!.pending(500)).map((o) => o.mutation);
+    expect(pending[0]).toMatchObject({ op: 'create', entity: 'event_series', id: uuid(300) });
+    const occurrences = pending.slice(1);
+    // En semaine, du mercredi 4 novembre jusqu'à 60 jours plus tard.
+    expect(occurrences.length).toBeGreaterThan(40);
+    expect(new Set(occurrences.map((m) => m.entity))).toEqual(new Set(['events']));
+    for (const m of pending) {
+      expect(FIELD_SCHEMAS[m.entity].safeParse(m.fields).success, `${m.entity} ${m.id}`).toBe(true);
+    }
+    for (let i = 0; i < pending.length; i += 200) {
+      expect(pushSchema.safeParse({ deviceId: 'appareil', mutations: pending.slice(i, i + 200) }).success).toBe(true);
+    }
+    // Consulter le jour suivant ne crée rien de plus (l'horizon est déjà couvert).
+    const before = await offline.current!.pendingCount();
+    await call('GET', '/agenda?date=2026-11-05');
+    expect(await offline.current!.pendingCount()).toBe(before);
+  });
+
+  it('série supprimée reçue du serveur : ses occurrences disparaissent, leurs tâches restent sans lien', async () => {
+    await setup();
+    vi.setSystemTime(new Date('2026-11-04T08:00:00.000Z'));
+    const first = (await call('POST', '/events', series(uuid(310)))).body as { data: { id: string } };
+    const task = (await call('POST', `/events/${first.data.id}/tasks`, { role: 'PREPARATION' })).body as {
+      data: { id: string };
+    };
+    await offline.current!.acknowledge(
+      (await offline.current!.pending(500)).map((o) => ({ mutationId: o.mutation.mutationId, status: 'applied' })),
+    );
+    await offline.current!.applyPull(
+      [{ entity: 'event_series', op: 'delete', id: uuid(310), version: 9 }],
+      9,
+      'epoch-1',
+    );
+    expect(await offline.current!.db.events.count()).toBe(0);
+    expect(await offline.current!.db.series.count()).toBe(0);
+    const kept = (await call('GET', `/tasks/${task.data.id}`)).body as { data: { eventId: string | null } };
+    expect(kept.data.eventId).toBeNull();
+    // Rien à renvoyer : le serveur a déjà fait la même chose.
+    expect(await offline.current!.pendingCount()).toBe(0);
+  });
+
+  it('reconstruction d’un serveur remplacé : séries avant rendez-vous, rendez-vous avant tâches', async () => {
+    await setup();
+    vi.setSystemTime(new Date('2026-11-04T08:00:00.000Z'));
+    const first = (
+      await call('POST', '/events', { ...series(uuid(320)), repeat: { weekdays: [3], until: '2026-11-11' } })
+    ).body as { data: { id: string } };
+    await call('POST', `/events/${first.data.id}/tasks`, { role: 'SUIVI' });
+    const order = (await offline.current!.snapshot()).map((m) => m.entity);
+    expect(order).toEqual(['event_series', 'events', 'events', 'tasks']);
+  });
+});

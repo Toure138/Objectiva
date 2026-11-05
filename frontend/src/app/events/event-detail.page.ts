@@ -9,13 +9,15 @@ import {
   createOutline,
   locationOutline,
   openOutline,
+  repeatOutline,
   trashOutline,
   walkOutline,
 } from 'ionicons/icons';
 
 import { ApiService } from '../core/api.service';
 import { longDate } from '../core/dates';
-import { EVENT_TYPE_LABELS, type CalendarEventDetail, type EventTaskRole } from '../core/models';
+import { EVENT_TYPE_LABELS, type CalendarEvent, type CalendarEventDetail, type EventTaskRole } from '../core/models';
+import { repeatLabel } from '../core/repeat';
 import { EventFormComponent, minutesLabel } from '../shared/event-form.component';
 import { eventIcon } from '../shared/event-item.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
@@ -176,6 +178,11 @@ import { TaskItemComponent } from '../shared/task-item.component';
               <p class="when">{{ day() }} · {{ e.startTime }} – {{ e.endTime }}</p>
 
               <div class="chips">
+                @if (e.repeat) {
+                  <span class="ob-chip ob-chip--primary"
+                    ><ion-icon [icon]="icons.repeat" aria-hidden="true"></ion-icon>{{ repeat() }}</span
+                  >
+                }
                 @if (e.location) {
                   <span class="ob-chip"
                     ><ion-icon [icon]="icons.place" aria-hidden="true"></ion-icon>{{ e.location }}</span
@@ -287,7 +294,12 @@ export class EventDetailPage {
     place: locationOutline,
     open: openOutline,
     leave: walkOutline,
+    repeat: repeatOutline,
   };
+  protected readonly repeat = computed(() => {
+    const r = this.event()?.repeat;
+    return r ? repeatLabel(r) : '';
+  });
 
   protected readonly icon = computed(() => eventIcon(this.event()?.type ?? 'REUNION'));
   protected readonly typeLabel = computed(() => EVENT_TYPE_LABELS[this.event()?.type ?? 'REUNION']);
@@ -309,26 +321,73 @@ export class EventDetailPage {
   }
 
   protected async edit(): Promise<void> {
-    const modal = await this.modals.create({ component: EventFormComponent, componentProps: { event: this.event() } });
+    const e = this.event();
+    if (!e) return;
+    let scope: 'occurrence' | 'following' = 'occurrence';
+    if (e.seriesId) {
+      const role = await this.choose('Modifier la réunion', 'Cette réunion se répète.', [
+        { text: 'Cette occurrence', role: 'occurrence' },
+        { text: 'Cette occurrence et les suivantes', role: 'following' },
+      ]);
+      if (role !== 'occurrence' && role !== 'following') return;
+      scope = role;
+    }
+    const modal = await this.modals.create({ component: EventFormComponent, componentProps: { event: e, scope } });
     await modal.present();
-    if ((await modal.onWillDismiss()).role === 'saved') await this.load();
+    const { role, data } = await modal.onWillDismiss<CalendarEvent>();
+    if (role !== 'saved') return;
+    // Nouveaux jours : la série a été coupée, l'occurrence affichée est celle de la nouvelle série.
+    if (data && data.id !== this.id()) await this.router.navigate(['/app/evenements', data.id], { replaceUrl: true });
+    else await this.load();
   }
 
   protected async remove(): Promise<void> {
-    const alert = await this.alerts.create({
-      header: 'Supprimer cet événement ?',
-      message: 'Les tâches de préparation et de suivi sont conservées.',
-      buttons: [
-        { text: 'Garder', role: 'cancel' },
-        { text: 'Supprimer', role: 'destructive' },
+    const e = this.event();
+    if (!e) return;
+    if (!e.seriesId) {
+      const role = await this.choose(
+        'Supprimer cet événement ?',
+        'Les tâches de préparation et de suivi sont conservées.',
+        [{ text: 'Supprimer', role: 'destructive' }],
+      );
+      if (role !== 'destructive') return;
+      await this.run(async () => {
+        await this.api.deleteEvent(e.id);
+        await this.router.navigateByUrl('/app/aujourdhui', { replaceUrl: true });
+      });
+      return;
+    }
+    const role = await this.choose(
+      'Supprimer la réunion',
+      'Les réunions déjà réalisées et les tâches liées sont conservées, sauf si tu supprimes toute la série.',
+      [
+        { text: 'Annuler cette fois', role: 'occurrence' },
+        { text: 'Cette occurrence et les suivantes', role: 'following' },
+        { text: 'Toute la série', role: 'series' },
       ],
+    );
+    if (role !== 'occurrence' && role !== 'following' && role !== 'series') return;
+    await this.run(async () => {
+      await this.api.deleteEvent(e.id, role);
+      if (role === 'occurrence') {
+        await this.load();
+        await this.say('Réunion annulée pour cette fois.');
+      } else {
+        await this.router.navigateByUrl('/app/aujourdhui', { replaceUrl: true });
+      }
+    });
+  }
+
+  /** Question à choix : renvoie le rôle du bouton touché (`cancel` pour « Garder »). */
+  private async choose(header: string, message: string, choices: { text: string; role: string }[]): Promise<string> {
+    const alert = await this.alerts.create({
+      header,
+      message,
+      cssClass: 'ob-alert-choices',
+      buttons: [...choices, { text: 'Garder', role: 'cancel' }],
     });
     await alert.present();
-    if ((await alert.onWillDismiss()).role !== 'destructive') return;
-    await this.run(async () => {
-      await this.api.deleteEvent(this.id());
-      await this.router.navigateByUrl('/app/aujourdhui', { replaceUrl: true });
-    });
+    return (await alert.onWillDismiss()).role ?? 'cancel';
   }
 
   protected async complete(): Promise<void> {

@@ -222,3 +222,25 @@ renvoie tout (nouvel appareil). L'`epoch` change si le serveur a été restauré
 neuf garde le même identifiant, donc retrouve ses données locales et les renvoie. Identifiant déjà pris :
 `409 CONFLICT` (message uniforme, rien n'est révélé). `GET /meta` donne l'`epoch` du serveur : le téléphone
 la compare avant chaque envoi et, si elle a changé, renvoie tout son état avant son journal.
+
+## Réunions récurrentes et agenda (spec 009)
+
+Tous ces appels sont aussi traités par le téléphone, sans réseau.
+
+| Méthode | Chemin | Entrée | Réponse |
+|---|---|---|---|
+| POST | `/events` | champs d'un événement + `repeat?: { weekdays: [1..7], until? }` (1 = lundi) | `201` première occurrence (au plus tôt à `date`) ; `id` fourni = celui de la série |
+| PATCH | `/events/:id?scope=occurrence\|following` | champs partiels (+ `repeat` avec `following`) | occurrence modifiée (ou première de la nouvelle série si les jours changent) |
+| DELETE | `/events/:id?scope=occurrence\|following\|series` | — | `message` : « Occurrence annulée », « Occurrences suivantes supprimées », « Série supprimée » |
+| GET | `/agenda` | `date?` (défaut : aujourd'hui) | `{ date, startHour, endHour, events[], conflictCount }` |
+
+- Chaque événement porte `seriesId`, `occurrenceDate` (date d'origine) et `repeat` (`{ weekdays, startDate, until }`
+  ou `null`).
+- Les occurrences sont créées jusqu'à 60 jours (ou la fin de la plage consultée, un an au plus), avec un
+  identifiant calculé à partir de la série et de la date (UUID v8).
+- `following` n'applique que les champs fournis, à cette occurrence et aux suivantes ; `date` y est refusé (400) ;
+  changer `repeat.weekdays` coupe la série. `repeat` sans `following` : 400.
+- Agenda : chaque événement a `column`, `columns` et `conflicts: [{ withId, withTitle, kind }]`
+  (`CHEVAUCHEMENT` ou `PREPARATION` : seul le trajet ou la préparation empiète).
+- Synchronisation : tables `event_series` et `events` (protocole 2 ; un client en version 1 ne les reçoit pas).
+  Une création reçue pour une ligne déjà présente est fusionnée champ par champ.

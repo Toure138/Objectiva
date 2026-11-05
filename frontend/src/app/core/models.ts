@@ -125,6 +125,36 @@ export interface CalendarEvent {
   blockedFromTime: string;
   leaveAtTime: string | null;
   completedAt: string | null;
+  /** Occurrence d'une réunion récurrente : série, date d'origine et règle de répétition. */
+  seriesId: string | null;
+  occurrenceDate: string | null;
+  repeat: EventRepeat | null;
+}
+
+/** Jours de la semaine ISO : 1 = lundi … 7 = dimanche. */
+export interface EventRepeat {
+  weekdays: number[];
+  startDate: string;
+  until: string | null;
+}
+
+export type EventScope = 'occurrence' | 'following' | 'series';
+
+export type ConflictKind = 'CHEVAUCHEMENT' | 'PREPARATION';
+
+export interface AgendaEvent extends CalendarEvent {
+  /** Colonne et nombre de colonnes du groupe : les rendez-vous qui se gênent sont côte à côte. */
+  column: number;
+  columns: number;
+  conflicts: { withId: string; withTitle: string; kind: ConflictKind }[];
+}
+
+export interface AgendaDay {
+  date: string;
+  startHour: number;
+  endHour: number;
+  events: AgendaEvent[];
+  conflictCount: number;
 }
 
 export interface CalendarEventDetail extends CalendarEvent {

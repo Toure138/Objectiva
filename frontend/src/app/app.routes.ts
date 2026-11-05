@@ -21,6 +21,8 @@ export const routes: Routes = [
         path: 'evenements/:id',
         loadComponent: () => import('./events/event-detail.page').then((m) => m.EventDetailPage),
       },
+      { path: 'agenda', loadComponent: () => import('./agenda/agenda.page').then((m) => m.AgendaPage) },
+      { path: 'agenda/:date', loadComponent: () => import('./agenda/agenda.page').then((m) => m.AgendaPage) },
       { path: 'budget', loadComponent: () => import('./budget/budget.page').then((m) => m.BudgetPage) },
       { path: 'bilan', loadComponent: () => import('./review/review.page').then((m) => m.ReviewPage) },
       { path: '', redirectTo: 'aujourdhui', pathMatch: 'full' },

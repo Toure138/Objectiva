@@ -10,11 +10,13 @@ import {
   linkOutline,
   locationOutline,
   peopleOutline,
+  repeatOutline,
   videocamOutline,
   walkOutline,
 } from 'ionicons/icons';
 
 import { EVENT_TYPE_LABELS, type CalendarEvent, type EventType } from '../core/models';
+import { repeatLabel } from '../core/repeat';
 
 const ICONS: Record<EventType, string> = {
   REUNION: peopleOutline,
@@ -135,6 +137,9 @@ export function eventIcon(type: EventType): string {
               {{ e.blockedFromTime }}</span
             >
           }
+          @if (e.repeat) {
+            <span class="ob-chip"><ion-icon [icon]="icons.repeat" aria-hidden="true"></ion-icon>{{ repeat() }}</span>
+          }
           @if (e.location) {
             <span class="ob-chip"><ion-icon [icon]="icons.place" aria-hidden="true"></ion-icon>{{ e.location }}</span>
           } @else if (e.link) {
@@ -155,7 +160,12 @@ export class EventItemComponent {
     leave: walkOutline,
     place: locationOutline,
     link: linkOutline,
+    repeat: repeatOutline,
   };
+  protected readonly repeat = computed(() => {
+    const r = this.event().repeat;
+    return r ? repeatLabel(r) : '';
+  });
   protected readonly icon = computed(() => ICONS[this.event().type]);
   protected readonly typeLabel = computed(() => EVENT_TYPE_LABELS[this.event().type]);
   // Les événements ont leur propre teinte (celle de « Carrière ») pour se distinguer des tâches.

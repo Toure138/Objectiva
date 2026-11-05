@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { IonButton, IonContent, IonFab, IonFabButton, IonIcon } from '@ionic/angular';
 import { add, calendarClearOutline, todayOutline } from 'ionicons/icons';
 
@@ -20,6 +21,7 @@ const PAGE_SIZE = 50;
 @Component({
   selector: 'app-plan',
   imports: [
+    RouterLink,
     PageHeaderComponent,
     StateViewComponent,
     TaskItemComponent,
@@ -60,7 +62,11 @@ const PAGE_SIZE = 50;
           @if (mode() === 'semaine') {
             @for (group of byDay(); track group.date) {
               <section>
-                <app-section-header [title]="group.label" [count]="group.tasks.length + group.events.length" />
+                <app-section-header [title]="group.label" [count]="group.tasks.length + group.events.length">
+                  @if (group.events.length > 0 && group.date) {
+                    <a class="ob-link" [routerLink]="['/app/agenda', group.date]">Agenda</a>
+                  }
+                </app-section-header>
                 @for (e of group.events; track e.id; let i = $index) {
                   <app-event-item [event]="e" [index]="i" />
                 }

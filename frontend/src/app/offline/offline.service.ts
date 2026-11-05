@@ -6,7 +6,8 @@ import { LocalEngine, type ApiResult, type Rejection } from './local-engine';
 /**
  * Porte d'entrée de la base locale. Tant que les données n'ont pas été téléchargées une première
  * fois (`ready` faux), tout passe par le réseau comme avant ; ensuite, tâches, objectifs, jalons,
- * relevés, « Aujourd'hui » et bilan sont traités sur le téléphone, avec ou sans réseau.
+ * relevés, rendez-vous, réunions récurrentes, agenda, « Aujourd'hui » et bilan sont traités sur le
+ * téléphone, avec ou sans réseau.
  */
 @Injectable({ providedIn: 'root' })
 export class OfflineService {
@@ -71,7 +72,8 @@ export class OfflineService {
   async tryLocal(method: string, path: string, body?: unknown): Promise<ApiResult | null> {
     if (!this.engine || !this.ready()) return null;
     const result = await this.engine.call(method, path, body);
-    if (result && method.toUpperCase() !== 'GET' && result.status < 400) {
+    // Une lecture par période peut créer les occurrences à venir : elle compte comme une écriture.
+    if (result && this.engine.writes(method, path) && result.status < 400) {
       await this.refresh();
       this.writeListener?.();
     }

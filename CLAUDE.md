@@ -7,7 +7,7 @@ année), gérer réunions et rencontres, et faire le bilan. Voir [README.md](REA
 
 **État** : étapes 1 et 2 terminées (specs 001 à 006) : socle objectifs, refonte de l'interface,
 progression mesurée, événements, budget mensuel, scénario EcoleSaaS. Hors connexion : phases 0 et 1
-faites (spec 007). Mise en production préparée (spec 008). Suite et éléments reportés :
+faites (spec 007). Mise en production préparée (spec 008). Réunions récurrentes et agenda du jour (spec 009). Suite et éléments reportés :
 [docs/feuille-de-route.md](docs/feuille-de-route.md). API : [docs/api.md](docs/api.md).
 
 ## Stack technique (versions vérifiées, voir `docs/versions.md`)
@@ -43,7 +43,7 @@ faites (spec 007). Mise en production préparée (spec 008). Suite et éléments
   existants restent valables. Import par chemin relatif et **sans extension** dans `shared/`
   (le build Angular refuse `.ts`).
 - Objectif de la spec 007 : fonctionnement complet hors connexion (le téléphone est la référence,
-  le serveur est un partenaire de synchronisation). Phase 0 faite : voir `specs/007-hors-connexion`.
+  le serveur est un partenaire de synchronisation). Phases 0, 1 et 2 faites (2 via la spec 009) : voir `specs/007-hors-connexion`.
 - **Base** : `server_version` et `updated_at` sont posés par des **déclencheurs** PostgreSQL sur toute
   table synchronisable, et toute suppression (cascades comprises) laisse une ligne dans `tombstones`.
   Ne jamais les écrire à la main. Une **nouvelle table synchronisable** doit avoir `user_id`,
@@ -67,8 +67,8 @@ faites (spec 007). Mise en production préparée (spec 008). Suite et éléments
   complètes), `sync.service.ts` (boucle, états, réessais). `ApiService` route vers le moteur local quand `ready`,
   sinon vers HTTP. `AuthService` démarre la synchronisation ; une session expirée ne déconnecte pas tant que
   des données locales existent (bandeau « Reconnecte-toi »).
-- **Rendez-vous et budget** ne sont pas encore locaux (phases 2 et 3) : ils exigent le réseau. Ajouter une
-  entité synchronisable = table (`user_id`, `server_version`, `updated_at`, `field_clocks`, déclencheurs),
+- **Rendez-vous et réunions récurrentes** sont locaux (spec 009, `shared/src/domain/events.ts`) ; seul le
+  **budget** exige encore le réseau (phase 3). Ajouter une entité synchronisable = table (`user_id`, `server_version`, `updated_at`, `field_clocks`, déclencheurs),
   `Repo`, schéma de champs dans `shared/src/sync.schemas.ts`, gestionnaire dans `sync.service.ts`, table
   Dexie, routes du moteur local, et un scénario de parité.
 
@@ -172,6 +172,17 @@ isolée, appliquer la démarche avec proportion.
 
 Avant de déclarer une étape finie : `npm test`, `npm run lint`, `ng build`, et un parcours réel
 dans le navigateur au format téléphone.
+
+## Réunions récurrentes et agenda (spec 009)
+
+- Une série (`event_series` : modèle, `weekdays` 1-7, `start_date`, `until`) ; ses occurrences sont des rendez-vous
+  ordinaires créés d'avance (60 jours, `ensureOccurrences`) avec un identifiant **calculé**
+  (`occurrenceId(série, date)`, `recurrence.rules.ts`) : jamais d'identifiant aléatoire pour une occurrence.
+- Les lectures par période (`/events`, `/today`, `/reviews`, `/agenda`) créent les occurrences manquantes : dans le
+  moteur local, ces routes sont marquées `write: true`.
+- « Et les suivantes » n'applique que les champs fournis : en modification, le formulaire envoie un diff.
+- Une occurrence ne se supprime pas seule : elle s'annule (sinon la génération la recréerait).
+- Agenda : colonnes et conflits calculés par `agenda.rules.ts` ; l'écran ne fait que convertir minutes → pixels.
 
 ## Production (spec 008)
 

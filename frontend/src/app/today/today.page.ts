@@ -159,7 +159,9 @@ import { TaskItemComponent } from '../shared/task-item.component';
 
             @if (v.events.length > 0) {
               <section>
-                <app-section-header title="Rendez-vous du jour" [count]="v.events.length" />
+                <app-section-header title="Rendez-vous du jour" [count]="v.events.length">
+                  <a class="ob-link" [routerLink]="['/app/agenda', v.date]">Heure par heure</a>
+                </app-section-header>
                 @for (e of v.events; track e.id; let i = $index) {
                   <app-event-item [event]="e" [index]="i" />
                 }

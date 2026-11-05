@@ -2,12 +2,12 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
-import { summarizeEvents } from '../../../../shared/src/events.rules';
 import type { PullResponse, PushRequest, PushResponse } from '../../../../shared/src/sync.schemas';
 import { OfflineService } from '../offline/offline.service';
 
 import { ApiError, toApiError, type FieldError } from './api-error';
 import type {
+  AgendaDay,
   BudgetAccount,
   BudgetCategory,
   BudgetMonth,
@@ -15,6 +15,7 @@ import type {
   BudgetTransaction,
   CalendarEvent,
   CalendarEventDetail,
+  EventScope,
   Goal,
   GoalDetail,
   GoalReading,
@@ -52,8 +53,9 @@ type Body = Record<string, unknown>;
 
 /**
  * Seul point d'entrée des données de l'application. Les appels sur les tâches, objectifs, jalons,
- * relevés, « Aujourd'hui » et bilan sont traités par le moteur local une fois la base du téléphone
- * prête (avec ou sans réseau) ; les autres (rendez-vous, budget, compte) passent par HTTP.
+ * relevés, rendez-vous, réunions récurrentes, agenda, « Aujourd'hui » et bilan sont traités par le
+ * moteur local une fois la base du téléphone prête (avec ou sans réseau) ; les autres (budget, compte)
+ * passent par HTTP.
  */
 @Injectable({ providedIn: 'root' })
 export class ApiService {
@@ -72,37 +74,15 @@ export class ApiService {
     return this.call('POST', '/auth/logout', {});
   }
 
-  // Aujourd'hui et bilan
-  async today(date?: string): Promise<TodayView> {
-    const view = await this.call<TodayView>('GET', '/today', undefined, { date });
-    // Les rendez-vous ne sont pas encore sur le téléphone (phase 2) : on les demande au serveur quand il répond.
-    if (this.offline.handles('GET', '/today')) {
-      try {
-        const events = await this.remote<CalendarEvent[]>('GET', '/events', undefined, {
-          from: view.date,
-          to: view.date,
-        });
-        view.events = events.filter((e) => e.status !== 'ANNULE');
-      } catch {
-        // Hors connexion : la liste des rendez-vous du jour reste vide, le reste est complet.
-      }
-    }
-    return view;
+  // Aujourd'hui, bilan et agenda (rendez-vous compris, sur le téléphone)
+  today(date?: string): Promise<TodayView> {
+    return this.call('GET', '/today', undefined, { date });
   }
-  async review(q: { period?: 'day' | 'week' | 'month'; date?: string; from?: string; to?: string }): Promise<Review> {
-    const view = await this.call<Review>('GET', '/reviews', undefined, q);
-    if (this.offline.handles('GET', '/reviews')) {
-      try {
-        const events = await this.remote<CalendarEvent[]>('GET', '/events', undefined, {
-          from: view.from,
-          to: view.to,
-        });
-        view.events = summarizeEvents(events);
-      } catch {
-        // Hors connexion : pas de résumé des rendez-vous.
-      }
-    }
-    return view;
+  review(q: { period?: 'day' | 'week' | 'month'; date?: string; from?: string; to?: string }): Promise<Review> {
+    return this.call('GET', '/reviews', undefined, q);
+  }
+  agenda(date?: string): Promise<AgendaDay> {
+    return this.call('GET', '/agenda', undefined, { date });
   }
 
   // Synchronisation (spec 007) : jamais traitée localement, avec la version du protocole en en-tête.
@@ -162,11 +142,13 @@ export class ApiService {
   createEvent(body: Body): Promise<CalendarEvent> {
     return this.call('POST', '/events', body);
   }
-  updateEvent(id: string, body: Body): Promise<CalendarEvent> {
-    return this.call('PATCH', `/events/${id}`, body);
+  /** `scope` : pour une occurrence de réunion récurrente, cette occurrence seule ou aussi les suivantes. */
+  updateEvent(id: string, body: Body, scope: 'occurrence' | 'following' = 'occurrence'): Promise<CalendarEvent> {
+    return this.call('PATCH', withQuery(`/events/${id}`, { scope }), body);
   }
-  deleteEvent(id: string): Promise<void> {
-    return this.call('DELETE', `/events/${id}`);
+  /** Occurrence : `occurrence` l'annule, `following` supprime la suite, `series` toute la série. */
+  deleteEvent(id: string, scope: EventScope = 'occurrence'): Promise<void> {
+    return this.call('DELETE', withQuery(`/events/${id}`, { scope }));
   }
   completeEvent(id: string, decisions?: string | null): Promise<CalendarEvent> {
     return this.call('POST', `/events/${id}/complete`, decisions === undefined ? {} : { decisions });

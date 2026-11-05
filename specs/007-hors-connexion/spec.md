@@ -138,7 +138,7 @@ manuelle des conflits ; partage de données entre utilisateurs ; plusieurs compt
 - [x] T0 Valider les décisions du § 6
 - [x] T1 P0 Fondations
 - [x] T2 P1 Noyau
-- [ ] T3 P2 Événements
+- [x] T3 P2 Événements (réalisée par la spec 009, avec la récurrence et l'agenda)
 - [ ] T4 P3 Budget
 - [ ] T5 P4 Robustesse
 - [ ] T6 Mettre à jour CLAUDE.md et les skills (règle de calcul partagé)

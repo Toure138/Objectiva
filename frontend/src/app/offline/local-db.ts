@@ -1,6 +1,13 @@
 import Dexie, { type Table } from 'dexie';
 
-import type { GoalRow, MilestoneRow, ReadingRow, TaskRow } from '../../../../shared/src/domain/rows';
+import type {
+  EventRow,
+  GoalRow,
+  MilestoneRow,
+  ReadingRow,
+  SeriesRow,
+  TaskRow,
+} from '../../../../shared/src/domain/rows';
 import type { Mutation } from '../../../../shared/src/sync.schemas';
 
 /** Une ligne stockée sur le téléphone : la ligne métier + l'horloge hybride de chacun de ses champs. */
@@ -48,6 +55,8 @@ export class OfflineDb extends Dexie {
   milestones!: Table<Stored<MilestoneRow>, string>;
   readings!: Table<Stored<ReadingRow>, string>;
   tasks!: Table<Stored<TaskRow>, string>;
+  events!: Table<Stored<EventRow>, string>;
+  series!: Table<Stored<SeriesRow>, string>;
   outbox!: Table<OutboxItem, number>;
   meta!: Table<MetaEntry, string>;
 
@@ -62,11 +71,17 @@ export class OfflineDb extends Dexie {
       outbox: '++seq',
       meta: 'key',
     });
+    // Spec 009 : rendez-vous et réunions récurrentes sur le téléphone.
+    this.version(2).stores({
+      tasks: 'id, workDate, originalDate, status, goalId, milestoneId, dueDate, eventId',
+      events: 'id, startsAt, seriesId, goalId, milestoneId',
+      series: 'id, goalId, milestoneId',
+    });
   }
 
   /** Les tables de données, pour ouvrir une transaction. */
   get dataTables(): Table[] {
-    return [this.goals, this.milestones, this.readings, this.tasks];
+    return [this.goals, this.milestones, this.readings, this.tasks, this.events, this.series];
   }
 
   get allTables(): Table[] {

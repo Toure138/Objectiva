@@ -32,8 +32,10 @@ report d'enveloppe d'un mois à l'autre.
 
 ## Étape 3 — Planification complète
 
-Budgets annuel et quotidien imbriqués (répartition, dépassements), vues agenda jour/semaine/mois,
-conflits entre rendez-vous, plages disponibles et charge (fusion des chevauchements, durée
+Déjà fait (spec 009) : agenda du jour heure par heure avec chevauchements signalés, réunions récurrentes
+(chaque jour, en semaine, jours choisis, chaque semaine ; cette occurrence ou les suivantes).
+
+Budgets annuel et quotidien imbriqués (répartition, dépassements), vues agenda semaine/mois, plages disponibles et charge (fusion des chevauchements, durée
 estimée des tâches), habitudes (quotidiennes, jours fixes, pauses, séries, changement de
 fréquence daté), bilans enrichis (habitudes, rencontres, budget).
 

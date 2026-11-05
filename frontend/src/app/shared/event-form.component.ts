@@ -29,6 +29,7 @@ import { ApiError } from '../core/api-error';
 import { ApiService } from '../core/api.service';
 import { localToday } from '../core/dates';
 import { EVENT_TYPE_LABELS, type CalendarEvent, type EventType, type Goal, type Milestone } from '../core/models';
+import { modeOf, REPEAT_MODES, weekdaysFor, WEEKDAYS, type RepeatMode } from '../core/repeat';
 
 /** Durées proposées pour le déplacement et la préparation. */
 const MINUTES = [0, 15, 30, 45, 60, 90, 120, 180];
@@ -86,7 +87,7 @@ function plusHour(time: string): string {
             <ion-icon slot="icon-only" [icon]="closeIcon"></ion-icon>
           </ion-button>
         </ion-buttons>
-        <ion-title>{{ event ? 'Modifier' : 'Événement' }}</ion-title>
+        <ion-title>{{ heading() }}</ion-title>
         <ion-buttons slot="end">
           <ion-button strong (click)="save()" [disabled]="saving() || !title.trim()">Enregistrer</ion-button>
         </ion-buttons>
@@ -113,9 +114,15 @@ function plusHour(time: string): string {
               placeholder="Ex. Démonstration au collège Les Palmiers"
             ></ion-input>
           </ion-item>
-          <ion-item>
-            <ion-input label="Jour" labelPlacement="stacked" type="date" [(ngModel)]="date" name="date"></ion-input>
-          </ion-item>
+          @if (following) {
+            <ion-note class="ion-padding-start"
+              >Chaque occurrence garde son jour ; tes changements s’appliquent à partir du {{ fromLabel() }}.</ion-note
+            >
+          } @else {
+            <ion-item>
+              <ion-input label="Jour" labelPlacement="stacked" type="date" [(ngModel)]="date" name="date"></ion-input>
+            </ion-item>
+          }
           <div class="pair">
             <ion-item>
               <ion-input
@@ -139,6 +146,55 @@ function plusHour(time: string): string {
           </div>
           @if (fieldError('endTime'); as msg) {
             <ion-note color="danger" class="ion-padding-start">{{ msg }}</ion-note>
+          }
+          @if (canRepeat()) {
+            <ion-item>
+              <ion-select
+                label="Répéter"
+                labelPlacement="stacked"
+                [(ngModel)]="repeatMode"
+                name="repeatMode"
+                interface="action-sheet"
+              >
+                @for (m of repeatModes; track m[0]) {
+                  @if (m[0] !== 'none' || !following) {
+                    <ion-select-option [value]="m[0]">{{ m[1] }}</ion-select-option>
+                  }
+                }
+              </ion-select>
+            </ion-item>
+            @if (repeatMode === 'custom') {
+              <div class="ob-days" role="group" aria-label="Jours de la réunion">
+                @for (d of weekdays; track d.day) {
+                  <button
+                    type="button"
+                    [class.on]="customDays.includes(d.day)"
+                    [attr.aria-pressed]="customDays.includes(d.day)"
+                    [attr.aria-label]="d.long"
+                    (click)="toggleDay(d.day)"
+                  >
+                    {{ d.short }}
+                  </button>
+                }
+              </div>
+            }
+            @if (fieldError('repeat.weekdays'); as msg) {
+              <ion-note color="danger" class="ion-padding-start">{{ msg }}</ion-note>
+            }
+            @if (repeatMode !== 'none') {
+              <ion-item>
+                <ion-input
+                  label="Jusqu’au (facultatif)"
+                  labelPlacement="stacked"
+                  type="date"
+                  [(ngModel)]="until"
+                  name="until"
+                ></ion-input>
+              </ion-item>
+              @if (fieldError('repeat.until'); as msg) {
+                <ion-note color="danger" class="ion-padding-start">{{ msg }}</ion-note>
+              }
+            }
           }
           <ion-item>
             <ion-input
@@ -280,11 +336,15 @@ export class EventFormComponent implements OnInit {
   @Input() presetDate: string | null = null;
   @Input() presetGoalId: string | null = null;
   @Input() presetMilestoneId: string | null = null;
+  /** Occurrence d'une réunion récurrente : modifier cette occurrence seule ou aussi les suivantes. */
+  @Input() scope: 'occurrence' | 'following' = 'occurrence';
 
   protected readonly closeIcon = close;
   protected readonly types = Object.entries(EVENT_TYPE_LABELS);
   protected readonly minutes = MINUTES;
   protected readonly label = minutesLabel;
+  protected readonly repeatModes = REPEAT_MODES;
+  protected readonly weekdays = WEEKDAYS;
 
   protected type: EventType = 'REUNION';
   protected title = '';
@@ -299,6 +359,13 @@ export class EventFormComponent implements OnInit {
   protected prep = 0;
   protected goalId: string | null = null;
   protected milestoneId: string | null = null;
+  protected repeatMode: RepeatMode = 'none';
+  protected customDays: number[] = [];
+  protected until = '';
+
+  /** Valeurs à l'ouverture : en modification, seuls les champs changés sont envoyés. */
+  private initial: Record<string, unknown> | null = null;
+  private initialRepeat: { weekdays: number[]; until: string } | null = null;
 
   protected readonly goals = signal<Goal[]>([]);
   protected readonly milestones = signal<Milestone[]>([]);
@@ -324,6 +391,13 @@ export class EventFormComponent implements OnInit {
         goalId: e.goalId,
         milestoneId: e.milestoneId,
       });
+      if (e.repeat && this.following) {
+        this.repeatMode = modeOf(e.repeat.weekdays, e.repeat.startDate);
+        this.customDays = [...e.repeat.weekdays];
+        this.until = e.repeat.until ?? '';
+        this.initialRepeat = { weekdays: [...e.repeat.weekdays], until: this.until };
+      }
+      this.initial = this.fieldsBody();
     } else {
       this.date = this.presetDate ?? localToday();
       this.goalId = this.presetGoalId;
@@ -339,6 +413,34 @@ export class EventFormComponent implements OnInit {
     } catch {
       // L'événement reste créable sans la liste des objectifs.
     }
+  }
+
+  /** Modification de « cette occurrence et les suivantes ». */
+  protected get following(): boolean {
+    return this.event !== null && this.event.seriesId !== null && this.scope === 'following';
+  }
+
+  protected canRepeat(): boolean {
+    return this.event === null || this.following;
+  }
+
+  protected heading(): string {
+    if (!this.event) return 'Événement';
+    return this.following ? 'Modifier la suite' : 'Modifier';
+  }
+
+  protected fromLabel(): string {
+    return new Date(`${this.event?.occurrenceDate ?? this.date}T12:00:00Z`).toLocaleDateString('fr-FR', {
+      day: 'numeric',
+      month: 'long',
+      timeZone: 'UTC',
+    });
+  }
+
+  protected toggleDay(day: number): void {
+    this.customDays = this.customDays.includes(day)
+      ? this.customDays.filter((d) => d !== day)
+      : [...this.customDays, day];
   }
 
   protected async loadMilestones(reset = true): Promise<void> {
@@ -364,7 +466,49 @@ export class EventFormComponent implements OnInit {
     this.saving.set(true);
     this.error.set(null);
     this.fields.set([]);
-    const body = {
+    try {
+      const e = this.event;
+      const saved = e ? await this.update(e) : await this.api.createEvent(this.createBody());
+      await this.modalCtrl.dismiss(saved, saved ? 'saved' : 'cancel');
+    } catch (err) {
+      this.error.set(err instanceof Error ? err.message : 'Échec de l’enregistrement');
+      if (err instanceof ApiError) this.fields.set(err.fields);
+      this.saving.set(false);
+    }
+  }
+
+  private createBody(): Record<string, unknown> {
+    const body: Record<string, unknown> = this.fieldsBody();
+    if (this.repeatMode !== 'none') {
+      body['repeat'] = {
+        weekdays: weekdaysFor(this.repeatMode, this.date, this.customDays),
+        until: this.until || null,
+      };
+    }
+    return body;
+  }
+
+  /** N'envoie que ce qui a changé : indispensable pour « et les suivantes », et la synchronisation y gagne. */
+  private async update(e: CalendarEvent): Promise<CalendarEvent | null> {
+    const now = this.fieldsBody();
+    const patch: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(now)) {
+      if (JSON.stringify(value) !== JSON.stringify(this.initial?.[key])) patch[key] = value;
+    }
+    if (this.following) {
+      delete patch['date'];
+      const weekdays = weekdaysFor(this.repeatMode, e.repeat?.startDate ?? this.date, this.customDays);
+      const repeat: Record<string, unknown> = {};
+      if (JSON.stringify(weekdays) !== JSON.stringify(this.initialRepeat?.weekdays)) repeat['weekdays'] = weekdays;
+      if (this.until !== this.initialRepeat?.until) repeat['until'] = this.until || null;
+      if (Object.keys(repeat).length > 0) patch['repeat'] = repeat;
+    }
+    if (Object.keys(patch).length === 0) return null;
+    return this.api.updateEvent(e.id, patch, this.following ? 'following' : 'occurrence');
+  }
+
+  private fieldsBody(): Record<string, unknown> {
+    return {
       type: this.type,
       title: this.title.trim(),
       date: this.date,
@@ -382,14 +526,5 @@ export class EventFormComponent implements OnInit {
       goalId: this.goalId,
       milestoneId: this.milestoneId,
     };
-    try {
-      const e = this.event;
-      const saved = e ? await this.api.updateEvent(e.id, body) : await this.api.createEvent(body);
-      await this.modalCtrl.dismiss(saved, 'saved');
-    } catch (err) {
-      this.error.set(err instanceof Error ? err.message : 'Échec de l’enregistrement');
-      if (err instanceof ApiError) this.fields.set(err.fields);
-      this.saving.set(false);
-    }
   }
 }

@@ -478,3 +478,222 @@ ion-modal:not(.ob-sheet) ion-accordion ion-item[slot='header'] {
   border: 0;
   font-weight: 600;
 }
+
+/* Jours d'une réunion récurrente (formulaire d'événement) : 7 cibles de 44 px tiennent dans 360 px. */
+.ob-days {
+  display: flex;
+  justify-content: space-between;
+  gap: 2px;
+  margin: 4px 0 8px;
+  padding: 0 4px;
+
+  button {
+    width: 44px;
+    height: 44px;
+    border: 1.5px solid var(--ob-hairline-strong);
+    border-radius: 999px;
+    background: var(--ob-surface);
+    color: var(--ob-text-2);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+
+    &.on {
+      border-color: var(--ion-color-primary);
+      background: var(--ion-color-primary);
+      color: var(--ion-color-primary-contrast);
+    }
+  }
+}
+
+/* Alerte à plusieurs choix (portée d'une modification) : un bouton par ligne, libellés entiers. */
+.ob-alert-choices .alert-button-group {
+  flex-direction: column;
+}
+.ob-alert-choices .alert-button {
+  min-height: 44px;
+  margin-inline-end: 0;
+  text-align: end;
+}
+
+/* Lien discret dans un en-tête de section (« Heure par heure », « Agenda ») : cible de 44 px. */
+.ob-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: var(--ion-color-primary);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 650;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* ---- Agenda du jour (spec 009) : grille horaire, blocs positionnés par l'écran à partir de l'API. */
+.ob-agenda-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 8px 0;
+
+  ion-button {
+    --padding-start: 0;
+    --padding-end: 0;
+    width: 44px;
+    height: 44px;
+    margin: 0;
+  }
+}
+.ob-agenda-day {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+
+  h1 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+}
+.ob-agenda-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  color: var(--ob-text-2);
+  font-weight: 600;
+
+  &.warn {
+    padding: 10px 12px;
+    border-radius: var(--ob-radius-md);
+    background: color-mix(in srgb, var(--ob-warn) 14%, var(--ob-surface));
+    color: var(--ob-warn-ink);
+  }
+  ion-icon {
+    flex: none;
+    font-size: 20px;
+  }
+}
+.ob-agenda-wrap {
+  position: relative;
+  margin-top: 8px;
+}
+/* Grille décorative et blocs superposés dans le même cadre. */
+.ob-agenda-grid,
+.ob-agenda-blocks {
+  position: absolute;
+  inset: 0;
+}
+.ob-agenda-blocks {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  > li {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+  }
+  .band {
+    display: block;
+    border-radius: var(--ob-radius-sm) var(--ob-radius-sm) 0 0;
+    background: repeating-linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--ob-warn) 22%, transparent) 0 6px,
+      transparent 6px 12px
+    );
+  }
+  .block {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden;
+    padding: 4px 8px;
+    border-left: 4px solid var(--ion-color-primary);
+    border-radius: var(--ob-radius-sm);
+    background: color-mix(in srgb, var(--ion-color-primary) 14%, var(--ob-surface));
+    color: var(--ob-text);
+    font-size: 0.8125rem;
+    line-height: 1.25;
+    text-decoration: none;
+    box-shadow: var(--ob-shadow-sm);
+
+    &.conflict {
+      border-left-color: var(--ob-warn);
+      background: color-mix(in srgb, var(--ob-warn) 16%, var(--ob-surface));
+    }
+    &.done {
+      opacity: 0.7;
+    }
+  }
+  .t {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--ob-text-2);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+
+    .warn {
+      color: var(--ob-warn-ink);
+    }
+  }
+  .n {
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+}
+.ob-agenda-hour {
+  position: absolute;
+  right: 0;
+  left: 0;
+  height: 0;
+  border-top: 1px solid var(--ob-hairline);
+
+  span {
+    position: absolute;
+    top: -9px;
+    left: 0;
+    width: 44px;
+    padding-right: 6px;
+    background: var(--ob-bg);
+    color: var(--ob-text-2);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+}
+.ob-agenda-now {
+  position: absolute;
+  right: 0;
+  left: 48px;
+  height: 0;
+  border-top: 2px solid var(--ob-danger);
+}
+.ob-agenda-conflicts {
+  margin-top: 16px;
+
+  h2 {
+    margin: 0 0 6px;
+    font-size: 1.0625rem;
+  }
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  li {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 6px;
+    color: var(--ob-warn-ink);
+    line-height: 1.4;
+  }
+  ion-icon {
+    flex: none;
+    margin-top: 2px;
+  }
+}
