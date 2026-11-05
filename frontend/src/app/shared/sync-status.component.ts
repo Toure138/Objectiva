@@ -132,6 +132,7 @@ export class SyncStatusComponent {
       case 'auth':
         lines.push(
           'Ta session a expiré. Reconnecte-toi pour reprendre la synchronisation : tes données restent sur ce téléphone.',
+          'Si le serveur a été remplacé et ne reconnaît plus ton compte, recrée-le avec le même e-mail : les données de ce téléphone y seront renvoyées.',
         );
         break;
       case 'upgrade':
@@ -146,6 +147,11 @@ export class SyncStatusComponent {
         lines.push(this.offline.ready() ? 'Tout est synchronisé avec le serveur.' : 'Récupération de tes données…');
     }
     if (pending > 0) lines.push(`${plural(pending, 'modification en attente', 'modifications en attente')} d’envoi.`);
+    const reseeded = this.sync.reseededAt();
+    if (reseeded)
+      lines.push(
+        `Le serveur avait été remplacé : les données de ce téléphone y ont été renvoyées le ${new Date(reseeded).toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' })}.`,
+      );
     if (last)
       lines.push(
         `Dernière synchronisation : ${new Date(last).toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' })}.`,

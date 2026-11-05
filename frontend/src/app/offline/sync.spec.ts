@@ -29,13 +29,24 @@ class FakeServer {
   epoch = 'epoch-1';
   failWith: ApiError | null = null;
   pullCalls = 0;
+  /** Lignes déjà présentes sur le serveur : une création y répond « déjà là ». */
+  existing = new Set<string>();
+
+  syncMeta = vi.fn(async () => {
+    if (this.failWith) throw this.failWith;
+    return { epoch: this.epoch, protocolVersion: 1, minProtocolVersion: 1, serverTime: new Date().toISOString() };
+  });
 
   syncPush = vi.fn(async (body: PushRequest): Promise<PushResponse> => {
     if (this.failWith) throw this.failWith;
     this.pushed.push(body.mutations);
     return {
       epoch: this.epoch,
-      results: body.mutations.map((m): MutationResult => ({ mutationId: m.mutationId, status: 'applied' })),
+      results: body.mutations.map((m): MutationResult =>
+        m.op === 'create' && this.existing.has(m.id)
+          ? { mutationId: m.mutationId, status: 'ignored', reason: 'exists' }
+          : { mutationId: m.mutationId, status: 'applied' },
+      ),
     };
   });
 
@@ -394,15 +405,138 @@ describe('boucle de synchronisation', () => {
     expect(offline.pending()).toBe(1);
   });
 
-  it('serveur restauré (époque différente) : synchronisation en pause, données locales intactes', async () => {
+  it('une seule synchronisation à la fois (bis : avec reconstruction)', async () => {
     await setup();
-    await sync.syncNow(); // première synchro : l'époque est mémorisée
-    await task(uuid(95));
-    server.epoch = 'epoch-restaure';
+    await task(uuid(97));
     await sync.syncNow();
-    expect(sync.state()).toBe('error');
-    expect(sync.lastError()).toMatch(/restauré/);
-    expect((await call('GET', `/tasks/${uuid(95)}`)).status).toBe(200);
+    server.epoch = 'epoch-neuve';
+    server.pushed = [];
+    await Promise.all([sync.syncNow(), sync.syncNow()]);
+    expect(server.pushed.flat().filter((m) => m.id === uuid(97) && m.op === 'create')).toHaveLength(1);
+  });
+});
+
+describe('serveur remplacé ou restauré (changement d’époque)', () => {
+  const GOAL = { title: 'Lancer EcoleSaaS', category: 'CARRIERE', startDate: '2026-11-01', endDate: '2027-03-31' };
+
+  it('base neuve : le téléphone renvoie tout son état avant le journal, puis tout est relu depuis le début', async () => {
+    await setup();
+    await call('POST', '/goals', { ...GOAL, id: uuid(200) });
+    await task(uuid(201), { goalId: uuid(200) });
+    await sync.syncNow(); // première synchro : époque mémorisée, journal vidé
+    await call('POST', `/tasks/${uuid(201)}/complete`); // en attente
+    server.pushed = [];
+    server.changes = [upsert(uuid(299), 1, taskRow(uuid(299)), { title: clock(500) })]; // déjà sur le nouveau serveur
+    server.epoch = 'epoch-neuve';
+
+    await sync.syncNow();
+
+    expect(sync.state()).toBe('idle');
+    const [snapshot, journal] = server.pushed;
+    // 1) tout l'état, parents d'abord, avec des messages valides pour le serveur
+    expect(snapshot!.map((m) => `${m.op}:${m.entity}:${m.id}`)).toEqual([
+      `create:goals:${uuid(200)}`,
+      `create:tasks:${uuid(201)}`,
+    ]);
+    expect(pushSchema.safeParse({ deviceId: 'appareil', mutations: snapshot }).success).toBe(true);
+    for (const m of snapshot!) expect(FIELD_SCHEMAS[m.entity].safeParse(m.fields).success).toBe(true);
+    // l'état renvoyé est l'état actuel : la tâche y est déjà terminée
+    expect(snapshot![1]!.fields!['status']).toBe('DONE');
+    // 2) puis le journal, qui n'est plus refusé
+    expect(journal!.map((m) => m.op)).toEqual(['update']);
+    expect(offline.pending()).toBe(0);
+    expect(offline.rejections()).toEqual([]);
+    // 3) relecture depuis le début avec la nouvelle époque
+    expect(await offline.current!.db.getMeta(META.epoch)).toBe('epoch-neuve');
+    expect(((await call('GET', `/tasks/${uuid(299)}`)).body as { data: { title: string } }).data.title).toBe(
+      'Du serveur',
+    );
+    expect(sync.reseededAt()).not.toBeNull();
+
+    // La synchronisation suivante est ordinaire : rien n'est renvoyé une seconde fois.
+    server.pushed = [];
+    await sync.syncNow();
+    expect(server.pushed).toEqual([]);
+  });
+
+  it('sauvegarde restaurée : une ligne déjà connue du serveur est renvoyée en modification, champ par champ', async () => {
+    await setup();
+    await task(uuid(210));
+    await sync.syncNow();
+    await call('PATCH', `/tasks/${uuid(210)}`, { title: 'Titre après la sauvegarde' });
+    await sync.syncNow();
+    server.pushed = [];
+    server.existing.add(uuid(210));
+    server.epoch = 'epoch-restauree';
+
+    await sync.syncNow();
+
+    const [snapshot, merge, journal] = server.pushed;
+    expect(snapshot!.map((m) => m.op)).toEqual(['create']);
+    expect(merge).toHaveLength(1);
+    expect(merge![0]).toMatchObject({ op: 'update', id: uuid(210), fields: { title: 'Titre après la sauvegarde' } });
+    expect(merge![0]!.clocks).toEqual(snapshot![0]!.clocks);
+    expect(merge![0]!.mutationId).not.toBe(snapshot![0]!.mutationId);
+    expect(journal).toBeUndefined();
+    expect(sync.state()).toBe('idle');
+  });
+
+  it('un champ sans horloge reçoit l’horloge minimale : il ne l’emporte jamais sur une vraie modification', async () => {
+    await setup();
+    await offline.current!.applyPull([upsert(uuid(220), 3, taskRow(uuid(220)), {})], 3, 'epoch-1');
+    server.epoch = 'epoch-neuve';
+    await sync.syncNow();
+    const sent = server.pushed[0]!.find((m) => m.id === uuid(220))!;
+    const clocks = Object.values(sent.clocks!);
+    expect(clocks.length).toBe(Object.keys(sent.fields!).length);
+    for (const c of clocks) expect(parseHlc(c)).toMatchObject({ wall: 0, counter: 0 });
+  });
+
+  it('refus du serveur pendant la reconstruction : conservés et montrés, jamais perdus en silence', async () => {
+    await setup();
+    await task(uuid(230));
+    await sync.syncNow();
+    server.epoch = 'epoch-neuve';
+    server.syncPush.mockImplementationOnce(async (body: PushRequest) => ({
+      epoch: server.epoch,
+      results: body.mutations.map((m) => ({
+        mutationId: m.mutationId,
+        status: 'rejected' as const,
+        reason: 'invalid',
+        message: 'Refusée',
+      })),
+    }));
+    await sync.syncNow();
+    expect(offline.rejections().map((r) => r.id)).toEqual([uuid(230)]);
+    expect((await call('GET', `/tasks/${uuid(230)}`)).status).toBe(200);
+  });
+
+  it('coupure en pleine reconstruction : rien n’est marqué fait, tout recommence au prochain essai', async () => {
+    await setup();
+    await task(uuid(240));
+    await sync.syncNow();
+    server.epoch = 'epoch-neuve';
+    server.syncPush.mockImplementationOnce(async () => {
+      throw network();
+    });
+    await sync.syncNow();
+    expect(sync.state()).toBe('offline');
+    expect(await offline.current!.db.getMeta(META.epoch)).toBe('epoch-1');
+    server.pushed = [];
+    await sync.syncNow();
+    expect(server.pushed[0]!.map((m) => m.id)).toEqual([uuid(240)]);
+    expect(await offline.current!.db.getMeta(META.epoch)).toBe('epoch-neuve');
+  });
+
+  it('première récupération inachevée puis serveur remplacé : elle repart de zéro, sans rien renvoyer', async () => {
+    await setup({ ready: false });
+    await offline.current!.applyPull([], 7, 'epoch-1');
+    server.epoch = 'epoch-neuve';
+    server.changes = [upsert(uuid(250), 1, taskRow(uuid(250)), { title: clock(500) })];
+    await sync.syncNow();
+    expect(server.pushed).toEqual([]);
+    expect(offline.ready()).toBe(true);
+    expect((await call('GET', `/tasks/${uuid(250)}`)).status).toBe(200);
   });
 
   it('une seule synchronisation à la fois', async () => {

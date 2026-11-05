@@ -31,6 +31,8 @@ export async function register(input: z.infer<typeof registerSchema>) {
 
   const user = await prisma.user.create({
     data: {
+      // Identifiant déjà pris : collision d'unicité → 409 uniforme (gestionnaire central), sans rien révéler.
+      ...(input.id ? { id: input.id } : {}),
       email: input.email,
       passwordHash: await bcrypt.hash(input.password, BCRYPT_COST),
       displayName: input.displayName,

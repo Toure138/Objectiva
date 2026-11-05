@@ -1,9 +1,13 @@
 import { z } from 'zod';
 import { isValidTimezone } from '../../core/dates.ts';
+import { clientId } from '../../core/ids.ts';
 
 const email = z.string().trim().toLowerCase().email('Adresse e-mail invalide').max(254);
 
 export const registerSchema = z.object({
+  // Identifiant fourni par le téléphone quand il recrée son compte sur un serveur neuf : ses données
+  // locales (rangées sous cet identifiant) peuvent alors y être renvoyées (spec 007, changement d'époque).
+  id: clientId,
   email,
   password: z.string().min(8, 'Au moins 8 caractères').max(128, '128 caractères maximum'),
   displayName: z.string().trim().min(1, 'Indique ton prénom').max(80),

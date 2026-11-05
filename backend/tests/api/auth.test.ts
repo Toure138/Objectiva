@@ -33,6 +33,31 @@ describe('authentification', () => {
     expect(short.body.details[0].field).toBe('password');
   });
 
+  it('serveur neuf : le téléphone recrée le compte avec son identifiant ; un identifiant pris est refusé sans fuite', async () => {
+    const id = '7f1c2a90-4b7e-4c3d-9a2b-1e5f6a7b8c9d';
+    const res = await request(app)
+      .post('/api/auth/register')
+      .send({ id, email: 'fatou@exemple.fr', password: 'motdepasse123', displayName: 'Fatou' });
+    expect(res.status).toBe(201);
+    expect(res.body.data.user.id).toBe(id);
+
+    // Quelqu'un d'autre tente de prendre cet identifiant : refus uniforme, le compte de Fatou est intact.
+    const taken = await request(app)
+      .post('/api/auth/register')
+      .send({ id, email: 'autre@exemple.fr', password: 'motdepasse123', displayName: 'Autre' });
+    expect(taken.status).toBe(409);
+    expect(taken.body.code).toBe('CONFLICT');
+    expect(JSON.stringify(taken.body)).not.toContain('fatou');
+    expect(await prisma.user.count({ where: { email: 'autre@exemple.fr' } })).toBe(0);
+    expect((await prisma.user.findUniqueOrThrow({ where: { id } })).email).toBe('fatou@exemple.fr');
+
+    const bad = await request(app)
+      .post('/api/auth/register')
+      .send({ id: 'pas-un-uuid', email: 'c@exemple.fr', password: 'motdepasse123', displayName: 'C' });
+    expect(bad.status).toBe(400);
+    expect(bad.body.details[0].field).toBe('id');
+  });
+
   it('protège les routes sans jeton (CA-2)', async () => {
     const res = await request(app).get('/api/goals');
     expect(res.status).toBe(401);

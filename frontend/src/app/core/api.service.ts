@@ -106,6 +106,10 @@ export class ApiService {
   }
 
   // Synchronisation (spec 007) : jamais traitée localement, avec la version du protocole en en-tête.
+  /** Point d'entrée public : époque du serveur (change si la base a été remplacée ou restaurée). */
+  syncMeta(): Promise<{ epoch: string; protocolVersion: number; minProtocolVersion: number; serverTime: string }> {
+    return this.remote('GET', '/meta');
+  }
   syncPull(cursor: number, limit: number, protocol: number): Promise<PullResponse> {
     return this.remote('GET', '/sync/pull', undefined, { cursor, limit }, { 'X-Objectiva-Protocol': String(protocol) });
   }

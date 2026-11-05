@@ -9,7 +9,7 @@ import { getReview, getToday } from '../../../../shared/src/domain/today';
 import { DomainError } from '../../../../shared/src/errors';
 import { formatHlc, initialHlc, parseHlc, receiveHlc, tickHlc, type Hlc } from '../../../../shared/src/hlc';
 import { idParam } from '../../../../shared/src/ids';
-import type { MutationResult, SyncChange } from '../../../../shared/src/sync.schemas';
+import type { Mutation, MutationResult, SyncChange, SyncedEntity } from '../../../../shared/src/sync.schemas';
 
 import { META, type OfflineDb, type OutboxItem, type Stored } from './local-db';
 import { LocalRepo } from './local-repo';
@@ -326,10 +326,54 @@ export class LocalEngine {
         }
       }
       await this.db.outbox.bulkDelete(done.map((o) => o.seq!));
-      if (refused.length > 0) {
-        const before = (await this.db.getMeta<Rejection[]>('rejections')) ?? [];
-        await this.db.setMeta('rejections', [...before, ...refused].slice(-100));
+      await this.recordRejections(refused);
+    });
+  }
+
+  /** Conserve des refus du serveur pour les montrer (les 100 derniers). */
+  async recordRejections(refused: Omit<Rejection, 'at'>[]): Promise<void> {
+    if (refused.length === 0) return;
+    const at = this.now().toISOString();
+    const before = (await this.db.getMeta<Rejection[]>('rejections')) ?? [];
+    await this.db.setMeta('rejections', [...before, ...refused.map((r) => ({ ...r, at }))].slice(-100));
+  }
+
+  // --- Serveur remplacé ou restauré (changement d'époque)
+
+  /**
+   * Tout ce que contient le téléphone, sous forme de créations (objectifs d'abord, puis jalons, relevés et
+   * tâches, pour que les parents existent avant leurs enfants), avec l'horloge de chaque champ. Un champ
+   * sans horloge (écrit par l'API) reçoit l'horloge minimale : il ne l'emporte jamais sur une vraie modification.
+   */
+  async snapshot(): Promise<Mutation[]> {
+    const floor = formatHlc(initialHlc(await this.deviceId()));
+    const sources: [SyncedEntity, Table<Stored<{ id: string; createdAt: string }>, string>][] = [
+      ['goals', this.db.goals as unknown as Table<Stored<{ id: string; createdAt: string }>, string>],
+      ['milestones', this.db.milestones as unknown as Table<Stored<{ id: string; createdAt: string }>, string>],
+      ['goal_readings', this.db.readings as unknown as Table<Stored<{ id: string; createdAt: string }>, string>],
+      ['tasks', this.db.tasks as unknown as Table<Stored<{ id: string; createdAt: string }>, string>],
+    ];
+    const out: Mutation[] = [];
+    for (const [entity, table] of sources) {
+      // Ordre de création : un jalon créé avant un autre garde sa place sur le serveur reconstruit.
+      const rows = (await table.toArray()).sort((a, b) =>
+        a.createdAt < b.createdAt ? -1 : a.createdAt > b.createdAt ? 1 : 0,
+      );
+      for (const row of rows) {
+        const fields = Object.fromEntries(Object.entries(row).filter(([k]) => !SYSTEM.has(k) && k !== '_c'));
+        const clocks = Object.fromEntries(Object.keys(fields).map((k) => [k, row._c?.[k] ?? floor]));
+        out.push({ mutationId: newId(), entity, id: row.id, op: 'create', fields, clocks, createdAt: row.createdAt });
       }
+    }
+    return out;
+  }
+
+  /** Repart de zéro avec ce serveur : tout sera relu (et fusionné champ par champ) à la prochaine récupération. */
+  async restartFrom(epoch: string, reseeded: boolean): Promise<void> {
+    await this.db.transaction('rw', this.db.meta, async () => {
+      await this.db.setMeta(META.cursor, 0);
+      await this.db.setMeta(META.epoch, epoch);
+      if (reseeded) await this.db.setMeta(META.reseededAt, this.now().toISOString());
     });
   }
 

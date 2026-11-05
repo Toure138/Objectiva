@@ -84,7 +84,8 @@ bilan, solde, progression) sont calculées. Il faut donc une base locale et le c
       avec les mêmes schémas ; aucun montant ni contenu dans les journaux.
 - [ ] CA-8 : un protocole trop ancien renvoie `426` ; le journal local reste intact.
 - [ ] CA-9 : serveur arrêté ou lent : jamais d'écran d'erreur bloquant, réessais, indicateur exact.
-- [ ] CA-10 : serveur restauré (époque différente) : réamorçage depuis l'appareil, vérifié.
+- [x] CA-10 : serveur restauré (époque différente) : réamorçage depuis l'appareil, vérifié (2026-11-05, pour
+  les tâches, objectifs, jalons et relevés ; rendez-vous et budget avec les phases 2 et 3).
 - [ ] CA-11 : stockage persistant demandé ; migrations locales testées depuis chaque version
       précédente du schéma.
 - [ ] CA-12 : indicateur d'état visible (en ligne/hors ligne, modifications en attente, dernière
@@ -143,6 +144,28 @@ manuelle des conflits ; partage de données entre utilisateurs ; plusieurs compt
 - [ ] T6 Mettre à jour CLAUDE.md et les skills (règle de calcul partagé)
 
 ## 11. Revue
+### Changement d'époque (avancé de la phase 4, 2026-11-05)
+- Décision : **sans confirmation**. La fusion se fait champ par champ par horloge (rien n'est écrasé à
+  l'aveugle) ; une question à valider risquait de laisser la synchronisation bloquée des mois.
+- Avant chaque envoi, le téléphone compare l'époque (`GET /api/meta`) à la sienne. Si elle a changé, il renvoie
+  **tout son état** (`LocalEngine.snapshot()` : créations, parents d'abord, horloge de chaque champ, horloge
+  minimale pour un champ qui n'en a pas), renvoie en modification ce que le serveur a déjà (`exists`), garde
+  les refus, puis remet le curseur à 0 : le journal part, et tout est relu et fusionné. Une coupure au milieu
+  ne marque rien comme fait (l'époque n'est mise à jour qu'à la fin) ; recommencer est sans effet de bord.
+- **Base neuve qui ne connaît plus le compte** : l'inscription accepte l'`id` fourni par l'appareil (collision
+  → 409 `CONFLICT` uniforme). Le téléphone mémorise e-mail → identifiant de chaque compte ouvert
+  (`objectiva.accounts`) et le renvoie quand on recrée le compte avec le même e-mail : la base locale est
+  retrouvée et renvoyée.
+- Première récupération inachevée et époque changée : elle repart de zéro, sans rien renvoyer.
+- Vérifications : 6 tests du moteur (dont coupure, refus, ligne déjà présente, champ sans horloge) ; mutation
+  « vérification d'époque retirée » détectée ; test d'inscription avec identifiant (succès, collision sans
+  fuite, identifiant mal formé) ; **e2e réel** `frontend/e2e/serveur-remplace.spec.ts` : compte supprimé de la
+  base et époque changée, bandeau, inscription avec le même e-mail, le serveur contient objectif et tâches
+  (statuts compris) sous le même identifiant.
+- Limites : rendez-vous et budget pas encore locaux, donc pas renvoyés ; après restauration d'une sauvegarde,
+  une suppression faite après la sauvegarde et déjà envoyée peut réapparaître (le téléphone ne garde pas de
+  trace des suppressions acquittées).
+
 ### Phase 1 — Noyau (terminée)
 - Livré :
   - **Logique métier unique** (`shared/src/domain/`) : commandes et vues des tâches, objectifs, jalons,

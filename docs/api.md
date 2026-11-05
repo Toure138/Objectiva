@@ -215,3 +215,10 @@ l'identifiant d'une donnée d'autrui n'est jamais accepté, ni révélé.
 **Changement reçu** : `{ entity, op: upsert | delete, id, version, row?, clocks? }`, par `version`
 croissante. `cursor` est à renvoyer tel quel ; `hasMore` indique qu'il reste des pages. Un curseur 0
 renvoie tout (nouvel appareil). L'`epoch` change si le serveur a été restauré.
+
+## Inscription avec identifiant (changement d'époque)
+
+`POST /auth/register` accepte un `id` (UUID) facultatif : un téléphone qui recrée son compte sur un serveur
+neuf garde le même identifiant, donc retrouve ses données locales et les renvoie. Identifiant déjà pris :
+`409 CONFLICT` (message uniforme, rien n'est révélé). `GET /meta` donne l'`epoch` du serveur : le téléphone
+la compare avant chaque envoi et, si elle a changé, renvoie tout son état avant son journal.

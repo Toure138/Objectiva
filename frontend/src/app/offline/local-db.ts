@@ -35,6 +35,8 @@ export const META = {
   lastSyncAt: 'lastSyncAt',
   /** Première synchronisation complète terminée (les données locales sont exploitables). */
   bootstrapped: 'bootstrapped',
+  /** Dernière fois que ce téléphone a reconstruit un serveur remplacé ou restauré (ISO). */
+  reseededAt: 'reseededAt',
 } as const;
 
 /**

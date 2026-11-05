@@ -35,13 +35,23 @@ fournie par Render à l'API.
   synchronisation reprend.
 - Aucune sauvegarde automatique sur l'offre gratuite.
 
-### ⚠ Ne pas recréer ni restaurer la base pour l'instant
+### Si la base est remplacée ou restaurée
 
-Une base neuve ou restaurée a une autre « époque » : les téléphones le détectent et **mettent la
-synchronisation en pause** (« Le serveur a été restauré… »), sans rien perdre ni rien envoyer. La reprise
-automatique (le téléphone renvoie ses données au nouveau serveur) est prévue à la phase 4 de la spec 007
-et **n'est pas encore faite**. D'ici là : garde la même base (passe-la en payant plutôt que d'en créer une
-autre à l'échéance).
+Le téléphone est la référence : il reconstruit le serveur tout seul.
+
+- **Base neuve** (base gratuite expirée puis recréée, autre hébergeur) : le serveur ne connaît plus ton
+  compte. L'application affiche « Ta session a expiré » ; touche le bandeau, choisis **Inscription** et
+  recrée ton compte avec **le même e-mail** (le mot de passe peut changer). Le compte reprend le même
+  identifiant et le téléphone renvoie aussitôt toutes ses données. Sur un second téléphone, il suffit
+  ensuite de se reconnecter : ses propres données sont fusionnées.
+- **Sauvegarde restaurée** : lance `npm run db:new-epoch` contre cette base. À la synchronisation suivante,
+  chaque téléphone renvoie son état ; ce que le serveur avait déjà est fusionné champ par champ (la
+  modification la plus récente l'emporte), rien n'est écrasé à l'aveugle.
+- Limites : les **rendez-vous et le budget** ne sont pas encore sur le téléphone (spec 007, phases 2 et 3) :
+  ils ne sont pas renvoyés et ceux d'une base perdue sont perdus. Après une restauration, une donnée
+  supprimée après la date de la sauvegarde peut réapparaître (à supprimer de nouveau).
+
+Passer la base gratuite en payant avant le 30e jour reste le plus simple : rien à reconstruire.
 
 ## 2. Construire l'APK (une fois, puis à chaque mise à jour)
 
@@ -90,8 +100,8 @@ le numéro de version augmente à chaque exécution et la clé est la même, don
   copie l'**External Database URL**, puis
   `docker run --rm postgres:16 pg_dump "<External Database URL>" -Fc > objectiva-AAAA-MM-JJ.dump`.
   Retire ensuite ton adresse IP de la liste.
-- Après une **restauration**, lancer `npm run db:new-epoch` contre cette base (voir l'avertissement
-  ci-dessus : les téléphones mettront la synchronisation en pause jusqu'à la phase 4).
+- Après une **restauration**, lancer `npm run db:new-epoch` contre cette base : les téléphones renvoient
+  alors leur état (voir « Si la base est remplacée ou restaurée »).
 
 ## 4. Développement : application sur le téléphone contre l'API du PC
 

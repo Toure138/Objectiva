@@ -183,8 +183,11 @@ dans le navigateur au format téléphone.
   du PC en HTTP. Adresse saisie normalisée par `core/api-url.ts`.
 - APK : `.github/workflows/android.yml`, signé avec une clé **stable** (secrets `ANDROID_*`) : une autre clé
   forcerait une désinstallation, donc la perte des données locales. Ne jamais versionner de `.jks`.
-- **Ne pas recréer ni restaurer la base de production** tant que la phase 4 de la spec 007 (changement
-  d'époque) n'est pas faite : les téléphones mettraient la synchronisation en pause.
+- **Changement d'époque** (base recréée ou restaurée) : le téléphone renvoie tout son état
+  (`LocalEngine.snapshot()`, `SyncService.reseed()`), vérifié avant chaque envoi via `GET /api/meta`. Une base
+  neuve ne connaît plus le compte : l'inscription accepte l'`id` de l'appareil (`objectiva.accounts` mémorise
+  e-mail → identifiant). Après une restauration : `npm run db:new-epoch`. Toute nouvelle entité locale doit
+  entrer dans `snapshot()` (parents d'abord).
 
 ## Commandes (depuis la racine)
 

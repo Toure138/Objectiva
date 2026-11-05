@@ -30,8 +30,7 @@ serveur en ligne, sans Android Studio ni boutique d'applications.
 
 ## 4. Hors périmètre
 - Publication sur le Play Store, iOS, application web en ligne (le web hors connexion exige un service worker).
-- Reprise automatique après changement d'époque (spec 007, phase 4) : **prérequis avant toute
-  restauration ou recréation de la base**.
+- (Fait ensuite, voir spec 007) Reconstruction du serveur par le téléphone après changement d'époque.
 - Supervision, alertes, nom de domaine personnalisé.
 
 ## 5. Plan technique
@@ -65,7 +64,8 @@ serveur en ligne, sans Android Studio ni boutique d'applications.
   - Le workflow Android n'a pas encore tourné (il faut pousser la branche et créer les secrets) : la
     construction Gradle et la signature ne sont vérifiées qu'à la première exécution.
   - Base gratuite : expire au 30e jour (passer en payant avant) ; pas de sauvegarde automatique.
-  - Changement d'époque non géré (spec 007, phase 4) : ne pas recréer ni restaurer la base.
+  - Base recréée ou restaurée : le téléphone reconstruit le serveur (spec 007, changement d'époque), mais les
+    rendez-vous et le budget, pas encore locaux, ne sont pas renvoyés.
   - Rendez-vous et budget exigent encore le réseau (spec 007, phases 2 et 3) : avec une API endormie, ils
     attendent son réveil (environ une minute).
   - Sessions de 30 jours côté serveur : au-delà, « Reconnecte-toi » (données intactes).
