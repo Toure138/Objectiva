@@ -9,8 +9,9 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         // Chaque mise à jour installée par-dessus la précédente doit avoir un versionCode plus grand
         // (le workflow GitHub le passe en -PappVersionCode=<numéro d'exécution>).
-        versionCode (project.findProperty('appVersionCode') ?: '1').toInteger()
-        versionName (project.findProperty('appVersionName') ?: '1.0')
+        // Affectation explicite : « versionCode (x).toInteger() » serait lu « versionCode(x).toInteger() ».
+        versionCode = Integer.parseInt((project.findProperty('appVersionCode') ?: '1').toString())
+        versionName = (project.findProperty('appVersionName') ?: '1.0').toString()
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
