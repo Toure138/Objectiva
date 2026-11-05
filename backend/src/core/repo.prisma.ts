@@ -1,8 +1,20 @@
 import { todayIn } from '../../../shared/src/dates.ts';
-import type { Ctx, GoalQuery, GoalRepo, MilestoneRepo, ReadingRepo, Repo, TaskQuery, TaskRepo } from '../../../shared/src/domain/repo.ts';
-import type { GoalRow, MilestoneRow, ReadingRow, TaskRow } from '../../../shared/src/domain/rows.ts';
+import type {
+  Ctx,
+  EventQuery,
+  EventRepo,
+  GoalQuery,
+  GoalRepo,
+  MilestoneRepo,
+  ReadingRepo,
+  Repo,
+  SeriesRepo,
+  TaskQuery,
+  TaskRepo,
+} from '../../../shared/src/domain/repo.ts';
+import type { EventRow, GoalRow, MilestoneRow, ReadingRow, SeriesRow, TaskRow } from '../../../shared/src/domain/rows.ts';
 import { ACTIVE_GOAL_STATUSES } from '../../../shared/src/domain/rows.ts';
-import type { Goal, GoalReading, Milestone, Prisma, Task } from '../generated/prisma/client.ts';
+import type { Event, EventSeries, Goal, GoalReading, Milestone, Prisma, Task } from '../generated/prisma/client.ts';
 import { fromDbDate, toDbDate } from '../../../shared/src/dates.ts';
 import { prisma } from './prisma.ts';
 
@@ -76,6 +88,97 @@ export function toTaskRow(t: Task): TaskRow {
     rescheduleCount: t.rescheduleCount,
     createdAt: t.createdAt.toISOString(),
     updatedAt: t.updatedAt.toISOString(),
+  };
+}
+
+export function toEventRow(e: Event): EventRow {
+  return {
+    id: e.id,
+    seriesId: e.seriesId,
+    occurrenceDate: day(e.occurrenceDate),
+    goalId: e.goalId,
+    milestoneId: e.milestoneId,
+    type: e.type,
+    title: e.title,
+    startsAt: e.startsAt.toISOString(),
+    endsAt: e.endsAt.toISOString(),
+    location: e.location,
+    link: e.link,
+    participants: e.participants,
+    agenda: e.agenda,
+    decisions: e.decisions,
+    status: e.status,
+    travelBeforeMinutes: e.travelBeforeMinutes,
+    prepBeforeMinutes: e.prepBeforeMinutes,
+    completedAt: iso(e.completedAt),
+    createdAt: e.createdAt.toISOString(),
+    updatedAt: e.updatedAt.toISOString(),
+  };
+}
+
+export function toSeriesRow(s: EventSeries): SeriesRow {
+  return {
+    id: s.id,
+    goalId: s.goalId,
+    milestoneId: s.milestoneId,
+    type: s.type,
+    title: s.title,
+    startTime: s.startTime,
+    endTime: s.endTime,
+    location: s.location,
+    link: s.link,
+    participants: s.participants,
+    agenda: s.agenda,
+    travelBeforeMinutes: s.travelBeforeMinutes,
+    prepBeforeMinutes: s.prepBeforeMinutes,
+    weekdays: s.weekdays,
+    startDate: day(s.startDate)!,
+    until: day(s.until),
+    createdAt: s.createdAt.toISOString(),
+    updatedAt: s.updatedAt.toISOString(),
+  };
+}
+
+/** Colonnes Prisma d'un correctif de rendez-vous (dates et instants convertis). */
+export function eventData(p: Partial<EventRow>): Prisma.EventUncheckedUpdateInput {
+  return {
+    seriesId: p.seriesId,
+    occurrenceDate: dbDay(p.occurrenceDate),
+    goalId: p.goalId,
+    milestoneId: p.milestoneId,
+    type: p.type,
+    title: p.title,
+    startsAt: dbInstant(p.startsAt) ?? undefined,
+    endsAt: dbInstant(p.endsAt) ?? undefined,
+    location: p.location,
+    link: p.link,
+    participants: p.participants,
+    agenda: p.agenda,
+    decisions: p.decisions,
+    status: p.status,
+    travelBeforeMinutes: p.travelBeforeMinutes,
+    prepBeforeMinutes: p.prepBeforeMinutes,
+    completedAt: dbInstant(p.completedAt),
+  };
+}
+
+export function seriesData(p: Partial<SeriesRow>): Prisma.EventSeriesUncheckedUpdateInput {
+  return {
+    goalId: p.goalId,
+    milestoneId: p.milestoneId,
+    type: p.type,
+    title: p.title,
+    startTime: p.startTime,
+    endTime: p.endTime,
+    location: p.location,
+    link: p.link,
+    participants: p.participants,
+    agenda: p.agenda,
+    travelBeforeMinutes: p.travelBeforeMinutes,
+    prepBeforeMinutes: p.prepBeforeMinutes,
+    weekdays: p.weekdays,
+    startDate: dbDay(p.startDate) ?? undefined,
+    until: dbDay(p.until),
   };
 }
 
@@ -164,6 +267,9 @@ function taskRepo(userId: string): TaskRepo {
     async inRange(from, to) {
       const range = { gte: toDbDate(from), lte: toDbDate(to) };
       return (await prisma.task.findMany({ where: { userId, OR: [{ workDate: range }, { originalDate: range }] } })).map(toTaskRow);
+    },
+    async byEvent(eventId) {
+      return (await prisma.task.findMany({ where: { userId, eventId }, orderBy: order })).map(toTaskRow);
     },
     async insert(row) {
       await prisma.task.create({
@@ -285,9 +391,103 @@ function readingRepo(userId: string): ReadingRepo {
   };
 }
 
+const isUniqueViolation = (e: unknown): boolean =>
+  typeof e === 'object' && e !== null && 'code' in e && (e as { code: unknown }).code === 'P2002';
+
+function eventRepo(userId: string): EventRepo {
+  const order = [{ startsAt: 'asc' as const }, { createdAt: 'asc' as const }, { id: 'asc' as const }];
+  const create = (row: EventRow) =>
+    prisma.event.create({
+      data: {
+        ...(eventData(row) as Prisma.EventUncheckedCreateInput),
+        id: row.id,
+        userId,
+        startsAt: new Date(row.startsAt),
+        endsAt: new Date(row.endsAt),
+        createdAt: new Date(row.createdAt),
+      },
+    });
+  return {
+    async get(id) {
+      const e = await prisma.event.findFirst({ where: { id, userId } });
+      return e ? toEventRow(e) : null;
+    },
+    async list(q: EventQuery) {
+      const where: Prisma.EventWhereInput = { userId };
+      if (q.status) where.status = q.status;
+      else if (q.notStatus) where.status = { not: q.notStatus };
+      if (q.startFrom || q.startBefore) {
+        where.startsAt = { gte: q.startFrom ? new Date(q.startFrom) : undefined, lt: q.startBefore ? new Date(q.startBefore) : undefined };
+      }
+      return (await prisma.event.findMany({ where, orderBy: order, take: q.limit })).map(toEventRow);
+    },
+    async bySeries(seriesId) {
+      return (await prisma.event.findMany({ where: { userId, seriesId }, orderBy: [{ occurrenceDate: 'asc' }] })).map(toEventRow);
+    },
+    async insert(row) {
+      await create(row);
+    },
+    async insertIfAbsent(row) {
+      try {
+        await create(row);
+        return true;
+      } catch (e) {
+        // Créée entre-temps par une autre requête (ou un autre appareil) : rien à faire.
+        if (isUniqueViolation(e)) return false;
+        throw e;
+      }
+    },
+    async update(id, patch) {
+      return toEventRow(await prisma.event.update({ where: { id, userId }, data: eventData(patch) }));
+    },
+    async remove(id) {
+      // Les tâches liées sont conservées : la base met leur event_id à NULL.
+      await prisma.event.deleteMany({ where: { id, userId } });
+    },
+  };
+}
+
+function seriesRepo(userId: string): SeriesRepo {
+  return {
+    async get(id) {
+      const s = await prisma.eventSeries.findFirst({ where: { id, userId } });
+      return s ? toSeriesRow(s) : null;
+    },
+    async list() {
+      const rows = await prisma.eventSeries.findMany({ where: { userId }, orderBy: [{ startDate: 'asc' }, { createdAt: 'asc' }, { id: 'asc' }] });
+      return rows.map(toSeriesRow);
+    },
+    async insert(row) {
+      await prisma.eventSeries.create({
+        data: {
+          ...(seriesData(row) as Prisma.EventSeriesUncheckedCreateInput),
+          id: row.id,
+          userId,
+          startDate: toDbDate(row.startDate),
+          createdAt: new Date(row.createdAt),
+        },
+      });
+    },
+    async update(id, patch) {
+      return toSeriesRow(await prisma.eventSeries.update({ where: { id, userId }, data: seriesData(patch) }));
+    },
+    async remove(id) {
+      // La base supprime les occurrences (cascade) et détache leurs tâches (SET NULL).
+      await prisma.eventSeries.deleteMany({ where: { id, userId } });
+    },
+  };
+}
+
 /** Interface de stockage partagée, limitée aux données d'un utilisateur. */
 export function prismaRepo(userId: string): Repo {
-  return { tasks: taskRepo(userId), goals: goalRepo(userId), milestones: milestoneRepo(userId), readings: readingRepo(userId) };
+  return {
+    tasks: taskRepo(userId),
+    goals: goalRepo(userId),
+    milestones: milestoneRepo(userId),
+    readings: readingRepo(userId),
+    events: eventRepo(userId),
+    series: seriesRepo(userId),
+  };
 }
 
 /** Contexte d'une commande : horloge du serveur et jour courant dans le fuseau de l'utilisateur. */

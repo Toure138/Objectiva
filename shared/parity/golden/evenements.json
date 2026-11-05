@@ -60,7 +60,10 @@
         "blockedFrom": "2026-11-05T07:45:00.000Z",
         "blockedFromTime": "08:45",
         "leaveAtTime": "09:15",
-        "completedAt": null
+        "completedAt": null,
+        "seriesId": null,
+        "occurrenceDate": null,
+        "repeat": null
       }
     }
   },
@@ -91,7 +94,10 @@
         "blockedFrom": "2026-11-04T16:00:00.000Z",
         "blockedFromTime": "17:00",
         "leaveAtTime": null,
-        "completedAt": null
+        "completedAt": null,
+        "seriesId": null,
+        "occurrenceDate": null,
+        "repeat": null
       }
     }
   },
@@ -122,7 +128,10 @@
         "blockedFrom": "2026-11-05T23:30:00.000Z",
         "blockedFromTime": "00:30",
         "leaveAtTime": null,
-        "completedAt": null
+        "completedAt": null,
+        "seriesId": null,
+        "occurrenceDate": null,
+        "repeat": null
       }
     }
   },
@@ -153,7 +162,10 @@
         "blockedFrom": "2027-03-28T00:30:00.000Z",
         "blockedFromTime": "01:30",
         "leaveAtTime": null,
-        "completedAt": null
+        "completedAt": null,
+        "seriesId": null,
+        "occurrenceDate": null,
+        "repeat": null
       }
     }
   },
@@ -184,7 +196,10 @@
         "blockedFrom": "2027-03-28T01:30:00.000Z",
         "blockedFromTime": "03:30",
         "leaveAtTime": null,
-        "completedAt": null
+        "completedAt": null,
+        "seriesId": null,
+        "occurrenceDate": null,
+        "repeat": null
       }
     }
   },
@@ -321,7 +336,10 @@
         "blockedFrom": "2026-11-05T07:45:00.000Z",
         "blockedFromTime": "08:45",
         "leaveAtTime": "09:15",
-        "completedAt": "2026-11-04T09:00:13.000Z"
+        "completedAt": "2026-11-04T09:00:13.000Z",
+        "seriesId": null,
+        "occurrenceDate": null,
+        "repeat": null
       }
     }
   },
@@ -355,7 +373,10 @@
         "blockedFrom": "2026-11-05T07:45:00.000Z",
         "blockedFromTime": "08:45",
         "leaveAtTime": "09:15",
-        "completedAt": "2026-11-04T09:00:13.000Z"
+        "completedAt": "2026-11-04T09:00:13.000Z",
+        "seriesId": null,
+        "occurrenceDate": null,
+        "repeat": null
       }
     }
   },
@@ -394,7 +415,10 @@
         "blockedFrom": "2026-11-05T23:30:00.000Z",
         "blockedFromTime": "00:30",
         "leaveAtTime": null,
-        "completedAt": null
+        "completedAt": null,
+        "seriesId": null,
+        "occurrenceDate": null,
+        "repeat": null
       }
     }
   },
@@ -425,7 +449,10 @@
         "blockedFrom": "2026-11-05T23:30:00.000Z",
         "blockedFromTime": "00:30",
         "leaveAtTime": null,
-        "completedAt": null
+        "completedAt": null,
+        "seriesId": null,
+        "occurrenceDate": null,
+        "repeat": null
       }
     }
   },
@@ -464,7 +491,10 @@
         "blockedFrom": "2026-11-05T23:30:00.000Z",
         "blockedFromTime": "00:30",
         "leaveAtTime": null,
-        "completedAt": null
+        "completedAt": null,
+        "seriesId": null,
+        "occurrenceDate": null,
+        "repeat": null
       }
     }
   },
@@ -495,7 +525,10 @@
         "blockedFrom": "2026-11-04T15:00:00.000Z",
         "blockedFromTime": "16:00",
         "leaveAtTime": null,
-        "completedAt": null
+        "completedAt": null,
+        "seriesId": null,
+        "occurrenceDate": null,
+        "repeat": null
       }
     }
   },
@@ -541,7 +574,10 @@
           "blockedFrom": "2026-11-04T15:00:00.000Z",
           "blockedFromTime": "16:00",
           "leaveAtTime": null,
-          "completedAt": null
+          "completedAt": null,
+          "seriesId": null,
+          "occurrenceDate": null,
+          "repeat": null
         },
         {
           "id": "00000000-0000-4000-8000-000000000020",
@@ -569,7 +605,10 @@
           "blockedFrom": "2026-11-05T07:45:00.000Z",
           "blockedFromTime": "08:45",
           "leaveAtTime": "09:15",
-          "completedAt": "2026-11-04T09:00:13.000Z"
+          "completedAt": "2026-11-04T09:00:13.000Z",
+          "seriesId": null,
+          "occurrenceDate": null,
+          "repeat": null
         },
         {
           "id": "00000000-0000-4000-8000-000000000022",
@@ -594,7 +633,10 @@
           "blockedFrom": "2026-11-05T23:30:00.000Z",
           "blockedFromTime": "00:30",
           "leaveAtTime": null,
-          "completedAt": null
+          "completedAt": null,
+          "seriesId": null,
+          "occurrenceDate": null,
+          "repeat": null
         }
       ]
     }
@@ -627,7 +669,10 @@
           "blockedFrom": "2026-11-04T15:00:00.000Z",
           "blockedFromTime": "16:00",
           "leaveAtTime": null,
-          "completedAt": null
+          "completedAt": null,
+          "seriesId": null,
+          "occurrenceDate": null,
+          "repeat": null
         },
         {
           "id": "00000000-0000-4000-8000-000000000022",
@@ -652,7 +697,10 @@
           "blockedFrom": "2026-11-05T23:30:00.000Z",
           "blockedFromTime": "00:30",
           "leaveAtTime": null,
-          "completedAt": null
+          "completedAt": null,
+          "seriesId": null,
+          "occurrenceDate": null,
+          "repeat": null
         },
         {
           "id": "00000000-0000-4000-8000-000000000023",
@@ -677,7 +725,10 @@
           "blockedFrom": "2027-03-28T00:30:00.000Z",
           "blockedFromTime": "01:30",
           "leaveAtTime": null,
-          "completedAt": null
+          "completedAt": null,
+          "seriesId": null,
+          "occurrenceDate": null,
+          "repeat": null
         },
         {
           "id": "00000000-0000-4000-8000-000000000024",
@@ -702,7 +753,10 @@
           "blockedFrom": "2027-03-28T01:30:00.000Z",
           "blockedFromTime": "03:30",
           "leaveAtTime": null,
-          "completedAt": null
+          "completedAt": null,
+          "seriesId": null,
+          "occurrenceDate": null,
+          "repeat": null
         }
       ]
     }
@@ -735,7 +789,10 @@
           "blockedFrom": "2027-03-28T00:30:00.000Z",
           "blockedFromTime": "01:30",
           "leaveAtTime": null,
-          "completedAt": null
+          "completedAt": null,
+          "seriesId": null,
+          "occurrenceDate": null,
+          "repeat": null
         },
         {
           "id": "00000000-0000-4000-8000-000000000024",
@@ -760,7 +817,10 @@
           "blockedFrom": "2027-03-28T01:30:00.000Z",
           "blockedFromTime": "03:30",
           "leaveAtTime": null,
-          "completedAt": null
+          "completedAt": null,
+          "seriesId": null,
+          "occurrenceDate": null,
+          "repeat": null
         }
       ]
     }
@@ -796,6 +856,9 @@
         "blockedFromTime": "08:45",
         "leaveAtTime": "09:15",
         "completedAt": "2026-11-04T09:00:13.000Z",
+        "seriesId": null,
+        "occurrenceDate": null,
+        "repeat": null,
         "tasks": [
           {
             "id": "<uuid#1>",
@@ -872,7 +935,10 @@
             "blockedFrom": "2026-11-05T07:45:00.000Z",
             "blockedFromTime": "08:45",
             "leaveAtTime": "09:15",
-            "completedAt": "2026-11-04T09:00:13.000Z"
+            "completedAt": "2026-11-04T09:00:13.000Z",
+            "seriesId": null,
+            "occurrenceDate": null,
+            "repeat": null
           }
         ],
         "planned": [],
@@ -953,7 +1019,10 @@
             "blockedFrom": "2026-11-04T15:00:00.000Z",
             "blockedFromTime": "16:00",
             "leaveAtTime": null,
-            "completedAt": null
+            "completedAt": null,
+            "seriesId": null,
+            "occurrenceDate": null,
+            "repeat": null
           }
         ],
         "planned": [
@@ -1133,7 +1202,10 @@
           "blockedFrom": "2026-11-04T15:00:00.000Z",
           "blockedFromTime": "16:00",
           "leaveAtTime": null,
-          "completedAt": null
+          "completedAt": null,
+          "seriesId": null,
+          "occurrenceDate": null,
+          "repeat": null
         },
         {
           "id": "00000000-0000-4000-8000-000000000020",
@@ -1161,7 +1233,10 @@
           "blockedFrom": "2026-11-05T07:45:00.000Z",
           "blockedFromTime": "08:45",
           "leaveAtTime": "09:15",
-          "completedAt": "2026-11-04T09:00:13.000Z"
+          "completedAt": "2026-11-04T09:00:13.000Z",
+          "seriesId": null,
+          "occurrenceDate": null,
+          "repeat": null
         },
         {
           "id": "00000000-0000-4000-8000-000000000022",
@@ -1186,7 +1261,10 @@
           "blockedFrom": "2026-11-05T23:30:00.000Z",
           "blockedFromTime": "00:30",
           "leaveAtTime": null,
-          "completedAt": null
+          "completedAt": null,
+          "seriesId": null,
+          "occurrenceDate": null,
+          "repeat": null
         },
         {
           "id": "00000000-0000-4000-8000-000000000024",
@@ -1211,7 +1289,10 @@
           "blockedFrom": "2027-03-28T01:30:00.000Z",
           "blockedFromTime": "03:30",
           "leaveAtTime": null,
-          "completedAt": null
+          "completedAt": null,
+          "seriesId": null,
+          "occurrenceDate": null,
+          "repeat": null
         }
       ]
     }

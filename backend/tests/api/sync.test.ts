@@ -149,13 +149,19 @@ describe('création, lecture et idempotence', () => {
     expect((await alice.get(`/api/tasks/${task}`)).body.data.title).toBe('Renommée');
   });
 
-  it('une création rejouée sous un autre numéro de modification est ignorée (déjà là)', async () => {
+  it('une création reçue pour une ligne déjà présente est fusionnée champ par champ (identifiants calculés)', async () => {
     const task = randomUUID();
     await push(alice, [mutation('create', 'tasks', task, taskFields(), 1000)]);
-    const res = await push(alice, [mutation('create', 'tasks', task, taskFields({ title: 'Autre' }), 2000)]);
-    expect(statuses(res)).toEqual(['ignored']);
-    expect(reasons(res)).toEqual(['exists']);
+    // Plus ancienne : rien ne change.
+    const older = await push(alice, [mutation('create', 'tasks', task, taskFields({ title: 'Plus ancienne' }), 500)]);
+    expect(statuses(older)).toEqual(['ignored']);
+    expect(reasons(older)).toEqual(['stale']);
     expect((await alice.get(`/api/tasks/${task}`)).body.data.title).toBe('Préparer les comptes');
+    // Plus récente : ses valeurs l'emportent, sans doublon.
+    const newer = await push(alice, [mutation('create', 'tasks', task, taskFields({ title: 'Plus récente' }), 2000)]);
+    expect(statuses(newer)).toEqual(['applied']);
+    expect((await alice.get(`/api/tasks/${task}`)).body.data.title).toBe('Plus récente');
+    expect(await prisma.task.count({ where: { userId: alice.user.id } })).toBe(1);
   });
 
   it('un même numéro de modification chez deux utilisateurs reste indépendant', async () => {

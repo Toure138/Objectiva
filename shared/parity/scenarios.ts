@@ -37,7 +37,7 @@ export const FROZEN_NOW = '2026-11-04T09:00:00.000Z';
 /** Identifiant fixe et lisible : les scénarios créent leurs données avec des identifiants d'appareil. */
 export const uid = (n: number): string => `00000000-0000-4000-8000-${n.toString(16).padStart(12, '0')}`;
 
-const get = (path: string): Step => ({ method: 'GET', path });
+const get = (path: string, extra: Partial<Step> = {}): Step => ({ method: 'GET', path, ...extra });
 const post = (path: string, body?: unknown, extra: Partial<Step> = {}): Step => ({ method: 'POST', path, body, ...extra });
 const patch = (path: string, body: unknown, extra: Partial<Step> = {}): Step => ({ method: 'PATCH', path, body, ...extra });
 const del = (path: string, extra: Partial<Step> = {}): Step => ({ method: 'DELETE', path, ...extra });
@@ -315,4 +315,66 @@ export const ordreDesListes: Scenario = {
   ],
 };
 
-export const SCENARIOS: Scenario[] = [tachesEtBilan, progressionMesuree, evenements, budgetMensuel, ordreDesListes];
+// ---------------------------------------------------------------------------------------------
+// 6. Réunions récurrentes et agenda du jour (spec 009). Mercredi 4 novembre 2026, Europe/Paris.
+
+const [DAILY, WEEKLY, BANK] = [uid(81), uid(82), uid(83)];
+const MEETING = { type: 'REUNION', startTime: '09:00', endTime: '09:15' };
+
+export const reunionsRecurrentes: Scenario = {
+  name: 'reunions-recurrentes',
+  timezone: 'Europe/Paris',
+  steps: [
+    patch('/api/auth/me', { timezone: 'Europe/Paris' }, { silent: true }),
+    // En semaine à 9 h, à partir d'aujourd'hui (mercredi).
+    post('/api/events', { ...MEETING, id: DAILY, title: 'Point quotidien', date: '2026-11-04', repeat: { weekdays: [5, 1, 2, 3, 4, 1] } }, { save: { d1: 'data.id' } }),
+    // Chaque jeudi jusqu'à fin décembre, avec 15 min de trajet.
+    post(
+      '/api/events',
+      { id: WEEKLY, type: 'RENCONTRE', title: 'Revue hebdo', date: '2026-11-05', startTime: '14:00', endTime: '15:00', travelBeforeMinutes: 15, repeat: { weekdays: [4], until: '2026-12-31' } },
+      { save: { w1: 'data.id' } },
+    ),
+    // Un rendez-vous unique qui chevauche le point du jeudi, avec 30 min de préparation.
+    post('/api/events', { id: BANK, type: 'RENDEZ_VOUS', title: 'Banque', date: '2026-11-05', startTime: '09:10', endTime: '09:45', prepBeforeMinutes: 30 }),
+    // Répétitions invalides.
+    post('/api/events', { ...MEETING, title: 'Sans jour', date: '2026-11-04', repeat: { weekdays: [] } }, { expect: 400 }),
+    post('/api/events', { ...MEETING, title: 'Jour inconnu', date: '2026-11-04', repeat: { weekdays: [8] } }, { expect: 400 }),
+    post('/api/events', { ...MEETING, title: 'Fin avant début', date: '2026-11-04', repeat: { weekdays: [1], until: '2026-11-01' } }, { expect: 400 }),
+    post('/api/events', { ...MEETING, title: 'Aucune date', date: '2026-11-02', repeat: { weekdays: [5], until: '2026-11-03' } }, { expect: 400 }),
+    get('/api/agenda?date=2026-11-05', { save: { d2: 'data.events.0.id' } }),
+    get('/api/events?from=2026-11-02&to=2026-11-08'),
+    get('/api/agenda?date=2026-11-06', { save: { d3: 'data.events.0.id' } }),
+    // Cette occurrence seulement : vendredi à 10 h.
+    patch('/api/events/{{d3}}', { startTime: '10:00', endTime: '10:15' }),
+    // Cette occurrence et les suivantes : seuls le titre et le lieu changent (vendredi garde 10 h).
+    patch('/api/events/{{d1}}?scope=following', { title: 'Point d’équipe', location: 'Salle B' }),
+    patch('/api/events/{{d1}}?scope=following', { date: '2026-11-05' }, { expect: 400 }),
+    patch('/api/events/{{d1}}', { repeat: { weekdays: [1] } }, { expect: 400 }),
+    patch(`/api/events/${BANK}`, { repeat: { weekdays: [1] } }, { expect: 400 }),
+    // Annuler cette fois (jeudi), puis réaliser mercredi.
+    del('/api/events/{{d2}}?scope=occurrence'),
+    post('/api/events/{{d1}}/complete', { decisions: 'Démo prête pour jeudi prochain.' }),
+    get('/api/agenda?date=2026-11-09', { save: { d4: 'data.events.0.id' } }),
+    // À partir de lundi 9 : lundi, mercredi et vendredi seulement (la série est coupée).
+    patch('/api/events/{{d4}}?scope=following', { repeat: { weekdays: [1, 3, 5] } }, { save: { n1: 'data.id', s2: 'data.seriesId' } }),
+    get('/api/events?from=2026-11-04&to=2026-11-13'),
+    get('/api/agenda?date=2026-11-12', { save: { w2: 'data.events.0.id' } }),
+    // La revue hebdo s'arrête après celle du 5.
+    del('/api/events/{{w2}}?scope=following'),
+    get('/api/events/{{w1}}'),
+    post('/api/events/{{d1}}/tasks', { role: 'SUIVI', title: 'Envoyer le compte rendu' }),
+    get('/api/today?date=2026-11-05'),
+    get('/api/reviews?period=week&date=2026-11-04'),
+    get('/api/agenda?date=2026-11-05'),
+    get('/api/agenda'),
+    // Toute la nouvelle série disparaît ; la tâche de suivi de l'ancienne reste, détachée, quand on supprime celle-ci.
+    del('/api/events/{{n1}}?scope=series'),
+    del('/api/events/{{d1}}?scope=series'),
+    get('/api/events?from=2026-11-04&to=2026-11-13'),
+    get('/api/tasks'),
+    { method: 'GET', path: '/api/events/{{d1}}', expect: 404 },
+    { method: 'DELETE', path: '/api/events/{{w1}}?scope=tout', expect: 400 },
+  ],
+};
+
+export const SCENARIOS: Scenario[] = [tachesEtBilan, progressionMesuree, evenements, budgetMensuel, ordreDesListes, reunionsRecurrentes];

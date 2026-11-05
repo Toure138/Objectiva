@@ -1,8 +1,11 @@
 // Constantes et règles de compatibilité du protocole de synchronisation (spec 007).
 // Partagées : l'application et le serveur doivent s'accorder sur les mêmes valeurs.
 
-/** Version du protocole parlée par ce code. À incrémenter à toute évolution incompatible. */
-export const SYNC_PROTOCOL_VERSION = 1;
+/**
+ * Version du protocole parlée par ce code. À incrémenter à toute évolution incompatible.
+ * 2 (spec 009) : rendez-vous et réunions récurrentes synchronisés.
+ */
+export const SYNC_PROTOCOL_VERSION = 2;
 
 /**
  * Plus ancienne version encore acceptée par le serveur. Règle de la spec : au moins 12 mois de
@@ -12,6 +15,12 @@ export const MIN_SYNC_PROTOCOL_VERSION = 1;
 
 /** En-tête HTTP portant la version du protocole du client. */
 export const PROTOCOL_HEADER = 'x-objectiva-protocol';
+
+/** Lit la version annoncée (en-tête déjà validé par `checkProtocol`). */
+export function protocolOf(raw: unknown): number {
+  const text = Array.isArray(raw) ? raw[0] : raw;
+  return typeof text === 'string' && /^\d{1,4}$/.test(text.trim()) ? Number(text) : SYNC_PROTOCOL_VERSION;
+}
 
 export type ProtocolCheck = 'ok' | 'client-too-old' | 'client-too-new' | 'invalid';
 
@@ -30,8 +39,9 @@ export const SYNC_ENTITIES = [
   'goals',
   'milestones',
   'goal_readings',
-  'tasks',
+  'event_series',
   'events',
+  'tasks',
   'accounts',
   'budget_categories',
   'envelopes',

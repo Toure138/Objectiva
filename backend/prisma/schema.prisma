@@ -23,10 +23,11 @@ model User {
   createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  goals    Goal[]
-  tasks    Task[]
-  events   Event[]
-  sessions Session[]
+  goals       Goal[]
+  tasks       Task[]
+  events      Event[]
+  eventSeries EventSeries[]
+  sessions    Session[]
 
   milestones        Milestone[]
   goalReadings      GoalReading[]
@@ -133,11 +134,12 @@ model Goal {
   createdAt    DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt    DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  milestones Milestone[]
-  tasks      Task[]
-  readings   GoalReading[]
-  events     Event[]
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  milestones  Milestone[]
+  tasks       Task[]
+  readings    GoalReading[]
+  events      Event[]
+  eventSeries EventSeries[]
 
   // Numéro de version attribué par un déclencheur (spec 007) : sert à la synchronisation.
   // Horloge hybride de chaque champ (synchronisation, spec 007) : sert à trancher les conflits.
@@ -157,9 +159,10 @@ model Milestone {
   completedAt DateTime? @map("completed_at") @db.Timestamptz(6)
   createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
 
-  goal   Goal    @relation(fields: [goalId], references: [id], onDelete: Cascade)
-  tasks  Task[]
-  events Event[]
+  goal        Goal          @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  tasks       Task[]
+  events      Event[]
+  eventSeries EventSeries[]
 
   // Numéro de version attribué par un déclencheur (spec 007) : sert à la synchronisation.
   // Horloge hybride de chaque champ (synchronisation, spec 007) : sert à trancher les conflits.
@@ -244,12 +247,16 @@ model Event {
   travelBeforeMinutes Int         @default(0) @map("travel_before_minutes")
   prepBeforeMinutes   Int         @default(0) @map("prep_before_minutes")
   completedAt         DateTime?   @map("completed_at") @db.Timestamptz(6)
+  // Occurrence d'une réunion récurrente (spec 009) : série et date d'origine (inchangée si l'occurrence est déplacée).
+  seriesId            String?     @map("series_id") @db.Uuid
+  occurrenceDate      DateTime?   @map("occurrence_date") @db.Date
   createdAt           DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt           DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  goal      Goal?      @relation(fields: [goalId], references: [id], onDelete: SetNull)
-  milestone Milestone? @relation(fields: [milestoneId], references: [id], onDelete: SetNull)
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goal      Goal?        @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  milestone Milestone?   @relation(fields: [milestoneId], references: [id], onDelete: SetNull)
+  series    EventSeries? @relation(fields: [seriesId], references: [id], onDelete: Cascade)
   tasks     Task[]
 
   // Numéro de version attribué par un déclencheur (spec 007) : sert à la synchronisation.
@@ -257,10 +264,46 @@ model Event {
   fieldClocks   Json   @default("{}") @map("field_clocks")
   serverVersion BigInt @default(0) @map("server_version")
 
+  @@unique([seriesId, occurrenceDate])
   @@index([userId, serverVersion])
   @@index([userId, startsAt])
   @@index([userId, status])
   @@map("events")
+}
+
+// Réunion récurrente (spec 009) : un modèle et les jours où il revient. Chaque occurrence est un
+// rendez-vous ordinaire (table events), créé d'avance. Heures locales : converties pour chaque date.
+model EventSeries {
+  id                  String    @id @default(uuid()) @db.Uuid
+  userId              String    @map("user_id") @db.Uuid
+  goalId              String?   @map("goal_id") @db.Uuid
+  milestoneId         String?   @map("milestone_id") @db.Uuid
+  type                EventType
+  title               String    @db.VarChar(160)
+  startTime           String    @map("start_time") @db.VarChar(5)
+  endTime             String    @map("end_time") @db.VarChar(5)
+  location            String?   @db.VarChar(200)
+  link                String?   @db.VarChar(500)
+  participants        String[]  @default([])
+  agenda              String?   @db.VarChar(2000)
+  travelBeforeMinutes Int       @default(0) @map("travel_before_minutes")
+  prepBeforeMinutes   Int       @default(0) @map("prep_before_minutes")
+  // Jours de la semaine ISO : 1 = lundi … 7 = dimanche.
+  weekdays            Int[]
+  startDate           DateTime  @map("start_date") @db.Date
+  until               DateTime? @db.Date
+  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  fieldClocks         Json      @default("{}") @map("field_clocks")
+  serverVersion       BigInt    @default(0) @map("server_version")
+
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goal        Goal?      @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  milestone   Milestone? @relation(fields: [milestoneId], references: [id], onDelete: SetNull)
+  occurrences Event[]
+
+  @@index([userId, serverVersion])
+  @@map("event_series")
 }
 
 enum TaskStatus {

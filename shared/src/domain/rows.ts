@@ -8,6 +8,8 @@ export type GoalStatus = 'A_DEMARRER' | 'EN_COURS' | 'EN_PAUSE' | 'TERMINE' | 'A
 export type ProgressMode = 'JALONS' | 'MESURE';
 export type TaskStatus = 'TODO' | 'DONE' | 'CANCELLED';
 export type EventTaskRole = 'PREPARATION' | 'SUIVI';
+export type EventType = 'REUNION' | 'RENCONTRE' | 'RENDEZ_VOUS' | 'APPEL' | 'VISIO';
+export type EventStatus = 'PREVU' | 'REALISE' | 'ANNULE';
 
 export interface GoalRow {
   id: string;
@@ -62,6 +64,52 @@ export interface TaskRow {
   completedAt: string | null;
   originalDate: string | null;
   rescheduleCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** Rendez-vous (instants UTC) ; une occurrence de réunion récurrente porte sa série et sa date d'origine. */
+export interface EventRow {
+  id: string;
+  seriesId: string | null;
+  occurrenceDate: string | null;
+  goalId: string | null;
+  milestoneId: string | null;
+  type: EventType;
+  title: string;
+  startsAt: string;
+  endsAt: string;
+  location: string | null;
+  link: string | null;
+  participants: string[];
+  agenda: string | null;
+  decisions: string | null;
+  status: EventStatus;
+  travelBeforeMinutes: number;
+  prepBeforeMinutes: number;
+  completedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** Réunion récurrente : modèle (heures locales) et jours de la semaine (1 = lundi … 7 = dimanche). */
+export interface SeriesRow {
+  id: string;
+  goalId: string | null;
+  milestoneId: string | null;
+  type: EventType;
+  title: string;
+  startTime: string;
+  endTime: string;
+  location: string | null;
+  link: string | null;
+  participants: string[];
+  agenda: string | null;
+  travelBeforeMinutes: number;
+  prepBeforeMinutes: number;
+  weekdays: number[];
+  startDate: string;
+  until: string | null;
   createdAt: string;
   updatedAt: string;
 }

@@ -8,7 +8,7 @@ import { errorHandler, notFoundRoute } from './core/errors.ts';
 import { checkProtocol, MIN_SYNC_PROTOCOL_VERSION, PROTOCOL_HEADER, SYNC_PROTOCOL_VERSION } from '../../shared/src/sync.ts';
 import { authRouter } from './modules/auth/auth.routes.ts';
 import { budgetRouter } from './modules/budget/budget.routes.ts';
-import { eventsRouter } from './modules/events/events.routes.ts';
+import { agendaRouter, eventsRouter } from './modules/events/events.routes.ts';
 import { goalsRouter, milestonesRouter, readingsRouter } from './modules/goals/goals.routes.ts';
 import { syncRouter } from './modules/sync/sync.routes.ts';
 import { reviewsRouter } from './modules/reviews/reviews.routes.ts';
@@ -62,6 +62,7 @@ export function createApp() {
   app.use('/api/readings', requireAuth, readingsRouter);
   app.use('/api/budget', requireAuth, budgetRouter);
   app.use('/api/events', requireAuth, eventsRouter);
+  app.use('/api/agenda', requireAuth, agendaRouter);
   app.use('/api/sync', requireAuth, syncRouter);
   app.use('/api/tasks', requireAuth, tasksRouter);
   app.use('/api/today', requireAuth, todayRouter);

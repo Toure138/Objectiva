@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { currentUser } from '../../core/auth.middleware.ts';
 import { parseInput } from '../../core/errors.ts';
 import { requireProtocol } from '../../core/protocol.ts';
+import { protocolOf, PROTOCOL_HEADER } from '../../../../shared/src/sync.ts';
 import { pullQuery, pushSchema } from '../../../../shared/src/sync.schemas.ts';
 import * as sync from './sync.service.ts';
 
@@ -11,7 +12,9 @@ syncRouter.use(requireProtocol);
 
 syncRouter.get('/pull', async (req, res) => {
   const q = parseInput(pullQuery, req.query);
-  res.json({ success: true, data: await sync.pull(currentUser(req).userId, q.cursor, q.limit) });
+  // Un client plus ancien ne reçoit que les tables qu'il sait lire.
+  const protocol = protocolOf(req.headers[PROTOCOL_HEADER]);
+  res.json({ success: true, data: await sync.pull(currentUser(req).userId, q.cursor, q.limit, protocol) });
 });
 
 syncRouter.post('/push', async (req, res) => {

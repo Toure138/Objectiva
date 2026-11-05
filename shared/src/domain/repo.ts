@@ -1,4 +1,4 @@
-import type { GoalRow, GoalStatus, MilestoneRow, ReadingRow, TaskRow, TaskStatus } from './rows';
+import type { EventRow, EventStatus, GoalRow, GoalStatus, MilestoneRow, ReadingRow, SeriesRow, TaskRow, TaskStatus } from './rows';
 
 // Interface de stockage de la logique métier partagée. Une instance est toujours limitée à UN
 // utilisateur : le serveur l'implémente avec Prisma (filtre `userId`), le téléphone avec IndexedDB.
@@ -38,6 +38,8 @@ export interface TaskRepo {
   overdue(date: string): Promise<TaskRow[]>;
   /** Tâches dont la date de travail ou la date initiale est dans la plage (pour le bilan). */
   inRange(from: string, to: string): Promise<TaskRow[]>;
+  /** Tâches liées à un rendez-vous, par date de création puis id. */
+  byEvent(eventId: string): Promise<TaskRow[]>;
   /** Insère une ligne ; un identifiant déjà utilisé lève une `DomainError` 409. */
   insert(row: TaskRow): Promise<void>;
   update(id: string, patch: Partial<TaskRow>): Promise<TaskRow>;
@@ -52,7 +54,7 @@ export interface GoalRepo {
   withoutNextAction(): Promise<{ id: string; title: string }[]>;
   insert(row: GoalRow): Promise<void>;
   update(id: string, patch: Partial<GoalRow>): Promise<GoalRow>;
-  /** Supprime l'objectif ET, comme le fait la base, ses jalons et relevés ; détache ses tâches. */
+  /** Supprime l'objectif ET, comme le fait la base, ses jalons et relevés ; détache ses tâches, rendez-vous et séries. */
   remove(id: string): Promise<void>;
 }
 
@@ -62,7 +64,7 @@ export interface MilestoneRepo {
   listByGoals(goalIds: string[]): Promise<MilestoneRow[]>;
   insert(row: MilestoneRow): Promise<void>;
   update(id: string, patch: Partial<MilestoneRow>): Promise<MilestoneRow>;
-  /** Supprime le jalon et détache les tâches qui y étaient liées. */
+  /** Supprime le jalon et détache les tâches, rendez-vous et séries qui y étaient liés. */
   remove(id: string): Promise<void>;
 }
 
@@ -74,11 +76,49 @@ export interface ReadingRepo {
   remove(id: string): Promise<void>;
 }
 
+export interface EventQuery {
+  /** Début au plus tôt (instant ISO UTC, inclus). */
+  startFrom?: string;
+  /** Début strictement avant (instant ISO UTC, exclu). */
+  startBefore?: string;
+  status?: EventStatus;
+  /** Exclut ce statut (ex. les annulés pour « Aujourd'hui »). */
+  notStatus?: EventStatus;
+  limit?: number;
+}
+
+export interface EventRepo {
+  get(id: string): Promise<EventRow | null>;
+  /** Tri : début croissant, puis date de création, puis id. */
+  list(q: EventQuery): Promise<EventRow[]>;
+  /** Occurrences d'une série, par date d'origine croissante. */
+  bySeries(seriesId: string): Promise<EventRow[]>;
+  /** Insère une ligne ; un identifiant déjà utilisé lève une `DomainError` 409. */
+  insert(row: EventRow): Promise<void>;
+  /** Insère si l'identifiant est libre (occurrences créées d'avance) ; `false` s'il est déjà pris. */
+  insertIfAbsent(row: EventRow): Promise<boolean>;
+  update(id: string, patch: Partial<EventRow>): Promise<EventRow>;
+  /** Supprime le rendez-vous ; ses tâches sont conservées sans lien (`eventId` à null). */
+  remove(id: string): Promise<void>;
+}
+
+export interface SeriesRepo {
+  get(id: string): Promise<SeriesRow | null>;
+  /** Tri : date de début croissante, puis date de création, puis id. */
+  list(): Promise<SeriesRow[]>;
+  insert(row: SeriesRow): Promise<void>;
+  update(id: string, patch: Partial<SeriesRow>): Promise<SeriesRow>;
+  /** Supprime la série ET, comme le fait la base, toutes ses occurrences (leurs tâches sont détachées). */
+  remove(id: string): Promise<void>;
+}
+
 export interface Repo {
   tasks: TaskRepo;
   goals: GoalRepo;
   milestones: MilestoneRepo;
   readings: ReadingRepo;
+  events: EventRepo;
+  series: SeriesRepo;
 }
 
 /** Contexte d'une commande : l'instant et le jour courants, fournis par l'appelant (horloge du serveur ou du téléphone). */

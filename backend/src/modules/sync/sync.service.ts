@@ -9,11 +9,24 @@ import type {
   SyncChange,
   SyncedEntity,
 } from '../../../../shared/src/sync.schemas.ts';
-import { FIELD_SCHEMAS } from '../../../../shared/src/sync.schemas.ts';
+import { entitiesFor, FIELD_SCHEMAS } from '../../../../shared/src/sync.schemas.ts';
 import { currentEpoch } from '../../core/epoch.ts';
 import { prisma } from '../../core/prisma.ts';
 import type { Prisma } from '../../generated/prisma/client.ts';
-import { dbDay, dbInstant, goalData, taskData, toGoalRow, toMilestoneRow, toReadingRow, toTaskRow } from '../../core/repo.prisma.ts';
+import {
+  dbDay,
+  dbInstant,
+  eventData,
+  goalData,
+  seriesData,
+  taskData,
+  toEventRow,
+  toGoalRow,
+  toMilestoneRow,
+  toReadingRow,
+  toSeriesRow,
+  toTaskRow,
+} from '../../core/repo.prisma.ts';
 import { isUniqueViolation } from '../budget/budget.service.ts';
 
 // Synchronisation (spec 007, phase 1) : le téléphone envoie ses modifications (`push`) et reçoit
@@ -218,10 +231,104 @@ const taskHandler: Handler = {
   },
 };
 
+/** Objectif et jalon d'un rendez-vous ou d'une série : supprimés ailleurs → détachés ; le jalon impose son objectif. */
+async function detachLinks(tx: Tx, userId: string, f: Fields): Promise<Fields> {
+  const out = { ...f };
+  const milestoneId = out['milestoneId'] as string | null;
+  if (milestoneId) {
+    const m = await tx.milestone.findFirst({ where: { id: milestoneId, userId }, select: { goalId: true } });
+    if (m) out['goalId'] = m.goalId;
+    else out['milestoneId'] = null;
+  }
+  const goalId = out['goalId'] as string | null;
+  if (goalId && !(await tx.goal.findFirst({ where: { id: goalId, userId }, select: { id: true } }))) {
+    out['goalId'] = null;
+    out['milestoneId'] = null;
+  }
+  return out;
+}
+
+const seriesHandler: Handler = {
+  async find(tx, userId, id) {
+    const s = await tx.eventSeries.findFirst({ where: { id, userId } });
+    return s ? { fields: strip(toSeriesRow(s)), clocks: asClocks(s.fieldClocks) } : null;
+  },
+  async prepare(tx, userId, _id, f) {
+    if ((f['endTime'] as string) <= (f['startTime'] as string)) {
+      return { reason: 'invalid', message: "L'heure de fin doit suivre l'heure de début" };
+    }
+    const until = f['until'] as string | null;
+    if (until !== null && until < (f['startDate'] as string)) {
+      return { reason: 'invalid', message: 'La fin de la répétition doit suivre la première date' };
+    }
+    const weekdays = [...new Set(f['weekdays'] as number[])].sort((a, b) => a - b);
+    return { fields: { ...(await detachLinks(tx, userId, f)), weekdays } };
+  },
+  async insert(tx, userId, id, f, createdAt, clocks) {
+    await tx.eventSeries.create({
+      data: {
+        ...(seriesData(f) as Prisma.EventSeriesUncheckedCreateInput),
+        id,
+        userId,
+        startDate: dbDay(f['startDate'] as string)!,
+        createdAt,
+        fieldClocks: clocks,
+      },
+    });
+  },
+  async update(tx, userId, id, f, clocks) {
+    await tx.eventSeries.update({ where: { id, userId }, data: { ...seriesData(f), fieldClocks: clocks } });
+  },
+  async remove(tx, userId, id) {
+    await tx.eventSeries.deleteMany({ where: { id, userId } });
+  },
+};
+
+const eventHandler: Handler = {
+  async find(tx, userId, id) {
+    const e = await tx.event.findFirst({ where: { id, userId } });
+    return e ? { fields: strip(toEventRow(e)), clocks: asClocks(e.fieldClocks) } : null;
+  },
+  async prepare(tx, userId, _id, f) {
+    if ((f['endsAt'] as string) <= (f['startsAt'] as string)) {
+      return { reason: 'invalid', message: "L'heure de fin doit suivre l'heure de début" };
+    }
+    const seriesId = f['seriesId'] as string | null;
+    if ((seriesId === null) !== (f['occurrenceDate'] === null)) return { reason: 'invalid', message: MESSAGES.invalid };
+    // Série supprimée ailleurs : la suppression l'emporte, l'occurrence n'a plus lieu d'être.
+    if (seriesId && !(await tx.eventSeries.findFirst({ where: { id: seriesId, userId }, select: { id: true } }))) {
+      return { reason: 'parent-missing', message: 'La série de cette occurrence n’existe plus' };
+    }
+    return { fields: await detachLinks(tx, userId, f) };
+  },
+  async insert(tx, userId, id, f, createdAt, clocks) {
+    await tx.event.create({
+      data: {
+        ...(eventData(f) as Prisma.EventUncheckedCreateInput),
+        id,
+        userId,
+        startsAt: new Date(f['startsAt'] as string),
+        endsAt: new Date(f['endsAt'] as string),
+        createdAt,
+        fieldClocks: clocks,
+      },
+    });
+  },
+  async update(tx, userId, id, f, clocks) {
+    await tx.event.update({ where: { id, userId }, data: { ...eventData(f), fieldClocks: clocks } });
+  },
+  async remove(tx, userId, id) {
+    // Les tâches liées sont conservées (event_id mis à NULL par la base).
+    await tx.event.deleteMany({ where: { id, userId } });
+  },
+};
+
 const HANDLERS: Record<SyncedEntity, Handler> = {
   goals: goalHandler,
   milestones: milestoneHandler,
   goal_readings: readingHandler,
+  event_series: seriesHandler,
+  events: eventHandler,
   tasks: taskHandler,
 };
 
@@ -264,7 +371,10 @@ async function apply(tx: Tx, userId: string, m: Mutation): Promise<MutationResul
     const parsed = schema.safeParse(raw);
     if (!parsed.success) return rejected(m, 'invalid', MESSAGES.invalid);
     if (await isDeleted(tx, userId, m.entity, m.id)) return ignored(m, 'deleted');
-    if (await handler.find(tx, userId, m.id)) return ignored(m, 'exists');
+    const already = await handler.find(tx, userId, m.id);
+    // Déjà présente (occurrence créée d'avance par un autre appareil, reconstruction d'un serveur) :
+    // fusion champ par champ, comme une modification.
+    if (already) return merge(tx, userId, m, handler, already, parsed.data as Fields);
     const prepared = await handler.prepare(tx, userId, m.id, parsed.data as Fields);
     if ('reason' in prepared) return prepared.reason === 'parent-missing' ? ignored(m, prepared.reason) : rejected(m, prepared.reason, prepared.message);
     await handler.insert(tx, userId, m.id, prepared.fields, m.createdAt ? new Date(m.createdAt) : new Date(), m.clocks!);
@@ -276,10 +386,13 @@ async function apply(tx: Tx, userId: string, m: Mutation): Promise<MutationResul
   if (!parsed.success) return rejected(m, 'invalid', MESSAGES.invalid);
   const existing = await handler.find(tx, userId, m.id);
   if (!existing) return (await isDeleted(tx, userId, m.entity, m.id)) ? ignored(m, 'deleted') : rejected(m, 'not-found', MESSAGES.notFound);
+  return merge(tx, userId, m, handler, existing, parsed.data as Fields);
+}
 
+async function merge(tx: Tx, userId: string, m: Mutation, handler: Handler, existing: Stored, incoming: Fields): Promise<MutationResult> {
   const accepted: Fields = {};
   const newClocks: Clocks = { ...existing.clocks };
-  for (const [field, value] of Object.entries(parsed.data as Fields)) {
+  for (const [field, value] of Object.entries(incoming)) {
     const clock = m.clocks![field]!;
     const stored = existing.clocks[field];
     if (stored === undefined || clock > stored) {
@@ -353,18 +466,22 @@ const num = (v: bigint): number => Number(v);
  * croissant. Chaque table est lue séparément ; on ne renvoie que ce qui est complet jusqu'à un numéro
  * « sûr », pour ne jamais sauter une ligne quand une page est tronquée.
  */
-export async function pull(userId: string, cursor: number, limit: number): Promise<PullResponse> {
+export async function pull(userId: string, cursor: number, limit: number, protocol = 2): Promise<PullResponse> {
+  const known = entitiesFor(protocol);
   const gt = BigInt(cursor);
   const take = limit + 1;
   const where = { userId, serverVersion: { gt } };
   const orderBy = { serverVersion: 'asc' as const };
 
-  const [goals, milestones, readings, tasks, stones] = await Promise.all([
+  const withEvents = known.includes('events');
+  const [goals, milestones, readings, tasks, series, events, stones] = await Promise.all([
     prisma.goal.findMany({ where, orderBy, take }),
     prisma.milestone.findMany({ where, orderBy, take }),
     prisma.goalReading.findMany({ where, orderBy, take }),
     prisma.task.findMany({ where, orderBy, take }),
-    prisma.tombstone.findMany({ where: { userId, serverVersion: { gt } }, orderBy, take }),
+    withEvents ? prisma.eventSeries.findMany({ where, orderBy, take }) : Promise.resolve([]),
+    withEvents ? prisma.event.findMany({ where, orderBy, take }) : Promise.resolve([]),
+    prisma.tombstone.findMany({ where: { userId, serverVersion: { gt }, entity: { in: [...known] } }, orderBy, take }),
   ]);
 
   const upsert = <T extends { id: string; serverVersion: bigint; fieldClocks: unknown }>(
@@ -385,11 +502,12 @@ export async function pull(userId: string, cursor: number, limit: number): Promi
     upsert('milestones', milestones, toMilestoneRow),
     upsert('goal_readings', readings, toReadingRow),
     upsert('tasks', tasks, toTaskRow),
+    upsert('event_series', series, toSeriesRow),
+    upsert('events', events, toEventRow),
     {
       entity: 'tasks',
       truncated: stones.length > limit,
       rows: stones
-        .filter((s) => (['goals', 'milestones', 'goal_readings', 'tasks'] as string[]).includes(s.entity))
         .map((s) => ({
           version: num(s.serverVersion),
           change: { entity: s.entity as SyncedEntity, op: 'delete', id: s.entityId, version: num(s.serverVersion) },

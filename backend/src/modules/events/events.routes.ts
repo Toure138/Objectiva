@@ -1,70 +1,66 @@
 import { Router } from 'express';
+import type { Request } from 'express';
 import { currentUser } from '../../core/auth.middleware.ts';
-import { todayIn } from '../../core/dates.ts';
-import { parseInput } from '../../core/errors.ts';
 import { idParam } from '../../core/ids.ts';
-import {
-  completeEventSchema,
-  createEventSchema,
-  createEventTaskSchema,
-  listEventsQuery,
-  updateEventSchema,
-} from './events.schemas.ts';
-import * as events from './events.service.ts';
+import { ctxFor, prismaRepo } from '../../core/repo.prisma.ts';
+import * as events from '../../../../shared/src/domain/events.ts';
 
+// Aucune règle ici : les commandes vivent dans shared/src/domain/events.ts (partagées avec le téléphone).
 export const eventsRouter = Router();
+export const agendaRouter = Router();
 
-function ctx(req: Parameters<typeof currentUser>[0]) {
+function ctx(req: Request) {
   const { userId, timezone } = currentUser(req);
-  return { userId, timezone, today: todayIn(timezone), eventId: idParam(req.params.id, 'Événement') };
+  return { repo: prismaRepo(userId), ctx: ctxFor(timezone) };
 }
+const eventId = (req: Request) => idParam(req.params['id'], 'Événement');
 
 eventsRouter.get('/', async (req, res) => {
-  const { userId, timezone } = currentUser(req);
-  res.json({ success: true, data: await events.listEvents(userId, timezone, parseInput(listEventsQuery, req.query)) });
+  const { repo, ctx: c } = ctx(req);
+  res.json({ success: true, data: await events.listEvents(repo, c, req.query) });
 });
 
 eventsRouter.post('/', async (req, res) => {
-  const { userId, timezone } = currentUser(req);
-  const data = await events.createEvent(userId, timezone, parseInput(createEventSchema, req.body));
-  res.status(201).json({ success: true, data });
+  const { repo, ctx: c } = ctx(req);
+  res.status(201).json({ success: true, data: await events.createEvent(repo, c, req.body) });
 });
 
 eventsRouter.get('/:id', async (req, res) => {
-  const { userId, timezone, today, eventId } = ctx(req);
-  res.json({ success: true, data: await events.getEvent(userId, eventId, timezone, today) });
+  const { repo, ctx: c } = ctx(req);
+  res.json({ success: true, data: await events.getEvent(repo, c, eventId(req)) });
 });
 
 eventsRouter.patch('/:id', async (req, res) => {
-  const { userId, timezone, eventId } = ctx(req);
-  const data = await events.updateEvent(userId, eventId, timezone, parseInput(updateEventSchema, req.body));
-  res.json({ success: true, data });
+  const { repo, ctx: c } = ctx(req);
+  res.json({ success: true, data: await events.updateEvent(repo, c, eventId(req), req.body, req.query) });
 });
 
 eventsRouter.delete('/:id', async (req, res) => {
-  const { userId, eventId } = ctx(req);
-  await events.deleteEvent(userId, eventId);
-  res.json({ success: true, message: 'Événement supprimé' });
+  const { repo, ctx: c } = ctx(req);
+  res.json({ success: true, message: await events.deleteEvent(repo, c, eventId(req), req.query) });
 });
 
 eventsRouter.post('/:id/complete', async (req, res) => {
-  const { userId, timezone, eventId } = ctx(req);
-  const data = await events.completeEvent(userId, eventId, timezone, parseInput(completeEventSchema, req.body));
-  res.json({ success: true, data });
+  const { repo, ctx: c } = ctx(req);
+  res.json({ success: true, data: await events.completeEvent(repo, c, eventId(req), req.body) });
 });
 
 eventsRouter.post('/:id/reopen', async (req, res) => {
-  const { userId, timezone, eventId } = ctx(req);
-  res.json({ success: true, data: await events.reopenEvent(userId, eventId, timezone) });
+  const { repo, ctx: c } = ctx(req);
+  res.json({ success: true, data: await events.reopenEvent(repo, c, eventId(req)) });
 });
 
 eventsRouter.post('/:id/cancel', async (req, res) => {
-  const { userId, timezone, eventId } = ctx(req);
-  res.json({ success: true, data: await events.cancelEvent(userId, eventId, timezone) });
+  const { repo, ctx: c } = ctx(req);
+  res.json({ success: true, data: await events.cancelEvent(repo, c, eventId(req)) });
 });
 
 eventsRouter.post('/:id/tasks', async (req, res) => {
-  const { userId, timezone, today, eventId } = ctx(req);
-  const data = await events.createEventTask(userId, eventId, timezone, today, parseInput(createEventTaskSchema, req.body));
-  res.status(201).json({ success: true, data });
+  const { repo, ctx: c } = ctx(req);
+  res.status(201).json({ success: true, data: await events.createEventTask(repo, c, eventId(req), req.body) });
+});
+
+agendaRouter.get('/', async (req, res) => {
+  const { repo, ctx: c } = ctx(req);
+  res.json({ success: true, data: await events.getAgenda(repo, c, req.query) });
 });

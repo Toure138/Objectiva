@@ -6,9 +6,14 @@ import { uuid } from './ids';
 // Messages de synchronisation (spec 007) et schémas des lignes qu'ils transportent.
 // Partagés : le téléphone valide ce qu'il envoie avec les mêmes schémas que le serveur.
 
-/** Tables synchronisées dans cette version du protocole (les autres arrivent aux phases 2 et 3). */
-export const SYNCED_ENTITIES = ['goals', 'milestones', 'goal_readings', 'tasks'] as const;
+/** Tables synchronisées dans cette version du protocole, les parents d'abord (le budget arrive en phase 3). */
+export const SYNCED_ENTITIES = ['goals', 'milestones', 'goal_readings', 'event_series', 'events', 'tasks'] as const;
 export type SyncedEntity = (typeof SYNCED_ENTITIES)[number];
+
+/** Tables qu'un client d'une version donnée sait lire : une application en version 1 ne connaît pas les rendez-vous. */
+export function entitiesFor(protocol: number): readonly SyncedEntity[] {
+  return protocol >= 2 ? SYNCED_ENTITIES : (['goals', 'milestones', 'goal_readings', 'tasks'] as const);
+}
 
 const instant = z.iso.datetime({ message: 'Instant ISO 8601 attendu' });
 const int = z.number().int();
@@ -69,10 +74,63 @@ export const taskFields = z
   })
   .strict();
 
+const time = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/);
+const eventType = z.enum(['REUNION', 'RENCONTRE', 'RENDEZ_VOUS', 'APPEL', 'VISIO']);
+const httpLink = z
+  .string()
+  .max(500)
+  .refine((v) => /^https?:\/\//i.test(v) && URL.canParse(v));
+const participants = z.array(z.string().trim().min(1).max(80)).max(20);
+const minutes = int.min(0).max(480);
+
+export const seriesFields = z
+  .object({
+    goalId: uuid.nullable(),
+    milestoneId: uuid.nullable(),
+    type: eventType,
+    title: z.string().trim().min(1).max(160),
+    startTime: time,
+    endTime: time,
+    location: nullableText(200),
+    link: httpLink.nullable(),
+    participants,
+    agenda: nullableText(2000),
+    travelBeforeMinutes: minutes,
+    prepBeforeMinutes: minutes,
+    weekdays: z.array(int.min(1).max(7)).min(1).max(7),
+    startDate: dateOnly,
+    until: dateOnly.nullable(),
+  })
+  .strict();
+
+export const eventFields = z
+  .object({
+    seriesId: uuid.nullable(),
+    occurrenceDate: dateOnly.nullable(),
+    goalId: uuid.nullable(),
+    milestoneId: uuid.nullable(),
+    type: eventType,
+    title: z.string().trim().min(1).max(160),
+    startsAt: instant,
+    endsAt: instant,
+    location: nullableText(200),
+    link: httpLink.nullable(),
+    participants,
+    agenda: nullableText(2000),
+    decisions: nullableText(2000),
+    status: z.enum(['PREVU', 'REALISE', 'ANNULE']),
+    travelBeforeMinutes: minutes,
+    prepBeforeMinutes: minutes,
+    completedAt: instant.nullable(),
+  })
+  .strict();
+
 export const FIELD_SCHEMAS = {
   goals: goalFields,
   milestones: milestoneFields,
   goal_readings: readingFields,
+  event_series: seriesFields,
+  events: eventFields,
   tasks: taskFields,
 } as const;
 

@@ -137,7 +137,7 @@ export interface TodayLists {
   goalsWithoutNextAction: { id: string; title: string }[];
 }
 
-/** Vue « Aujourd'hui ». `events` vient d'ailleurs (serveur : base ; téléphone : à venir en phase 2). */
+/** Vue « Aujourd'hui ». */
 export function buildToday(date: string, l: TodayLists, events: unknown[]) {
   const s = (t: TaskRow) => serializeTask(t, date);
   return {
