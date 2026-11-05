@@ -14,6 +14,7 @@ import type {
   BudgetOperation,
   BudgetTransaction,
   CalendarEvent,
+  CalendarMonth,
   CalendarEventDetail,
   EventScope,
   Goal,
@@ -23,6 +24,7 @@ import type {
   Page,
   Progress,
   Review,
+  SeriesSummary,
   Task,
   TodayView,
   User,
@@ -83,6 +85,14 @@ export class ApiService {
   }
   agenda(date?: string): Promise<AgendaDay> {
     return this.call('GET', '/agenda', undefined, { date });
+  }
+  /** Calendrier d'un mois (`AAAA-MM`, défaut : mois courant). */
+  calendar(month?: string): Promise<CalendarMonth> {
+    return this.call('GET', '/calendar', undefined, { month });
+  }
+  /** Réunions récurrentes. */
+  series(): Promise<SeriesSummary[]> {
+    return this.call('GET', '/series');
   }
 
   // Synchronisation (spec 007) : jamais traitée localement, avec la version du protocole en en-tête.

@@ -4,10 +4,13 @@ import { currentUser } from '../../core/auth.middleware.ts';
 import { idParam } from '../../core/ids.ts';
 import { ctxFor, prismaRepo } from '../../core/repo.prisma.ts';
 import * as events from '../../../../shared/src/domain/events.ts';
+import * as overview from '../../../../shared/src/domain/overview.ts';
 
 // Aucune règle ici : les commandes vivent dans shared/src/domain/events.ts (partagées avec le téléphone).
 export const eventsRouter = Router();
 export const agendaRouter = Router();
+export const calendarRouter = Router();
+export const seriesRouter = Router();
 
 function ctx(req: Request) {
   const { userId, timezone } = currentUser(req);
@@ -63,4 +66,14 @@ eventsRouter.post('/:id/tasks', async (req, res) => {
 agendaRouter.get('/', async (req, res) => {
   const { repo, ctx: c } = ctx(req);
   res.json({ success: true, data: await events.getAgenda(repo, c, req.query) });
+});
+
+calendarRouter.get('/', async (req, res) => {
+  const { repo, ctx: c } = ctx(req);
+  res.json({ success: true, data: await overview.getCalendarMonth(repo, c, req.query) });
+});
+
+seriesRouter.get('/', async (req, res) => {
+  const { repo, ctx: c } = ctx(req);
+  res.json({ success: true, data: await overview.listSeries(repo, c) });
 });

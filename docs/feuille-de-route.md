@@ -32,8 +32,9 @@ report d'enveloppe d'un mois à l'autre.
 
 ## Étape 3 — Planification complète
 
-Déjà fait (spec 009) : agenda du jour heure par heure avec chevauchements signalés, réunions récurrentes
-(chaque jour, en semaine, jours choisis, chaque semaine ; cette occurrence ou les suivantes).
+Déjà fait (specs 009 et 010) : agenda du jour heure par heure avec chevauchements signalés, réunions
+récurrentes (chaque jour, en semaine, jours choisis, chaque semaine ; cette occurrence ou les suivantes),
+calendrier du mois, liste « à venir » sans limite de durée avec filtres, liste des réunions récurrentes.
 
 Budgets annuel et quotidien imbriqués (répartition, dépassements), vues agenda semaine/mois, plages disponibles et charge (fusion des chevauchements, durée
 estimée des tâches), habitudes (quotidiennes, jours fixes, pauses, séries, changement de

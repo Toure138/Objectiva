@@ -6,6 +6,7 @@ import ordreGolden from '../../../../shared/parity/golden/ordre-des-listes.json'
 import progressionGolden from '../../../../shared/parity/golden/progression-mesuree.json';
 import reunionsGolden from '../../../../shared/parity/golden/reunions-recurrentes.json';
 import tachesGolden from '../../../../shared/parity/golden/taches-et-bilan.json';
+import vueGolden from '../../../../shared/parity/golden/vue-ensemble.json';
 import { fill, makeNormalizer, readPath } from '../../../../shared/parity/normalize';
 import { FROZEN_NOW, SCENARIOS, type Scenario } from '../../../../shared/parity/scenarios';
 
@@ -24,10 +25,18 @@ const GOLDEN: Record<string, unknown> = {
   'budget-mensuel': budgetGolden,
   'ordre-des-listes': ordreGolden,
   'reunions-recurrentes': reunionsGolden,
+  'vue-ensemble': vueGolden,
 };
 
 /** Scénarios dont TOUS les appels sont gérés localement. Budget : phase 3. */
-const LOCAL = ['taches-et-bilan', 'progression-mesuree', 'ordre-des-listes', 'evenements', 'reunions-recurrentes'];
+const LOCAL = [
+  'taches-et-bilan',
+  'progression-mesuree',
+  'ordre-des-listes',
+  'evenements',
+  'reunions-recurrentes',
+  'vue-ensemble',
+];
 
 let counter = 0;
 

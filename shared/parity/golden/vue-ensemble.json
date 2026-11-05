@@ -1,0 +1,1405 @@
+{
+  "01 POST /api/goals": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000005b",
+        "title": "Réussir le semestre",
+        "description": null,
+        "motivation": null,
+        "category": "ETUDES",
+        "horizon": "PERSONNALISEE",
+        "startDate": "2026-09-01",
+        "endDate": "2027-01-31",
+        "priority": "MOYENNE",
+        "status": "EN_COURS",
+        "progressMode": "JALONS",
+        "measureUnit": null,
+        "startValue": null,
+        "targetValue": null,
+        "progress": {
+          "mode": "JALONS",
+          "done": 0,
+          "total": 0,
+          "percent": null,
+          "label": "Ajoute un premier jalon"
+        },
+        "nextAction": null,
+        "needsNextAction": true
+      }
+    }
+  },
+  "02 POST /api/tasks": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000005f",
+        "title": "Réviser",
+        "notes": null,
+        "goalId": null,
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-04",
+        "dueDate": null,
+        "originalDate": "2026-11-04",
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "03 POST /api/tasks": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000060",
+        "title": "Exercices",
+        "notes": null,
+        "goalId": "00000000-0000-4000-8000-00000000005b",
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-05",
+        "dueDate": null,
+        "originalDate": "2026-11-05",
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "04 POST /api/tasks": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000061",
+        "title": "Lire le chapitre 3",
+        "notes": null,
+        "goalId": null,
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-05",
+        "dueDate": null,
+        "originalDate": "2026-11-05",
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "05 POST /api/tasks/00000000-0000-4000-8000-000000000061/complete": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000061",
+        "title": "Lire le chapitre 3",
+        "notes": null,
+        "goalId": null,
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-05",
+        "dueDate": null,
+        "originalDate": "2026-11-05",
+        "rescheduleCount": 0,
+        "status": "DONE",
+        "completedAt": "2026-11-04T09:00:05.000Z",
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "06 POST /api/tasks": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000062",
+        "title": "Annulée",
+        "notes": null,
+        "goalId": null,
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-06",
+        "dueDate": null,
+        "originalDate": "2026-11-06",
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "07 POST /api/tasks/00000000-0000-4000-8000-000000000062/cancel": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000062",
+        "title": "Annulée",
+        "notes": null,
+        "goalId": null,
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-06",
+        "dueDate": null,
+        "originalDate": "2026-11-06",
+        "rescheduleCount": 0,
+        "status": "CANCELLED",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "08 POST /api/tasks": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000063",
+        "title": "Rendre le mémoire",
+        "notes": null,
+        "goalId": "00000000-0000-4000-8000-00000000005b",
+        "milestoneId": null,
+        "eventId": null,
+        "eventRole": null,
+        "workDate": "2026-11-20",
+        "dueDate": null,
+        "originalDate": "2026-11-20",
+        "rescheduleCount": 0,
+        "status": "TODO",
+        "completedAt": null,
+        "needsRescheduling": false,
+        "overdue": false,
+        "unscheduled": false,
+        "suggestSplit": false
+      }
+    }
+  },
+  "09 POST /api/events": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "<uuid#1>",
+        "type": "REUNION",
+        "title": "Cours de statistiques",
+        "date": "2026-11-02",
+        "startTime": "10:00",
+        "endTime": "11:00",
+        "startsAt": "2026-11-02T10:00:00.000Z",
+        "endsAt": "2026-11-02T11:00:00.000Z",
+        "location": null,
+        "link": null,
+        "participants": [],
+        "agenda": null,
+        "decisions": null,
+        "status": "PREVU",
+        "goalId": "00000000-0000-4000-8000-00000000005b",
+        "milestoneId": null,
+        "travelBeforeMinutes": 0,
+        "prepBeforeMinutes": 0,
+        "blockedMinutes": 0,
+        "blockedFrom": "2026-11-02T10:00:00.000Z",
+        "blockedFromTime": "10:00",
+        "leaveAtTime": null,
+        "completedAt": null,
+        "seriesId": "00000000-0000-4000-8000-00000000005c",
+        "occurrenceDate": "2026-11-02",
+        "repeat": {
+          "weekdays": [
+            1,
+            3
+          ],
+          "startDate": "2026-11-02",
+          "until": "2026-11-30"
+        }
+      }
+    }
+  },
+  "10 POST /api/events": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "<uuid#2>",
+        "type": "RENDEZ_VOUS",
+        "title": "Footing",
+        "date": "2026-11-04",
+        "startTime": "07:00",
+        "endTime": "07:30",
+        "startsAt": "2026-11-04T07:00:00.000Z",
+        "endsAt": "2026-11-04T07:30:00.000Z",
+        "location": null,
+        "link": null,
+        "participants": [],
+        "agenda": null,
+        "decisions": null,
+        "status": "PREVU",
+        "goalId": null,
+        "milestoneId": null,
+        "travelBeforeMinutes": 0,
+        "prepBeforeMinutes": 0,
+        "blockedMinutes": 0,
+        "blockedFrom": "2026-11-04T07:00:00.000Z",
+        "blockedFromTime": "07:00",
+        "leaveAtTime": null,
+        "completedAt": null,
+        "seriesId": "00000000-0000-4000-8000-00000000005d",
+        "occurrenceDate": "2026-11-04",
+        "repeat": {
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "startDate": "2026-11-04",
+          "until": "2026-11-10"
+        }
+      }
+    }
+  },
+  "11 POST /api/events": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "<uuid#3>",
+        "type": "APPEL",
+        "title": "Appel de rentrée",
+        "date": "2026-10-05",
+        "startTime": "18:00",
+        "endTime": "18:30",
+        "startsAt": "2026-10-05T18:00:00.000Z",
+        "endsAt": "2026-10-05T18:30:00.000Z",
+        "location": null,
+        "link": null,
+        "participants": [],
+        "agenda": null,
+        "decisions": null,
+        "status": "PREVU",
+        "goalId": null,
+        "milestoneId": null,
+        "travelBeforeMinutes": 0,
+        "prepBeforeMinutes": 0,
+        "blockedMinutes": 0,
+        "blockedFrom": "2026-10-05T18:00:00.000Z",
+        "blockedFromTime": "18:00",
+        "leaveAtTime": null,
+        "completedAt": null,
+        "seriesId": "00000000-0000-4000-8000-00000000005e",
+        "occurrenceDate": "2026-10-05",
+        "repeat": {
+          "weekdays": [
+            1
+          ],
+          "startDate": "2026-10-05",
+          "until": "2026-10-26"
+        }
+      }
+    }
+  },
+  "12 POST /api/events": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000064",
+        "type": "RENDEZ_VOUS",
+        "title": "Dentiste",
+        "date": "2026-11-11",
+        "startTime": "10:30",
+        "endTime": "11:00",
+        "startsAt": "2026-11-11T10:30:00.000Z",
+        "endsAt": "2026-11-11T11:00:00.000Z",
+        "location": null,
+        "link": null,
+        "participants": [],
+        "agenda": null,
+        "decisions": null,
+        "status": "PREVU",
+        "goalId": null,
+        "milestoneId": null,
+        "travelBeforeMinutes": 0,
+        "prepBeforeMinutes": 0,
+        "blockedMinutes": 0,
+        "blockedFrom": "2026-11-11T10:30:00.000Z",
+        "blockedFromTime": "10:30",
+        "leaveAtTime": null,
+        "completedAt": null,
+        "seriesId": null,
+        "occurrenceDate": null,
+        "repeat": null
+      }
+    }
+  },
+  "13 POST /api/events": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000065",
+        "type": "VISIO",
+        "title": "Jury",
+        "date": "2026-12-02",
+        "startTime": "14:00",
+        "endTime": "15:00",
+        "startsAt": "2026-12-02T14:00:00.000Z",
+        "endsAt": "2026-12-02T15:00:00.000Z",
+        "location": null,
+        "link": null,
+        "participants": [],
+        "agenda": null,
+        "decisions": null,
+        "status": "PREVU",
+        "goalId": null,
+        "milestoneId": null,
+        "travelBeforeMinutes": 0,
+        "prepBeforeMinutes": 0,
+        "blockedMinutes": 0,
+        "blockedFrom": "2026-12-02T14:00:00.000Z",
+        "blockedFromTime": "14:00",
+        "leaveAtTime": null,
+        "completedAt": null,
+        "seriesId": null,
+        "occurrenceDate": null,
+        "repeat": null
+      }
+    }
+  },
+  "14 GET /api/agenda?date=2026-11-09": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "date": "2026-11-09",
+        "startHour": 7,
+        "endHour": 21,
+        "events": [
+          {
+            "id": "<uuid#4>",
+            "type": "RENDEZ_VOUS",
+            "title": "Footing",
+            "date": "2026-11-09",
+            "startTime": "07:00",
+            "endTime": "07:30",
+            "startsAt": "2026-11-09T07:00:00.000Z",
+            "endsAt": "2026-11-09T07:30:00.000Z",
+            "location": null,
+            "link": null,
+            "participants": [],
+            "agenda": null,
+            "decisions": null,
+            "status": "PREVU",
+            "goalId": null,
+            "milestoneId": null,
+            "travelBeforeMinutes": 0,
+            "prepBeforeMinutes": 0,
+            "blockedMinutes": 0,
+            "blockedFrom": "2026-11-09T07:00:00.000Z",
+            "blockedFromTime": "07:00",
+            "leaveAtTime": null,
+            "completedAt": null,
+            "seriesId": "00000000-0000-4000-8000-00000000005d",
+            "occurrenceDate": "2026-11-09",
+            "repeat": {
+              "weekdays": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ],
+              "startDate": "2026-11-04",
+              "until": "2026-11-10"
+            },
+            "column": 0,
+            "columns": 1,
+            "conflicts": []
+          },
+          {
+            "id": "{{c9}}",
+            "type": "REUNION",
+            "title": "Cours de statistiques",
+            "date": "2026-11-09",
+            "startTime": "10:00",
+            "endTime": "11:00",
+            "startsAt": "2026-11-09T10:00:00.000Z",
+            "endsAt": "2026-11-09T11:00:00.000Z",
+            "location": null,
+            "link": null,
+            "participants": [],
+            "agenda": null,
+            "decisions": null,
+            "status": "PREVU",
+            "goalId": "00000000-0000-4000-8000-00000000005b",
+            "milestoneId": null,
+            "travelBeforeMinutes": 0,
+            "prepBeforeMinutes": 0,
+            "blockedMinutes": 0,
+            "blockedFrom": "2026-11-09T10:00:00.000Z",
+            "blockedFromTime": "10:00",
+            "leaveAtTime": null,
+            "completedAt": null,
+            "seriesId": "00000000-0000-4000-8000-00000000005c",
+            "occurrenceDate": "2026-11-09",
+            "repeat": {
+              "weekdays": [
+                1,
+                3
+              ],
+              "startDate": "2026-11-02",
+              "until": "2026-11-30"
+            },
+            "column": 0,
+            "columns": 1,
+            "conflicts": []
+          }
+        ],
+        "conflictCount": 0
+      }
+    }
+  },
+  "15 DELETE /api/events/{{c9}}?scope=occurrence": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "message": "Occurrence annulée"
+    }
+  },
+  "16 GET /api/calendar?month=2026-11": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "month": "2026-11",
+        "days": [
+          {
+            "date": "2026-11-01",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-02",
+            "events": 1,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-03",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-04",
+            "events": 2,
+            "tasks": 1,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-05",
+            "events": 1,
+            "tasks": 1,
+            "done": 1,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-06",
+            "events": 1,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-07",
+            "events": 1,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-08",
+            "events": 1,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-09",
+            "events": 1,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-10",
+            "events": 1,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-11",
+            "events": 2,
+            "tasks": 0,
+            "done": 0,
+            "conflict": true
+          },
+          {
+            "date": "2026-11-12",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-13",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-14",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-15",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-16",
+            "events": 1,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-17",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-18",
+            "events": 1,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-19",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-20",
+            "events": 0,
+            "tasks": 1,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-21",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-22",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-23",
+            "events": 1,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-24",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-25",
+            "events": 1,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-26",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-27",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-28",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-29",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-30",
+            "events": 1,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          }
+        ]
+      }
+    }
+  },
+  "17 GET /api/calendar": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "month": "2026-11",
+        "days": [
+          {
+            "date": "2026-11-01",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-02",
+            "events": 1,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-03",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-04",
+            "events": 2,
+            "tasks": 1,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-05",
+            "events": 1,
+            "tasks": 1,
+            "done": 1,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-06",
+            "events": 1,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-07",
+            "events": 1,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-08",
+            "events": 1,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-09",
+            "events": 1,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-10",
+            "events": 1,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-11",
+            "events": 2,
+            "tasks": 0,
+            "done": 0,
+            "conflict": true
+          },
+          {
+            "date": "2026-11-12",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-13",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-14",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-15",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-16",
+            "events": 1,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-17",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-18",
+            "events": 1,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-19",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-20",
+            "events": 0,
+            "tasks": 1,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-21",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-22",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-23",
+            "events": 1,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-24",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-25",
+            "events": 1,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-26",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-27",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-28",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-29",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-11-30",
+            "events": 1,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          }
+        ]
+      }
+    }
+  },
+  "18 GET /api/calendar?month=2026-12": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "month": "2026-12",
+        "days": [
+          {
+            "date": "2026-12-01",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-02",
+            "events": 1,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-03",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-04",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-05",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-06",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-07",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-08",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-09",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-10",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-11",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-12",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-13",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-14",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-15",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-16",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-17",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-18",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-19",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-20",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-21",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-22",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-23",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-24",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-25",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-26",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-27",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-28",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-29",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-30",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          },
+          {
+            "date": "2026-12-31",
+            "events": 0,
+            "tasks": 0,
+            "done": 0,
+            "conflict": false
+          }
+        ]
+      }
+    }
+  },
+  "19 GET /api/series": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": [
+        {
+          "id": "00000000-0000-4000-8000-00000000005d",
+          "type": "RENDEZ_VOUS",
+          "title": "Footing",
+          "startTime": "07:00",
+          "endTime": "07:30",
+          "location": null,
+          "goalId": null,
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "startDate": "2026-11-04",
+          "until": "2026-11-10",
+          "nextOccurrence": {
+            "id": "<uuid#2>",
+            "date": "2026-11-04"
+          },
+          "ended": false
+        },
+        {
+          "id": "00000000-0000-4000-8000-00000000005c",
+          "type": "REUNION",
+          "title": "Cours de statistiques",
+          "startTime": "10:00",
+          "endTime": "11:00",
+          "location": null,
+          "goalId": "00000000-0000-4000-8000-00000000005b",
+          "weekdays": [
+            1,
+            3
+          ],
+          "startDate": "2026-11-02",
+          "until": "2026-11-30",
+          "nextOccurrence": {
+            "id": "<uuid#5>",
+            "date": "2026-11-04"
+          },
+          "ended": false
+        },
+        {
+          "id": "00000000-0000-4000-8000-00000000005e",
+          "type": "APPEL",
+          "title": "Appel de rentrée",
+          "startTime": "18:00",
+          "endTime": "18:30",
+          "location": null,
+          "goalId": null,
+          "weekdays": [
+            1
+          ],
+          "startDate": "2026-10-05",
+          "until": "2026-10-26",
+          "nextOccurrence": null,
+          "ended": true
+        }
+      ]
+    }
+  },
+  "20 GET /api/agenda?date=2026-11-06": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "date": "2026-11-06",
+        "startHour": 7,
+        "endHour": 21,
+        "events": [
+          {
+            "id": "{{f6}}",
+            "type": "RENDEZ_VOUS",
+            "title": "Footing",
+            "date": "2026-11-06",
+            "startTime": "07:00",
+            "endTime": "07:30",
+            "startsAt": "2026-11-06T07:00:00.000Z",
+            "endsAt": "2026-11-06T07:30:00.000Z",
+            "location": null,
+            "link": null,
+            "participants": [],
+            "agenda": null,
+            "decisions": null,
+            "status": "PREVU",
+            "goalId": null,
+            "milestoneId": null,
+            "travelBeforeMinutes": 0,
+            "prepBeforeMinutes": 0,
+            "blockedMinutes": 0,
+            "blockedFrom": "2026-11-06T07:00:00.000Z",
+            "blockedFromTime": "07:00",
+            "leaveAtTime": null,
+            "completedAt": null,
+            "seriesId": "00000000-0000-4000-8000-00000000005d",
+            "occurrenceDate": "2026-11-06",
+            "repeat": {
+              "weekdays": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ],
+              "startDate": "2026-11-04",
+              "until": "2026-11-10"
+            },
+            "column": 0,
+            "columns": 1,
+            "conflicts": []
+          }
+        ],
+        "conflictCount": 0
+      }
+    }
+  },
+  "21 DELETE /api/events/{{f6}}?scope=following": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "message": "Occurrences suivantes supprimées"
+    }
+  },
+  "22 GET /api/series": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": [
+        {
+          "id": "00000000-0000-4000-8000-00000000005d",
+          "type": "RENDEZ_VOUS",
+          "title": "Footing",
+          "startTime": "07:00",
+          "endTime": "07:30",
+          "location": null,
+          "goalId": null,
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "startDate": "2026-11-04",
+          "until": "2026-11-05",
+          "nextOccurrence": {
+            "id": "<uuid#2>",
+            "date": "2026-11-04"
+          },
+          "ended": false
+        },
+        {
+          "id": "00000000-0000-4000-8000-00000000005c",
+          "type": "REUNION",
+          "title": "Cours de statistiques",
+          "startTime": "10:00",
+          "endTime": "11:00",
+          "location": null,
+          "goalId": "00000000-0000-4000-8000-00000000005b",
+          "weekdays": [
+            1,
+            3
+          ],
+          "startDate": "2026-11-02",
+          "until": "2026-11-30",
+          "nextOccurrence": {
+            "id": "<uuid#5>",
+            "date": "2026-11-04"
+          },
+          "ended": false
+        },
+        {
+          "id": "00000000-0000-4000-8000-00000000005e",
+          "type": "APPEL",
+          "title": "Appel de rentrée",
+          "startTime": "18:00",
+          "endTime": "18:30",
+          "location": null,
+          "goalId": null,
+          "weekdays": [
+            1
+          ],
+          "startDate": "2026-10-05",
+          "until": "2026-10-26",
+          "nextOccurrence": null,
+          "ended": true
+        }
+      ]
+    }
+  },
+  "23 GET /api/calendar?month=2026-13": {
+    "status": 400,
+    "body": {
+      "success": false,
+      "code": "VALIDATION_ERROR",
+      "message": "Certaines informations sont invalides",
+      "details": [
+        {
+          "field": "month",
+          "message": "Format attendu : AAAA-MM"
+        }
+      ]
+    }
+  },
+  "24 GET /api/calendar?month=nov": {
+    "status": 400,
+    "body": {
+      "success": false,
+      "code": "VALIDATION_ERROR",
+      "message": "Certaines informations sont invalides",
+      "details": [
+        {
+          "field": "month",
+          "message": "Format attendu : AAAA-MM"
+        }
+      ]
+    }
+  }
+}

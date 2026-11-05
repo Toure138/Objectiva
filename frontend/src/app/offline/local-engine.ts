@@ -3,6 +3,7 @@ import type { Table } from 'dexie';
 import { todayIn } from '../../../../shared/src/dates';
 import * as events from '../../../../shared/src/domain/events';
 import * as goals from '../../../../shared/src/domain/goals';
+import * as overview from '../../../../shared/src/domain/overview';
 import type { Ctx, Repo } from '../../../../shared/src/domain/repo';
 import { newId } from '../../../../shared/src/domain/repo';
 import * as tasks from '../../../../shared/src/domain/tasks';
@@ -264,6 +265,19 @@ const ROUTES: { method: string; pattern: string; write: boolean; handler: Handle
     pattern: '/agenda',
     write: true,
     handler: async (c) => ({ data: await events.getAgenda(c.repo, c.ctx, c.query) }),
+  },
+  // Vue d'ensemble (spec 010) : elles aussi créent les occurrences à venir.
+  {
+    method: 'GET',
+    pattern: '/calendar',
+    write: true,
+    handler: async (c) => ({ data: await overview.getCalendarMonth(c.repo, c.ctx, c.query) }),
+  },
+  {
+    method: 'GET',
+    pattern: '/series',
+    write: true,
+    handler: async (c) => ({ data: await overview.listSeries(c.repo, c.ctx) }),
   },
   {
     method: 'GET',

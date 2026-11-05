@@ -697,3 +697,175 @@ ion-modal:not(.ob-sheet) ion-accordion ion-item[slot='header'] {
     margin-top: 2px;
   }
 }
+
+/* ---- Vue d'ensemble (spec 010) */
+/* Pastilles de filtre (un seul choix) : cibles de 44 px. */
+.ob-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  button {
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1.5px solid var(--ob-hairline-strong);
+    border-radius: 999px;
+    background: var(--ob-surface);
+    color: var(--ob-text-2);
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 650;
+    cursor: pointer;
+
+    &.on {
+      border-color: var(--ion-color-primary);
+      background: color-mix(in srgb, var(--ion-color-primary) 14%, var(--ob-surface));
+      color: var(--ob-primary-ink);
+    }
+  }
+}
+.ob-plan-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin-bottom: 12px;
+
+  ion-select {
+    min-height: 44px;
+    max-width: 100%;
+    font-size: 0.875rem;
+  }
+}
+.ob-plan-series,
+.ob-series {
+  color: inherit;
+  text-decoration: none;
+
+  > ion-icon {
+    flex: none;
+    color: var(--ob-text-2);
+  }
+}
+.ob-plan-series > ion-icon:first-child {
+  color: var(--ion-color-primary);
+  font-size: 20px;
+}
+.ob-series {
+  align-items: flex-start;
+
+  .ob-row-txt {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+  }
+  &.off {
+    box-shadow: none;
+    opacity: 0.75;
+  }
+}
+.ob-plan-until {
+  margin: 4px 0 0;
+  font-size: 0.8125rem;
+  text-align: center;
+}
+.ob-plan-day {
+  margin-top: 16px;
+}
+
+/* Calendrier du mois : 7 colonnes, cases de 44 px au moins. */
+.ob-month-head,
+.ob-month-days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 3px;
+}
+.ob-month-head span {
+  color: var(--ob-text-2);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-align: center;
+}
+.ob-month-days {
+  margin-top: 4px;
+
+  button {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-height: 52px;
+    padding: 4px 0;
+    border: 1.5px solid transparent;
+    border-radius: var(--ob-radius-sm);
+    background: var(--ob-surface);
+    color: var(--ob-text);
+    font: inherit;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+
+    &.today .n {
+      color: var(--ion-color-primary);
+      font-weight: 800;
+    }
+    &.on {
+      border-color: var(--ion-color-primary);
+    }
+    .n {
+      font-size: 0.875rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .warn {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      color: var(--ob-warn-ink);
+      font-size: 13px;
+    }
+  }
+}
+.ob-month-days .marks,
+.ob-month-legend {
+  display: flex;
+  gap: 3px;
+}
+.ob-month-days .e,
+.ob-month-days .t,
+.ob-month-legend .e,
+.ob-month-legend .t {
+  min-width: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+}
+.ob-month-days .e,
+.ob-month-legend .e {
+  background: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
+}
+.ob-month-days .t,
+.ob-month-legend .t {
+  background: var(--ob-surface-2);
+  color: var(--ob-text-2);
+}
+.ob-month-legend {
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 10px 0 0;
+  color: var(--ob-text-2);
+  font-size: 0.8125rem;
+
+  > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .warn {
+    color: var(--ob-warn-ink);
+  }
+}

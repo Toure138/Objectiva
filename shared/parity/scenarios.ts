@@ -377,4 +377,43 @@ export const reunionsRecurrentes: Scenario = {
   ],
 };
 
-export const SCENARIOS: Scenario[] = [tachesEtBilan, progressionMesuree, evenements, budgetMensuel, ordreDesListes, reunionsRecurrentes];
+// ---------------------------------------------------------------------------------------------
+// 7. Vue d'ensemble : calendrier du mois et réunions récurrentes (spec 010). Mercredi 4 novembre 2026.
+
+const [VG, COURS, FOOTING, ANCIENNE] = [uid(91), uid(92), uid(93), uid(94)];
+
+export const vueEnsemble: Scenario = {
+  name: 'vue-ensemble',
+  timezone: 'Africa/Abidjan',
+  steps: [
+    post('/api/goals', { id: VG, title: 'Réussir le semestre', category: 'ETUDES', status: 'EN_COURS', startDate: '2026-09-01', endDate: '2027-01-31' }),
+    post('/api/tasks', { id: uid(95), title: 'Réviser', workDate: '2026-11-04' }),
+    post('/api/tasks', { id: uid(96), title: 'Exercices', workDate: '2026-11-05', goalId: VG }),
+    post('/api/tasks', { id: uid(97), title: 'Lire le chapitre 3', workDate: '2026-11-05' }),
+    post(`/api/tasks/${uid(97)}/complete`),
+    post('/api/tasks', { id: uid(98), title: 'Annulée', workDate: '2026-11-06' }),
+    post(`/api/tasks/${uid(98)}/cancel`),
+    post('/api/tasks', { id: uid(99), title: 'Rendre le mémoire', workDate: '2026-11-20', goalId: VG }),
+    // Cours le lundi et le mercredi jusqu'à fin novembre ; footing chaque matin jusqu'au 10.
+    post('/api/events', { id: COURS, type: 'REUNION', title: 'Cours de statistiques', date: '2026-11-02', startTime: '10:00', endTime: '11:00', goalId: VG, repeat: { weekdays: [1, 3], until: '2026-11-30' } }),
+    post('/api/events', { id: FOOTING, type: 'RENDEZ_VOUS', title: 'Footing', date: '2026-11-04', startTime: '07:00', endTime: '07:30', repeat: { weekdays: [1, 2, 3, 4, 5, 6, 7], until: '2026-11-10' } }),
+    // Une réunion terminée en octobre.
+    post('/api/events', { id: ANCIENNE, type: 'APPEL', title: 'Appel de rentrée', date: '2026-10-05', startTime: '18:00', endTime: '18:30', repeat: { weekdays: [1], until: '2026-10-26' } }),
+    // Un rendez-vous qui chevauche le cours du mercredi 11, un autre en décembre.
+    post('/api/events', { id: uid(100), type: 'RENDEZ_VOUS', title: 'Dentiste', date: '2026-11-11', startTime: '10:30', endTime: '11:00' }),
+    post('/api/events', { id: uid(101), type: 'VISIO', title: 'Jury', date: '2026-12-02', startTime: '14:00', endTime: '15:00' }),
+    get('/api/agenda?date=2026-11-09', { save: { c9: 'data.events.1.id' } }),
+    del('/api/events/{{c9}}?scope=occurrence'),
+    get('/api/calendar?month=2026-11'),
+    get('/api/calendar'),
+    get('/api/calendar?month=2026-12'),
+    get('/api/series'),
+    get('/api/agenda?date=2026-11-06', { save: { f6: 'data.events.0.id' } }),
+    del('/api/events/{{f6}}?scope=following'),
+    get('/api/series'),
+    { method: 'GET', path: '/api/calendar?month=2026-13', expect: 400 },
+    { method: 'GET', path: '/api/calendar?month=nov', expect: 400 },
+  ],
+};
+
+export const SCENARIOS: Scenario[] = [tachesEtBilan, progressionMesuree, evenements, budgetMensuel, ordreDesListes, reunionsRecurrentes, vueEnsemble];

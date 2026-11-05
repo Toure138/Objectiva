@@ -183,6 +183,8 @@ dans le navigateur au format téléphone.
 - « Et les suivantes » n'applique que les champs fournis : en modification, le formulaire envoie un diff.
 - Une occurrence ne se supprime pas seule : elle s'annule (sinon la génération la recréerait).
 - Agenda : colonnes et conflits calculés par `agenda.rules.ts` ; l'écran ne fait que convertir minutes → pixels.
+- Vue d'ensemble (spec 010) : `domain/overview.ts` (`GET /calendar`, `GET /series`) ; « Planifier » a trois modes
+  (À venir, Mois, À planifier) et la page `/app/reunions`. Tâches lues par pages de 100 (plafond de l'API).
 
 ## Production (spec 008)
 

@@ -271,3 +271,27 @@ describe('synchronisation des réunions récurrentes', () => {
     expect(await prisma.event.count({ where: { userId: bob.user.id } })).toBe(0);
   });
 });
+
+describe('vue d’ensemble (spec 010)', () => {
+  it('calendrier et réunions récurrentes d’autrui restent invisibles', async () => {
+    await alice.post('/api/events', daily());
+    await alice.post('/api/tasks', { title: 'Tâche d’Alice', workDate: today });
+    const month = today.slice(0, 7);
+    const mine = (await alice.get(`/api/calendar?month=${month}`)).body.data;
+    expect(mine.days.find((d: { date: string }) => d.date === today)).toMatchObject({ events: 1, tasks: 1 });
+    const theirs = (await bob.get(`/api/calendar?month=${month}`)).body.data;
+    expect(theirs.days.every((d: { events: number; tasks: number; done: number }) => d.events + d.tasks + d.done === 0)).toBe(true);
+    expect((await alice.get('/api/series')).body.data).toHaveLength(1);
+    expect((await bob.get('/api/series')).body.data).toEqual([]);
+  });
+
+  it('le calendrier par défaut est celui du mois courant et compte les occurrences créées jusqu’à sa fin', async () => {
+    const res = await alice.get('/api/calendar');
+    expect(res.body.data.month).toBe(today.slice(0, 7));
+    expect(res.body.data.days[0].date).toBe(`${today.slice(0, 7)}-01`);
+    const next = addDays(`${today.slice(0, 7)}-28`, 10).slice(0, 7);
+    await alice.post('/api/events', daily());
+    const later = (await alice.get(`/api/calendar?month=${next}`)).body.data;
+    expect(later.days.every((d: { events: number }) => d.events === 1)).toBe(true);
+  });
+});

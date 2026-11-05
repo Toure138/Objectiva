@@ -157,6 +157,40 @@ export interface AgendaDay {
   conflictCount: number;
 }
 
+/** Un jour du calendrier du mois (spec 010). */
+export interface CalendarDay {
+  date: string;
+  /** Rendez-vous non annulés. */
+  events: number;
+  /** Tâches à faire ce jour. */
+  tasks: number;
+  /** Tâches faites ce jour. */
+  done: number;
+  /** Au moins un chevauchement (horaires ou trajet / préparation). */
+  conflict: boolean;
+}
+
+export interface CalendarMonth {
+  month: string;
+  days: CalendarDay[];
+}
+
+/** Réunion récurrente, avec sa prochaine occurrence non annulée. */
+export interface SeriesSummary {
+  id: string;
+  type: EventType;
+  title: string;
+  startTime: string;
+  endTime: string;
+  location: string | null;
+  goalId: string | null;
+  weekdays: number[];
+  startDate: string;
+  until: string | null;
+  nextOccurrence: { id: string; date: string } | null;
+  ended: boolean;
+}
+
 export interface CalendarEventDetail extends CalendarEvent {
   tasks: Task[];
 }

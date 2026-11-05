@@ -244,3 +244,15 @@ Tous ces appels sont aussi traités par le téléphone, sans réseau.
   (`CHEVAUCHEMENT` ou `PREPARATION` : seul le trajet ou la préparation empiète).
 - Synchronisation : tables `event_series` et `events` (protocole 2 ; un client en version 1 ne les reçoit pas).
   Une création reçue pour une ligne déjà présente est fusionnée champ par champ.
+
+## Vue d'ensemble (spec 010)
+
+Aussi traités par le téléphone, sans réseau.
+
+| Méthode | Chemin | Entrée | Réponse |
+|---|---|---|---|
+| GET | `/calendar` | `month?` (`AAAA-MM`, défaut : mois courant) | `{ month, days: [{ date, events, tasks, done, conflict }] }` |
+| GET | `/series` | — | réunions récurrentes : modèle, `weekdays`, `startDate`, `until`, `nextOccurrence` (`{ id, date }` ou `null`), `ended` |
+
+`events` : rendez-vous non annulés du jour ; `tasks` / `done` : tâches à faire / faites ce jour ; `conflict` :
+au moins un chevauchement (règles de l'agenda). Les occurrences sont créées jusqu'à la fin du mois demandé.

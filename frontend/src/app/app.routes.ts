@@ -21,6 +21,7 @@ export const routes: Routes = [
         path: 'evenements/:id',
         loadComponent: () => import('./events/event-detail.page').then((m) => m.EventDetailPage),
       },
+      { path: 'reunions', loadComponent: () => import('./series/series.page').then((m) => m.SeriesPage) },
       { path: 'agenda', loadComponent: () => import('./agenda/agenda.page').then((m) => m.AgendaPage) },
       { path: 'agenda/:date', loadComponent: () => import('./agenda/agenda.page').then((m) => m.AgendaPage) },
       { path: 'budget', loadComponent: () => import('./budget/budget.page').then((m) => m.BudgetPage) },
