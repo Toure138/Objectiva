@@ -51,6 +51,7 @@ export function serializeEvent(e: EventRow, timezone: string, series: SeriesRow 
     // Temps réservé avant le rendez-vous : déplacement puis préparation.
     travelBeforeMinutes: e.travelBeforeMinutes,
     prepBeforeMinutes: e.prepBeforeMinutes,
+    reminder: e.reminder,
     blockedMinutes: blocked.blockedMinutes,
     blockedFrom: blocked.blockedFrom.toISOString(),
     blockedFromTime: blocked.blockedFromTime,
@@ -97,6 +98,7 @@ function occurrenceRow(s: SeriesRow, date: string, ctx: Ctx): EventRow {
     status: 'PREVU',
     travelBeforeMinutes: s.travelBeforeMinutes,
     prepBeforeMinutes: s.prepBeforeMinutes,
+    reminder: s.reminder,
     completedAt: null,
     createdAt: ctx.now,
     updatedAt: ctx.now,
@@ -228,6 +230,7 @@ export async function createEvent(repo: Repo, ctx: Ctx, raw: unknown) {
     agenda: input.agenda ?? null,
     travelBeforeMinutes: input.travelBeforeMinutes ?? 0,
     prepBeforeMinutes: input.prepBeforeMinutes ?? 0,
+    reminder: input.reminder ?? null,
   };
 
   if (input.repeat) {
@@ -285,6 +288,7 @@ function sharedFields(input: UpdateInput): Partial<EventRow & SeriesRow> {
   if (input.agenda !== undefined) out.agenda = input.agenda;
   if (input.travelBeforeMinutes !== undefined) out.travelBeforeMinutes = input.travelBeforeMinutes;
   if (input.prepBeforeMinutes !== undefined) out.prepBeforeMinutes = input.prepBeforeMinutes;
+  if (input.reminder !== undefined) out.reminder = input.reminder;
   return out;
 }
 
@@ -344,7 +348,7 @@ async function updateFollowing(repo: Repo, ctx: Ctx, existing: EventRow, input: 
 
   const toEvent = (o: EventRow): Partial<EventRow> => {
     const p: Partial<EventRow> = {};
-    for (const key of ['type', 'title', 'location', 'link', 'participants', 'agenda', 'goalId', 'milestoneId', 'travelBeforeMinutes', 'prepBeforeMinutes'] as const) {
+    for (const key of ['type', 'title', 'location', 'link', 'participants', 'agenda', 'goalId', 'milestoneId', 'travelBeforeMinutes', 'prepBeforeMinutes', 'reminder'] as const) {
       if (changed[key] !== undefined) (p as Record<string, unknown>)[key] = changed[key];
     }
     if (times) {

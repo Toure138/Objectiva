@@ -23,6 +23,7 @@ interface NewEvent {
   start?: string;
   end?: string;
   repeat?: string;
+  reminder?: string;
 }
 
 async function addEvent(page: Page, e: NewEvent): Promise<void> {
@@ -38,11 +39,18 @@ async function addEvent(page: Page, e: NewEvent): Promise<void> {
     await page.locator('ion-action-sheet').getByRole('radio', { name: e.repeat }).click();
     await expect(page.locator('ion-action-sheet')).toBeHidden();
   }
+  if (e.reminder) {
+    await form.locator('ion-select[name=reminder]').click();
+    await page.locator('ion-action-sheet').getByRole('radio', { name: e.reminder }).click();
+    await expect(page.locator('ion-action-sheet')).toBeHidden();
+  }
   await form.getByRole('button', { name: 'Enregistrer' }).last().click();
   await expect(form).toBeHidden();
 }
 
 test('réunions récurrentes et agenda du jour : portée, chevauchements, hors connexion', async ({ page }) => {
+  // Long parcours (création, agenda, portée, hors connexion, synchronisation) : plus de temps que par défaut.
+  test.setTimeout(90_000);
   const email = `e2e-agenda-${Date.now()}@objectiva.test`;
   const today = isoDay(0);
   const tomorrow = isoDay(1);
@@ -59,10 +67,12 @@ test('réunions récurrentes et agenda du jour : portée, chevauchements, hors c
 
   // --- Une réunion chaque jour à 9 h, et un rendez-vous qui la chevauche.
   await addEvent(page, { title: 'Point quotidien', start: '09:00', end: '10:00', repeat: 'Chaque jour' });
-  await addEvent(page, { title: 'Banque', start: '09:30', end: '10:30' });
+  await addEvent(page, { title: 'Banque', start: '09:30', end: '10:30', reminder: '30 min avant' });
   const todayPage = page.locator('app-today');
   await expect(todayPage.getByText('Rendez-vous du jour')).toBeVisible();
-  await expect(todayPage.locator('app-event-item').filter({ hasText: 'Point quotidien' }).getByText('Chaque jour')).toBeVisible();
+  await expect(
+    todayPage.locator('app-event-item').filter({ hasText: 'Point quotidien' }).getByText('Chaque jour'),
+  ).toBeVisible();
 
   // --- L'agenda du jour signale le chevauchement en toutes lettres.
   await todayPage.getByRole('link', { name: 'Heure par heure' }).click();
@@ -96,7 +106,13 @@ test('réunions récurrentes et agenda du jour : portée, chevauchements, hors c
   // --- Serveur coupé : nouvelle réunion hebdomadaire, annulation d'une seule fois, tout reste sur le téléphone.
   await page.route('**/api/**', (route) => route.abort('connectionrefused'));
   await page.getByRole('tab', { name: /Aujourd/ }).click();
-  await addEvent(page, { title: 'Revue hebdo', date: tomorrow, start: '14:00', end: '15:00', repeat: 'Chaque semaine' });
+  await addEvent(page, {
+    title: 'Revue hebdo',
+    date: tomorrow,
+    start: '14:00',
+    end: '15:00',
+    repeat: 'Chaque semaine',
+  });
   await page.goto(`/app/agenda/${tomorrow}`);
   const offlineAgenda = page.locator('app-agenda');
   await expect(offlineAgenda.getByText('Aucun chevauchement')).toBeVisible();
@@ -122,8 +138,19 @@ test('réunions récurrentes et agenda du jour : portée, chevauchements, hors c
   expect(hebdo.filter((e) => e.date !== tomorrow).every((e) => e.status === 'PREVU')).toBe(true);
   expect(events.filter((e) => e.title === 'Point d’équipe').length).toBeGreaterThanOrEqual(8);
   expect(events.some((e) => e.title === 'Point quotidien')).toBe(false);
+  // Rappel choisi pour la banque (spec 011), synchronisé ; les autres suivent le réglage par défaut.
+  expect(
+    (events as unknown as { title: string; reminder: string | null }[]).find((e) => e.title === 'Banque')?.reminder,
+  ).toBe('M30');
+  expect(hebdo.every((e) => (e as unknown as { reminder: string | null }).reminder === null)).toBe(true);
+
+  // Profil dans le navigateur : les rappels sont annoncés pour l'application Android.
+  await page.goto('/profil');
+  await expect(page.getByText('fonctionnent dans l’application Android installée', { exact: false })).toBeVisible();
 
   // Aucun défilement horizontal à 360 px.
-  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  );
   expect(overflow).toBeLessThanOrEqual(0);
 });

@@ -28,7 +28,16 @@ import type { FieldError } from '../core/api-error';
 import { ApiError } from '../core/api-error';
 import { ApiService } from '../core/api.service';
 import { localToday } from '../core/dates';
-import { EVENT_TYPE_LABELS, type CalendarEvent, type EventType, type Goal, type Milestone } from '../core/models';
+import {
+  EVENT_TYPE_LABELS,
+  REMINDER_LABELS,
+  type CalendarEvent,
+  type EventReminder,
+  type EventType,
+  type Goal,
+  type Milestone,
+} from '../core/models';
+import { RemindersService } from '../core/reminders.service';
 import { modeOf, REPEAT_MODES, weekdaysFor, WEEKDAYS, type RepeatMode } from '../core/repeat';
 
 /** Durées proposées pour le déplacement et la préparation. */
@@ -147,6 +156,20 @@ function plusHour(time: string): string {
           @if (fieldError('endTime'); as msg) {
             <ion-note color="danger" class="ion-padding-start">{{ msg }}</ion-note>
           }
+          <ion-item>
+            <ion-select
+              label="Rappel"
+              labelPlacement="stacked"
+              [(ngModel)]="reminder"
+              name="reminder"
+              interface="action-sheet"
+            >
+              <ion-select-option [value]="null">Par défaut ({{ defaultReminder() }})</ion-select-option>
+              @for (r of reminders; track r[0]) {
+                <ion-select-option [value]="r[0]">{{ r[1] }}</ion-select-option>
+              }
+            </ion-select>
+          </ion-item>
           @if (canRepeat()) {
             <ion-item>
               <ion-select
@@ -330,6 +353,7 @@ function plusHour(time: string): string {
 export class EventFormComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly modalCtrl = inject(ModalController);
+  private readonly reminderSettings = inject(RemindersService);
 
   // `@Input()` classiques : Ionic affecte `componentProps` directement (voir task-form).
   @Input() event: CalendarEvent | null = null;
@@ -344,6 +368,7 @@ export class EventFormComponent implements OnInit {
   protected readonly minutes = MINUTES;
   protected readonly label = minutesLabel;
   protected readonly repeatModes = REPEAT_MODES;
+  protected readonly reminders = Object.entries(REMINDER_LABELS) as [EventReminder, string][];
   protected readonly weekdays = WEEKDAYS;
 
   protected type: EventType = 'REUNION';
@@ -359,6 +384,8 @@ export class EventFormComponent implements OnInit {
   protected prep = 0;
   protected goalId: string | null = null;
   protected milestoneId: string | null = null;
+  /** `null` : réglage par défaut du téléphone. */
+  protected reminder: EventReminder | null = null;
   protected repeatMode: RepeatMode = 'none';
   protected customDays: number[] = [];
   protected until = '';
@@ -390,6 +417,7 @@ export class EventFormComponent implements OnInit {
         prep: e.prepBeforeMinutes,
         goalId: e.goalId,
         milestoneId: e.milestoneId,
+        reminder: e.reminder,
       });
       if (e.repeat && this.following) {
         this.repeatMode = modeOf(e.repeat.weekdays, e.repeat.startDate);
@@ -422,6 +450,10 @@ export class EventFormComponent implements OnInit {
 
   protected canRepeat(): boolean {
     return this.event === null || this.following;
+  }
+
+  protected defaultReminder(): string {
+    return REMINDER_LABELS[this.reminderSettings.defaultChoice()].toLowerCase();
   }
 
   protected heading(): string {
@@ -525,6 +557,7 @@ export class EventFormComponent implements OnInit {
       prepBeforeMinutes: this.prep,
       goalId: this.goalId,
       milestoneId: this.milestoneId,
+      reminder: this.reminder,
     };
   }
 }

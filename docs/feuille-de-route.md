@@ -42,6 +42,9 @@ fréquence daté), bilans enrichis (habitudes, rencontres, budget).
 
 ## Étape 4 — Fonctions complémentaires
 
+Déjà fait (spec 011) : rappels locaux Android avant les rendez-vous (moment au choix, réglage par défaut,
+rappel d'essai). Reste : rappels des tâches et habitudes, plage de tranquillité.
+
 Récurrences (« cette occurrence » / « et les suivantes », changements d'heure), rappels locaux
 Android (plage de tranquillité, reprogrammation), transferts entre comptes (atomiques, exclus
 des totaux), objectifs d'épargne, report d'enveloppe, devise par utilisateur, export des

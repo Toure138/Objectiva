@@ -89,6 +89,9 @@ environ 10 minutes, télécharge **Objectiva-apk** en bas de la page de l'exécu
 
 ### Mettre à jour
 
+**Toujours le serveur d'abord** (push sur `main` : Render redéploie et applique les migrations), **puis**
+l'APK : une nouvelle application peut envoyer des champs qu'un ancien serveur refuserait.
+
 Relance le workflow et installe le nouvel APK **par-dessus** l'ancien (jamais de désinstallation) :
 le numéro de version augmente à chaque exécution et la clé est la même, donc les données restent.
 

@@ -256,3 +256,10 @@ Aussi traités par le téléphone, sans réseau.
 
 `events` : rendez-vous non annulés du jour ; `tasks` / `done` : tâches à faire / faites ce jour ; `conflict` :
 au moins un chevauchement (règles de l'agenda). Les occurrences sont créées jusqu'à la fin du mois demandé.
+
+## Rappels (spec 011)
+
+Champ `reminder` des rendez-vous et des réunions récurrentes (création, modification, `following`) :
+`AUCUN`, `HEURE`, `M15`, `M30`, `H1`, `DEPART` (début du temps réservé, sinon 15 min avant), ou `null` pour le
+réglage par défaut du téléphone. Copié dans les occurrences. Synchronisé (facultatif dans les messages : une
+application plus ancienne reste compatible). Les notifications elles-mêmes sont programmées par le téléphone.

@@ -82,6 +82,8 @@ const httpLink = z
   .refine((v) => /^https?:\/\//i.test(v) && URL.canParse(v));
 const participants = z.array(z.string().trim().min(1).max(80)).max(20);
 const minutes = int.min(0).max(480);
+// Facultatif : une application d'avant la spec 011 n'envoie pas ce champ (il vaut alors « par défaut »).
+const reminder = z.enum(['AUCUN', 'HEURE', 'M15', 'M30', 'H1', 'DEPART']).nullable().optional();
 
 export const seriesFields = z
   .object({
@@ -97,6 +99,7 @@ export const seriesFields = z
     agenda: nullableText(2000),
     travelBeforeMinutes: minutes,
     prepBeforeMinutes: minutes,
+    reminder,
     weekdays: z.array(int.min(1).max(7)).min(1).max(7),
     startDate: dateOnly,
     until: dateOnly.nullable(),
@@ -121,6 +124,7 @@ export const eventFields = z
     status: z.enum(['PREVU', 'REALISE', 'ANNULE']),
     travelBeforeMinutes: minutes,
     prepBeforeMinutes: minutes,
+    reminder,
     completedAt: instant.nullable(),
   })
   .strict();

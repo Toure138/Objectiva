@@ -295,3 +295,27 @@ describe('vue d’ensemble (spec 010)', () => {
     expect(later.days.every((d: { events: number }) => d.events === 1)).toBe(true);
   });
 });
+
+describe('rappels (spec 011)', () => {
+  it('choix de rappel : accepté, copié dans les occurrences, modifiable pour la suite, refusé s’il est inconnu', async () => {
+    const first = (await alice.post('/api/events', daily({ reminder: 'M30' }))).body.data;
+    expect(first.reminder).toBe('M30');
+    const later = occurrenceId(first.seriesId, addDays(today, 3));
+    expect((await alice.get(`/api/events/${later}`)).body.data.reminder).toBe('M30');
+    await alice.patch(`/api/events/${later}?scope=following`, { reminder: 'AUCUN' });
+    expect((await alice.get(`/api/events/${first.id}`)).body.data.reminder).toBe('M30');
+    expect((await alice.get(`/api/events/${occurrenceId(first.seriesId, addDays(today, 4))}`)).body.data.reminder).toBe('AUCUN');
+    // Retour au réglage du téléphone.
+    expect((await alice.patch(`/api/events/${first.id}`, { reminder: null })).body.data.reminder).toBeNull();
+    const bad = await alice.post('/api/events', daily({ reminder: 'DEMAIN' }));
+    expect(bad.status).toBe(400);
+    expect(bad.body.details[0].field).toBe('reminder');
+  });
+
+  it('une application d’avant les rappels peut toujours créer un rendez-vous par synchronisation', async () => {
+    const id = randomUUID();
+    const res = await push(alice, [mutation('create', 'events', id, occurrenceFields(null as unknown as string, '2026-11-02', { seriesId: null, occurrenceDate: null }), 1000)]);
+    expect(res.body.data.results[0].status).toBe('applied');
+    expect((await alice.get(`/api/events/${id}`)).body.data.reminder).toBeNull();
+  });
+});

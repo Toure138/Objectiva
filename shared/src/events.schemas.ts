@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { dateOnly } from './dates';
 import { clientId, optionalId } from './ids';
 import { TIME_RE } from './events.rules';
+import { REMINDER_CHOICES } from './reminders.rules';
 
 export const eventType = z.enum(['REUNION', 'RENCONTRE', 'RENDEZ_VOUS', 'APPEL', 'VISIO'], {
   message: "Type d'événement inconnu",
@@ -46,6 +47,8 @@ const eventFields = {
   milestoneId: optionalId,
   travelBeforeMinutes: minutes.optional(),
   prepBeforeMinutes: minutes.optional(),
+  // Rappel (spec 011) : null = réglage par défaut du téléphone.
+  reminder: z.enum(REMINDER_CHOICES, { message: 'Rappel inconnu' }).nullable().optional(),
 };
 
 // Avec `repeat`, `id` est celui de la série ; ses occurrences reçoivent un identifiant calculé.

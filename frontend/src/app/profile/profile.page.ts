@@ -1,9 +1,23 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { IonButton, IonContent, IonIcon, IonInput, IonItem, IonList } from '@ionic/angular';
+import {
+  IonButton,
+  IonContent,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonList,
+  IonNote,
+  IonSelect,
+  IonSelectOption,
+  IonToggle,
+  ToastController,
+} from '@ionic/angular';
 import { logOutOutline, moonOutline, phonePortraitOutline, sunnyOutline } from 'ionicons/icons';
 
 import { AuthService } from '../core/auth.service';
+import { REMINDER_LABELS, type EventReminder } from '../core/models';
+import { RemindersService } from '../core/reminders.service';
 import { SettingsService } from '../core/settings.service';
 import { ThemeService, type ThemeChoice } from '../core/theme.service';
 import { PageHeaderComponent } from '../shared/page-header.component';
@@ -21,6 +35,10 @@ import { SegmentedComponent, type SegmentOption } from '../shared/segmented.comp
     IonInput,
     IonButton,
     IonIcon,
+    IonToggle,
+    IonSelect,
+    IonSelectOption,
+    IonNote,
   ],
   styles: `
     .identity {
@@ -142,6 +160,52 @@ import { SegmentedComponent, type SegmentOption } from '../shared/segmented.comp
         </section>
 
         <section class="ob-card">
+          <h3 class="ob-eyebrow">Rappels</h3>
+          @if (reminders.permission() === 'unavailable') {
+            <p class="hint ob-muted">
+              Les rappels avant tes rendez-vous fonctionnent dans l’application Android installée sur ton téléphone.
+            </p>
+          } @else {
+            <ion-list class="ob-form" lines="none">
+              <ion-item>
+                <ion-toggle [checked]="reminders.enabled()" (ionChange)="toggleReminders($event.detail.checked)">
+                  Me rappeler mes rendez-vous
+                </ion-toggle>
+              </ion-item>
+              <ion-item>
+                <ion-select
+                  label="Par défaut"
+                  labelPlacement="stacked"
+                  interface="action-sheet"
+                  [value]="reminders.defaultChoice()"
+                  (ionChange)="setDefault($event.detail.value)"
+                  [disabled]="!reminders.enabled()"
+                >
+                  @for (r of reminderChoices; track r[0]) {
+                    @if (r[0] !== 'AUCUN') {
+                      <ion-select-option [value]="r[0]">{{ r[1] }}</ion-select-option>
+                    }
+                  }
+                </ion-select>
+              </ion-item>
+            </ion-list>
+            @if (reminders.permission() === 'denied') {
+              <ion-note class="hint" color="warning">
+                Les notifications sont bloquées pour Objectiva. Pour recevoir tes rappels, autorise-les dans les
+                réglages Android de l’application.
+              </ion-note>
+            }
+            @if (reminders.exact() === 'denied') {
+              <p class="hint ob-muted">Android peut retarder tes rappels de quelques minutes.</p>
+              <ion-button expand="block" fill="outline" (click)="reminders.openExactSettings()">
+                Autoriser les rappels à l’heure exacte
+              </ion-button>
+            }
+            <ion-button expand="block" fill="clear" (click)="test()">Envoyer un rappel d’essai</ion-button>
+          }
+        </section>
+
+        <section class="ob-card">
           <h3 class="ob-eyebrow">Connexion au serveur</h3>
           <p class="hint ob-muted">Sur téléphone : adresse de ton serveur, ex. https://objectiva-api.onrender.com</p>
           <ion-list class="ob-form" lines="none">
@@ -183,12 +247,36 @@ export class ProfilePage {
     { value: 'dark', label: 'Sombre', icon: moonOutline },
   ];
   protected readonly icons = { logout: logOutOutline };
+  protected readonly reminders = inject(RemindersService);
+  private readonly toasts = inject(ToastController);
+  protected readonly reminderChoices = Object.entries(REMINDER_LABELS) as [EventReminder, string][];
   protected apiUrl = this.settings.apiUrl();
   protected readonly saved = signal(false);
   protected readonly initial = computed(() => (this.auth.user()?.displayName.trim().charAt(0) || '?').toUpperCase());
 
   protected setTheme(choice: string): void {
     void this.theme.set(choice as ThemeChoice);
+  }
+
+  protected toggleReminders(on: boolean): void {
+    void this.reminders.setEnabled(on);
+  }
+
+  protected setDefault(choice: EventReminder): void {
+    void this.reminders.setDefault(choice);
+  }
+
+  protected async test(): Promise<void> {
+    const ok = await this.reminders.sendTest();
+    const toast = await this.toasts.create({
+      message: ok
+        ? 'Rappel d’essai dans 5 secondes : tu peux fermer l’application.'
+        : 'Les notifications ne sont pas autorisées pour Objectiva.',
+      duration: 3000,
+      position: 'top',
+      cssClass: 'ob-toast',
+    });
+    await toast.present();
   }
 
   protected async saveApi(): Promise<void> {

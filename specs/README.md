@@ -15,6 +15,7 @@ d'acceptation, plan, tâches et revue). Le modèle est dans [_template.md](_temp
 | 008 | [008-mise-en-production](008-mise-en-production/spec.md) | préparée (2026-11-04) ; déploiement réel à faire |
 | 009 | [009-agenda-recurrent](009-agenda-recurrent/spec.md) | terminée (2026-11-05) |
 | 010 | [010-vue-ensemble](010-vue-ensemble/spec.md) | terminée (2026-11-05) |
+| 011 | [011-rappels](011-rappels/spec.md) | terminée côté code (2026-11-05) ; à confirmer sur téléphone |
 
 Les fiches 003 à 006 découpent l'étape 2 de [docs/feuille-de-route.md](../docs/feuille-de-route.md).
 

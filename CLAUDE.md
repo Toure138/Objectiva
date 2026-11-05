@@ -7,7 +7,7 @@ année), gérer réunions et rencontres, et faire le bilan. Voir [README.md](REA
 
 **État** : étapes 1 et 2 terminées (specs 001 à 006) : socle objectifs, refonte de l'interface,
 progression mesurée, événements, budget mensuel, scénario EcoleSaaS. Hors connexion : phases 0 et 1
-faites (spec 007). Mise en production préparée (spec 008). Réunions récurrentes et agenda du jour (spec 009). Suite et éléments reportés :
+faites (spec 007). Mise en production préparée (spec 008). Réunions récurrentes et agenda du jour (spec 009), vue d'ensemble (010), rappels (011). Suite et éléments reportés :
 [docs/feuille-de-route.md](docs/feuille-de-route.md). API : [docs/api.md](docs/api.md).
 
 ## Stack technique (versions vérifiées, voir `docs/versions.md`)
@@ -185,6 +185,15 @@ dans le navigateur au format téléphone.
 - Agenda : colonnes et conflits calculés par `agenda.rules.ts` ; l'écran ne fait que convertir minutes → pixels.
 - Vue d'ensemble (spec 010) : `domain/overview.ts` (`GET /calendar`, `GET /series`) ; « Planifier » a trois modes
   (À venir, Mois, À planifier) et la page `/app/reunions`. Tâches lues par pages de 100 (plafond de l'API).
+
+## Rappels (spec 011)
+
+- Notifications **locales** (`@capacitor/local-notifications`), programmées par `core/reminders.service.ts` :
+  rendez-vous prévus des 14 prochains jours (60 au plus), reprogrammés après chaque écriture locale,
+  synchronisation ou retour au premier plan (effet dans `app.component.ts`). Moment et texte :
+  `shared/src/reminders.rules.ts`. Champ `reminder` (null = réglage du téléphone, dans Preferences).
+- Le service reçoit le module et la plateforme par injection (`NOTIFICATIONS`, `IS_NATIVE`) : tests avec un faux.
+- Ordre de déploiement : serveur puis APK (les schémas de synchronisation sont stricts).
 
 ## Production (spec 008)
 

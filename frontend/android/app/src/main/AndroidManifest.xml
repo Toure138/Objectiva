@@ -38,4 +38,7 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Rappels de rendez-vous à l'heure exacte (spec 011). Android 13+ : accordé d'office aux applications
+         d'agenda ; avant, SCHEDULE_EXACT_ALARM (déclaré par le module de notifications). -->
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
 </manifest>

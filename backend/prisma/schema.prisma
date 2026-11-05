@@ -230,28 +230,30 @@ enum EventTaskRole {
 // Réunion, rencontre, rendez-vous, appel ou visio. Les instants sont en UTC (timestamptz) ;
 // le fuseau de l'utilisateur sert à les convertir en jour et heure locaux.
 model Event {
-  id                  String      @id @default(uuid()) @db.Uuid
-  userId              String      @map("user_id") @db.Uuid
-  goalId              String?     @map("goal_id") @db.Uuid
-  milestoneId         String?     @map("milestone_id") @db.Uuid
+  id                  String         @id @default(uuid()) @db.Uuid
+  userId              String         @map("user_id") @db.Uuid
+  goalId              String?        @map("goal_id") @db.Uuid
+  milestoneId         String?        @map("milestone_id") @db.Uuid
   type                EventType
-  title               String      @db.VarChar(160)
-  startsAt            DateTime    @map("starts_at") @db.Timestamptz(6)
-  endsAt              DateTime    @map("ends_at") @db.Timestamptz(6)
-  location            String?     @db.VarChar(200)
-  link                String?     @db.VarChar(500)
-  participants        String[]    @default([])
-  agenda              String?     @db.VarChar(2000)
-  decisions           String?     @db.VarChar(2000)
-  status              EventStatus @default(PREVU)
-  travelBeforeMinutes Int         @default(0) @map("travel_before_minutes")
-  prepBeforeMinutes   Int         @default(0) @map("prep_before_minutes")
-  completedAt         DateTime?   @map("completed_at") @db.Timestamptz(6)
+  title               String         @db.VarChar(160)
+  startsAt            DateTime       @map("starts_at") @db.Timestamptz(6)
+  endsAt              DateTime       @map("ends_at") @db.Timestamptz(6)
+  location            String?        @db.VarChar(200)
+  link                String?        @db.VarChar(500)
+  participants        String[]       @default([])
+  agenda              String?        @db.VarChar(2000)
+  decisions           String?        @db.VarChar(2000)
+  status              EventStatus    @default(PREVU)
+  travelBeforeMinutes Int            @default(0) @map("travel_before_minutes")
+  prepBeforeMinutes   Int            @default(0) @map("prep_before_minutes")
+  completedAt         DateTime?      @map("completed_at") @db.Timestamptz(6)
+  // Rappel (spec 011) : null = réglage par défaut du téléphone.
+  reminder            EventReminder?
   // Occurrence d'une réunion récurrente (spec 009) : série et date d'origine (inchangée si l'occurrence est déplacée).
-  seriesId            String?     @map("series_id") @db.Uuid
-  occurrenceDate      DateTime?   @map("occurrence_date") @db.Date
-  createdAt           DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt           DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  seriesId            String?        @map("series_id") @db.Uuid
+  occurrenceDate      DateTime?      @map("occurrence_date") @db.Date
+  createdAt           DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   goal      Goal?        @relation(fields: [goalId], references: [id], onDelete: SetNull)
@@ -271,31 +273,46 @@ model Event {
   @@map("events")
 }
 
+// Moment du rappel avant un rendez-vous (spec 011) : aucun, à l'heure, 15 min, 30 min, 1 h avant,
+// ou quand partir / se préparer (début du temps réservé, sinon 15 min avant).
+enum EventReminder {
+  AUCUN
+  HEURE
+  M15
+  M30
+  H1
+  DEPART
+
+  @@map("event_reminder")
+}
+
 // Réunion récurrente (spec 009) : un modèle et les jours où il revient. Chaque occurrence est un
 // rendez-vous ordinaire (table events), créé d'avance. Heures locales : converties pour chaque date.
 model EventSeries {
-  id                  String    @id @default(uuid()) @db.Uuid
-  userId              String    @map("user_id") @db.Uuid
-  goalId              String?   @map("goal_id") @db.Uuid
-  milestoneId         String?   @map("milestone_id") @db.Uuid
+  id                  String         @id @default(uuid()) @db.Uuid
+  userId              String         @map("user_id") @db.Uuid
+  goalId              String?        @map("goal_id") @db.Uuid
+  milestoneId         String?        @map("milestone_id") @db.Uuid
   type                EventType
-  title               String    @db.VarChar(160)
-  startTime           String    @map("start_time") @db.VarChar(5)
-  endTime             String    @map("end_time") @db.VarChar(5)
-  location            String?   @db.VarChar(200)
-  link                String?   @db.VarChar(500)
-  participants        String[]  @default([])
-  agenda              String?   @db.VarChar(2000)
-  travelBeforeMinutes Int       @default(0) @map("travel_before_minutes")
-  prepBeforeMinutes   Int       @default(0) @map("prep_before_minutes")
+  title               String         @db.VarChar(160)
+  startTime           String         @map("start_time") @db.VarChar(5)
+  endTime             String         @map("end_time") @db.VarChar(5)
+  location            String?        @db.VarChar(200)
+  link                String?        @db.VarChar(500)
+  participants        String[]       @default([])
+  agenda              String?        @db.VarChar(2000)
+  travelBeforeMinutes Int            @default(0) @map("travel_before_minutes")
+  prepBeforeMinutes   Int            @default(0) @map("prep_before_minutes")
+  // Rappel copié dans les occurrences (spec 011) ; null = réglage par défaut du téléphone.
+  reminder            EventReminder?
   // Jours de la semaine ISO : 1 = lundi … 7 = dimanche.
   weekdays            Int[]
-  startDate           DateTime  @map("start_date") @db.Date
-  until               DateTime? @db.Date
-  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt           DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
-  fieldClocks         Json      @default("{}") @map("field_clocks")
-  serverVersion       BigInt    @default(0) @map("server_version")
+  startDate           DateTime       @map("start_date") @db.Date
+  until               DateTime?      @db.Date
+  createdAt           DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+  fieldClocks         Json           @default("{}") @map("field_clocks")
+  serverVersion       BigInt         @default(0) @map("server_version")
 
   user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   goal        Goal?      @relation(fields: [goalId], references: [id], onDelete: SetNull)

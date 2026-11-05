@@ -10,6 +10,8 @@ export type TaskStatus = 'TODO' | 'DONE' | 'CANCELLED';
 export type EventTaskRole = 'PREPARATION' | 'SUIVI';
 export type EventType = 'REUNION' | 'RENCONTRE' | 'RENDEZ_VOUS' | 'APPEL' | 'VISIO';
 export type EventStatus = 'PREVU' | 'REALISE' | 'ANNULE';
+/** Moment du rappel (spec 011) ; `null` = réglage par défaut du téléphone. */
+export type EventReminder = 'AUCUN' | 'HEURE' | 'M15' | 'M30' | 'H1' | 'DEPART';
 
 export interface GoalRow {
   id: string;
@@ -87,6 +89,7 @@ export interface EventRow {
   status: EventStatus;
   travelBeforeMinutes: number;
   prepBeforeMinutes: number;
+  reminder: EventReminder | null;
   completedAt: string | null;
   createdAt: string;
   updatedAt: string;
@@ -107,6 +110,7 @@ export interface SeriesRow {
   agenda: string | null;
   travelBeforeMinutes: number;
   prepBeforeMinutes: number;
+  reminder: EventReminder | null;
   weekdays: number[];
   startDate: string;
   until: string | null;

@@ -110,6 +110,7 @@ export function toEventRow(e: Event): EventRow {
     status: e.status,
     travelBeforeMinutes: e.travelBeforeMinutes,
     prepBeforeMinutes: e.prepBeforeMinutes,
+    reminder: e.reminder,
     completedAt: iso(e.completedAt),
     createdAt: e.createdAt.toISOString(),
     updatedAt: e.updatedAt.toISOString(),
@@ -131,6 +132,7 @@ export function toSeriesRow(s: EventSeries): SeriesRow {
     agenda: s.agenda,
     travelBeforeMinutes: s.travelBeforeMinutes,
     prepBeforeMinutes: s.prepBeforeMinutes,
+    reminder: s.reminder,
     weekdays: s.weekdays,
     startDate: day(s.startDate)!,
     until: day(s.until),
@@ -158,6 +160,7 @@ export function eventData(p: Partial<EventRow>): Prisma.EventUncheckedUpdateInpu
     status: p.status,
     travelBeforeMinutes: p.travelBeforeMinutes,
     prepBeforeMinutes: p.prepBeforeMinutes,
+    reminder: p.reminder,
     completedAt: dbInstant(p.completedAt),
   };
 }
@@ -176,6 +179,7 @@ export function seriesData(p: Partial<SeriesRow>): Prisma.EventSeriesUncheckedUp
     agenda: p.agenda,
     travelBeforeMinutes: p.travelBeforeMinutes,
     prepBeforeMinutes: p.prepBeforeMinutes,
+    reminder: p.reminder,
     weekdays: p.weekdays,
     startDate: dbDay(p.startDate) ?? undefined,
     until: dbDay(p.until),

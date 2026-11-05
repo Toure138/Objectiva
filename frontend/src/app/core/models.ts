@@ -111,6 +111,9 @@ export interface CalendarEvent {
   date: string;
   startTime: string;
   endTime: string;
+  /** Instants UTC (ISO 8601). */
+  startsAt: string;
+  endsAt: string;
   location: string | null;
   link: string | null;
   participants: string[];
@@ -125,6 +128,8 @@ export interface CalendarEvent {
   blockedFromTime: string;
   leaveAtTime: string | null;
   completedAt: string | null;
+  /** Rappel (spec 011) ; `null` = réglage par défaut du téléphone. */
+  reminder: EventReminder | null;
   /** Occurrence d'une réunion récurrente : série, date d'origine et règle de répétition. */
   seriesId: string | null;
   occurrenceDate: string | null;
@@ -139,6 +144,17 @@ export interface EventRepeat {
 }
 
 export type EventScope = 'occurrence' | 'following' | 'series';
+
+export type EventReminder = 'AUCUN' | 'HEURE' | 'M15' | 'M30' | 'H1' | 'DEPART';
+
+export const REMINDER_LABELS: Record<EventReminder, string> = {
+  DEPART: 'Quand partir ou se préparer',
+  HEURE: 'À l’heure du rendez-vous',
+  M15: '15 min avant',
+  M30: '30 min avant',
+  H1: '1 h avant',
+  AUCUN: 'Aucun rappel',
+};
 
 export type ConflictKind = 'CHEVAUCHEMENT' | 'PREPARATION';
 
