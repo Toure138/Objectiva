@@ -10,6 +10,7 @@ import { authRouter } from './modules/auth/auth.routes.ts';
 import { budgetRouter } from './modules/budget/budget.routes.ts';
 import { agendaRouter, calendarRouter, eventsRouter, seriesRouter } from './modules/events/events.routes.ts';
 import { goalsRouter, milestonesRouter, readingsRouter } from './modules/goals/goals.routes.ts';
+import { habitsRouter } from './modules/habits/habits.routes.ts';
 import { syncRouter } from './modules/sync/sync.routes.ts';
 import { reviewsRouter } from './modules/reviews/reviews.routes.ts';
 import { tasksRouter } from './modules/tasks/tasks.routes.ts';
@@ -65,6 +66,7 @@ export function createApp() {
   app.use('/api/agenda', requireAuth, agendaRouter);
   app.use('/api/calendar', requireAuth, calendarRouter);
   app.use('/api/series', requireAuth, seriesRouter);
+  app.use('/api/habits', requireAuth, habitsRouter);
   app.use('/api/sync', requireAuth, syncRouter);
   app.use('/api/tasks', requireAuth, tasksRouter);
   app.use('/api/today', requireAuth, todayRouter);

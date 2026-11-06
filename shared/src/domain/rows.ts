@@ -1,3 +1,5 @@
+import type { HabitPause, HabitRule } from '../habits.rules';
+
 // Lignes de données synchronisables (format « fil » : dates AAAA-MM-JJ, instants ISO 8601 UTC).
 // Ce sont les mêmes objets sur le serveur (convertis depuis Prisma) et sur le téléphone (IndexedDB).
 
@@ -114,6 +116,29 @@ export interface SeriesRow {
   weekdays: number[];
   startDate: string;
   until: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** Habitude (spec 012) : règles datées et pauses, évaluées par `habits.rules.ts`. */
+export interface HabitRow {
+  id: string;
+  goalId: string | null;
+  title: string;
+  rules: HabitRule[];
+  pauses: HabitPause[];
+  status: 'ACTIVE' | 'ARCHIVEE';
+  startDate: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** Un jour d'une habitude : identifiant calculé (habitude + jour), `done` remis à faux pour décocher. */
+export interface HabitCheckRow {
+  id: string;
+  habitId: string;
+  date: string;
+  done: boolean;
   createdAt: string;
   updatedAt: string;
 }

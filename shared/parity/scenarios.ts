@@ -416,4 +416,56 @@ export const vueEnsemble: Scenario = {
   ],
 };
 
-export const SCENARIOS: Scenario[] = [tachesEtBilan, progressionMesuree, evenements, budgetMensuel, ordreDesListes, reunionsRecurrentes, vueEnsemble];
+// ---------------------------------------------------------------------------------------------
+// 8. Habitudes (spec 012). Mercredi 4 novembre 2026, Africa/Abidjan.
+
+const [HG, H1, H2, H3] = [uid(110), uid(111), uid(112), uid(113)];
+const check = (id: string, date?: string, extra: Partial<Step> = {}) => post(`/api/habits/${id}/check`, date ? { date } : {}, extra);
+
+export const habitudes: Scenario = {
+  name: 'habitudes',
+  timezone: 'Africa/Abidjan',
+  steps: [
+    post('/api/goals', { id: HG, title: 'Lire 12 livres', category: 'ETUDES', status: 'EN_COURS', startDate: '2026-09-01', endDate: '2027-08-31' }),
+    post('/api/habits', { id: H1, title: 'Lire 20 pages', goalId: HG, kind: 'JOURS', weekdays: [1, 2, 3, 4, 5, 6, 7], startDate: '2026-10-26' }),
+    post('/api/habits', { id: H2, title: 'Sport', kind: 'SEMAINE', timesPerWeek: 3, startDate: '2026-10-26' }),
+    post('/api/habits', { id: H3, title: 'Réviser', kind: 'JOURS', weekdays: [5, 1, 2, 3, 4] }),
+    post('/api/habits', { title: 'Sans jours', kind: 'JOURS' }, { expect: 400 }),
+    post('/api/habits', { title: 'Trop souvent', kind: 'SEMAINE', timesPerWeek: 8 }, { expect: 400 }),
+    post('/api/habits', { title: '', kind: 'SEMAINE', timesPerWeek: 2 }, { expect: 400 }),
+    // Lecture : manquée le 26 et le 30 octobre.
+    ...['2026-10-27', '2026-10-28', '2026-10-29', '2026-10-31', '2026-11-01', '2026-11-02', '2026-11-03'].map((d) => check(H1, d, { silent: true })),
+    // Sport : 3 fois la première semaine, 1 fois la seconde (en cours).
+    ...['2026-10-27', '2026-10-29', '2026-10-31', '2026-11-02'].map((d) => check(H2, d, { silent: true })),
+    check(H1, '2026-11-05', { expect: 400 }),
+    check(H1, '2026-10-20', { expect: 400 }),
+    check(H1, '2026-11-03'),
+    post(`/api/habits/${H1}/uncheck`, { date: '2026-11-01' }),
+    post(`/api/habits/${H1}/uncheck`, { date: '2026-11-01' }),
+    check(H1, '2026-11-01'),
+    get('/api/today'),
+    check(H1),
+    get('/api/habits'),
+    get(`/api/habits/${H1}`),
+    get(`/api/habits/${H2}`),
+    // Changement de fréquence daté : lundi, mercredi, vendredi à partir de demain ; jamais avant le début.
+    patch(`/api/habits/${H1}`, { kind: 'JOURS', weekdays: [1, 3, 5], from: '2026-11-05' }),
+    patch(`/api/habits/${H1}`, { kind: 'JOURS', weekdays: [1], from: '2026-10-01' }, { expect: 400 }),
+    patch(`/api/habits/${H1}`, { title: 'Lire 30 pages' }),
+    // Pause : l'habitude disparaît du jour ; reprise le jour même : la pause est effacée.
+    post(`/api/habits/${H3}/pause`),
+    get('/api/today'),
+    post(`/api/habits/${H3}/resume`),
+    post(`/api/habits/${H2}/archive`),
+    get('/api/habits?status=ACTIVE'),
+    post(`/api/habits/${H2}/unarchive`),
+    get('/api/reviews?period=week&date=2026-11-04'),
+    get('/api/reviews?period=week&date=2026-10-28'),
+    get('/api/today?date=2026-11-02'),
+    del(`/api/habits/${H3}`),
+    { method: 'GET', path: `/api/habits/${H3}`, expect: 404 },
+    { method: 'GET', path: '/api/habits?status=PERDUE', expect: 400 },
+  ],
+};
+
+export const SCENARIOS: Scenario[] = [tachesEtBilan, progressionMesuree, evenements, budgetMensuel, ordreDesListes, reunionsRecurrentes, vueEnsemble, habitudes];

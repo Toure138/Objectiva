@@ -963,6 +963,7 @@
             "repeat": null
           }
         ],
+        "habits": [],
         "planned": [],
         "done": [],
         "toReschedule": [
@@ -1048,6 +1049,7 @@
             "repeat": null
           }
         ],
+        "habits": [],
         "planned": [
           {
             "id": "<uuid#1>",
@@ -1119,6 +1121,7 @@
           "cancelled": 0,
           "expected": 1
         },
+        "habits": [],
         "goals": [
           {
             "id": "00000000-0000-4000-8000-00000000001f",
@@ -1168,6 +1171,7 @@
           "cancelled": 0,
           "expected": 3
         },
+        "habits": [],
         "goals": [
           {
             "id": "00000000-0000-4000-8000-00000000001f",

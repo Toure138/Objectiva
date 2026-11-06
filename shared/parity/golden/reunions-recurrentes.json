@@ -1375,6 +1375,7 @@
             }
           }
         ],
+        "habits": [],
         "planned": [
           {
             "id": "<uuid#3>",
@@ -1431,6 +1432,7 @@
           "cancelled": 1,
           "expected": 4
         },
+        "habits": [],
         "goals": [],
         "questions": [
           "Qu'ai-je accompli ?",

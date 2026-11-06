@@ -138,11 +138,12 @@ export interface TodayLists {
 }
 
 /** Vue « Aujourd'hui ». */
-export function buildToday(date: string, l: TodayLists, events: unknown[]) {
+export function buildToday(date: string, l: TodayLists, events: unknown[], habits: unknown[]) {
   const s = (t: TaskRow) => serializeTask(t, date);
   return {
     date,
     events,
+    habits,
     planned: l.planned.map(s),
     done: l.done.map(s),
     toReschedule: l.toReschedule.map(s),
@@ -160,6 +161,7 @@ export function buildReview(
   tasks: TaskRow[],
   goals: { goal: GoalRow; rel: GoalRelations }[],
   events: unknown,
+  habits: unknown[],
 ) {
   const taskReview = reviewTasks(
     tasks.map((t) => ({
@@ -176,6 +178,7 @@ export function buildReview(
     to,
     tasks: taskReview,
     events,
+    habits,
     goals: goals.map(({ goal, rel }) => {
       // Jalons terminés pendant la période, d'après le jour local de réalisation.
       const milestonesDoneInPeriod = rel.milestones.filter((m) => {

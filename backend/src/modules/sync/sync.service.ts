@@ -18,10 +18,14 @@ import {
   dbInstant,
   eventData,
   goalData,
+  habitCheckData,
+  habitData,
   seriesData,
   taskData,
   toEventRow,
   toGoalRow,
+  toHabitCheckRow,
+  toHabitRow,
   toMilestoneRow,
   toReadingRow,
   toSeriesRow,
@@ -323,6 +327,64 @@ const eventHandler: Handler = {
   },
 };
 
+const habitHandler: Handler = {
+  async find(tx, userId, id) {
+    const h = await tx.habit.findFirst({ where: { id, userId } });
+    return h ? { fields: strip(toHabitRow(h)), clocks: asClocks(h.fieldClocks) } : null;
+  },
+  async prepare(tx, userId, _id, f) {
+    const goalId = f['goalId'] as string | null;
+    // Objectif supprimé ailleurs : l'habitude est conservée sans objectif.
+    if (goalId && !(await tx.goal.findFirst({ where: { id: goalId, userId }, select: { id: true } }))) {
+      return { fields: { ...f, goalId: null } };
+    }
+    return { fields: f };
+  },
+  async insert(tx, userId, id, f, createdAt, clocks) {
+    await tx.habit.create({
+      data: {
+        ...(habitData(f) as Prisma.HabitUncheckedCreateInput),
+        id,
+        userId,
+        startDate: dbDay(f['startDate'] as string)!,
+        createdAt,
+        fieldClocks: clocks,
+      },
+    });
+  },
+  async update(tx, userId, id, f, clocks) {
+    await tx.habit.update({ where: { id, userId }, data: { ...habitData(f), fieldClocks: clocks } });
+  },
+  async remove(tx, userId, id) {
+    await tx.habit.deleteMany({ where: { id, userId } });
+  },
+};
+
+const habitCheckHandler: Handler = {
+  async find(tx, userId, id) {
+    const c = await tx.habitCheck.findFirst({ where: { id, userId } });
+    return c ? { fields: strip(toHabitCheckRow(c)), clocks: asClocks(c.fieldClocks) } : null;
+  },
+  async prepare(tx, userId, _id, f) {
+    // Habitude supprimée ailleurs : la suppression l'emporte.
+    if (!(await tx.habit.findFirst({ where: { id: f['habitId'] as string, userId }, select: { id: true } }))) {
+      return { reason: 'parent-missing', message: 'L’habitude de ce jour n’existe plus' };
+    }
+    return { fields: f };
+  },
+  async insert(tx, userId, id, f, createdAt, clocks) {
+    await tx.habitCheck.create({
+      data: { ...(habitCheckData(f) as Prisma.HabitCheckUncheckedCreateInput), id, userId, createdAt, fieldClocks: clocks },
+    });
+  },
+  async update(tx, userId, id, f, clocks) {
+    await tx.habitCheck.update({ where: { id, userId }, data: { ...habitCheckData(f), fieldClocks: clocks } });
+  },
+  async remove(tx, userId, id) {
+    await tx.habitCheck.deleteMany({ where: { id, userId } });
+  },
+};
+
 const HANDLERS: Record<SyncedEntity, Handler> = {
   goals: goalHandler,
   milestones: milestoneHandler,
@@ -330,6 +392,8 @@ const HANDLERS: Record<SyncedEntity, Handler> = {
   event_series: seriesHandler,
   events: eventHandler,
   tasks: taskHandler,
+  habits: habitHandler,
+  habit_checks: habitCheckHandler,
 };
 
 // ---------------------------------------------------------------------------------------------
@@ -474,13 +538,16 @@ export async function pull(userId: string, cursor: number, limit: number, protoc
   const orderBy = { serverVersion: 'asc' as const };
 
   const withEvents = known.includes('events');
-  const [goals, milestones, readings, tasks, series, events, stones] = await Promise.all([
+  const withHabits = known.includes('habits');
+  const [goals, milestones, readings, tasks, series, events, habits, checks, stones] = await Promise.all([
     prisma.goal.findMany({ where, orderBy, take }),
     prisma.milestone.findMany({ where, orderBy, take }),
     prisma.goalReading.findMany({ where, orderBy, take }),
     prisma.task.findMany({ where, orderBy, take }),
     withEvents ? prisma.eventSeries.findMany({ where, orderBy, take }) : Promise.resolve([]),
     withEvents ? prisma.event.findMany({ where, orderBy, take }) : Promise.resolve([]),
+    withHabits ? prisma.habit.findMany({ where, orderBy, take }) : Promise.resolve([]),
+    withHabits ? prisma.habitCheck.findMany({ where, orderBy, take }) : Promise.resolve([]),
     prisma.tombstone.findMany({ where: { userId, serverVersion: { gt }, entity: { in: [...known] } }, orderBy, take }),
   ]);
 
@@ -504,6 +571,8 @@ export async function pull(userId: string, cursor: number, limit: number, protoc
     upsert('tasks', tasks, toTaskRow),
     upsert('event_series', series, toSeriesRow),
     upsert('events', events, toEventRow),
+    upsert('habits', habits, toHabitRow),
+    upsert('habit_checks', checks, toHabitCheckRow),
     {
       entity: 'tasks',
       truncated: stones.length > limit,

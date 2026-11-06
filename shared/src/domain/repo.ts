@@ -1,4 +1,16 @@
-import type { EventRow, EventStatus, GoalRow, GoalStatus, MilestoneRow, ReadingRow, SeriesRow, TaskRow, TaskStatus } from './rows';
+import type {
+  EventRow,
+  EventStatus,
+  GoalRow,
+  GoalStatus,
+  HabitCheckRow,
+  HabitRow,
+  MilestoneRow,
+  ReadingRow,
+  SeriesRow,
+  TaskRow,
+  TaskStatus,
+} from './rows';
 
 // Interface de stockage de la logique métier partagée. Une instance est toujours limitée à UN
 // utilisateur : le serveur l'implémente avec Prisma (filtre `userId`), le téléphone avec IndexedDB.
@@ -54,7 +66,7 @@ export interface GoalRepo {
   withoutNextAction(): Promise<{ id: string; title: string }[]>;
   insert(row: GoalRow): Promise<void>;
   update(id: string, patch: Partial<GoalRow>): Promise<GoalRow>;
-  /** Supprime l'objectif ET, comme le fait la base, ses jalons et relevés ; détache ses tâches, rendez-vous et séries. */
+  /** Supprime l'objectif ET, comme le fait la base, ses jalons et relevés ; détache ses tâches, rendez-vous, séries et habitudes. */
   remove(id: string): Promise<void>;
 }
 
@@ -112,6 +124,24 @@ export interface SeriesRepo {
   remove(id: string): Promise<void>;
 }
 
+export interface HabitRepo {
+  get(id: string): Promise<HabitRow | null>;
+  /** Tri : date de création, puis id. */
+  list(): Promise<HabitRow[]>;
+  insert(row: HabitRow): Promise<void>;
+  update(id: string, patch: Partial<HabitRow>): Promise<HabitRow>;
+  /** Supprime l'habitude ET, comme le fait la base, ses jours cochés. */
+  remove(id: string): Promise<void>;
+}
+
+export interface HabitCheckRepo {
+  get(id: string): Promise<HabitCheckRow | null>;
+  /** Jours de ces habitudes (ordre libre). */
+  byHabits(habitIds: string[]): Promise<HabitCheckRow[]>;
+  insert(row: HabitCheckRow): Promise<void>;
+  update(id: string, patch: Partial<HabitCheckRow>): Promise<HabitCheckRow>;
+}
+
 export interface Repo {
   tasks: TaskRepo;
   goals: GoalRepo;
@@ -119,6 +149,8 @@ export interface Repo {
   readings: ReadingRepo;
   events: EventRepo;
   series: SeriesRepo;
+  habits: HabitRepo;
+  habitChecks: HabitCheckRepo;
 }
 
 /** Contexte d'une commande : l'instant et le jour courants, fournis par l'appelant (horloge du serveur ou du téléphone). */

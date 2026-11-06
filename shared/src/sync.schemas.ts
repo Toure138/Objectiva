@@ -7,12 +7,14 @@ import { uuid } from './ids';
 // Partagés : le téléphone valide ce qu'il envoie avec les mêmes schémas que le serveur.
 
 /** Tables synchronisées dans cette version du protocole, les parents d'abord (le budget arrive en phase 3). */
-export const SYNCED_ENTITIES = ['goals', 'milestones', 'goal_readings', 'event_series', 'events', 'tasks'] as const;
+export const SYNCED_ENTITIES = ['goals', 'milestones', 'goal_readings', 'event_series', 'events', 'tasks', 'habits', 'habit_checks'] as const;
 export type SyncedEntity = (typeof SYNCED_ENTITIES)[number];
 
 /** Tables qu'un client d'une version donnée sait lire : une application en version 1 ne connaît pas les rendez-vous. */
 export function entitiesFor(protocol: number): readonly SyncedEntity[] {
-  return protocol >= 2 ? SYNCED_ENTITIES : (['goals', 'milestones', 'goal_readings', 'tasks'] as const);
+  if (protocol >= 3) return SYNCED_ENTITIES;
+  if (protocol === 2) return ['goals', 'milestones', 'goal_readings', 'event_series', 'events', 'tasks'];
+  return ['goals', 'milestones', 'goal_readings', 'tasks'];
 }
 
 const instant = z.iso.datetime({ message: 'Instant ISO 8601 attendu' });
@@ -129,6 +131,34 @@ export const eventFields = z
   })
   .strict();
 
+const habitRule = z
+  .object({
+    from: dateOnly,
+    kind: z.enum(['JOURS', 'SEMAINE']),
+    weekdays: z.array(int.min(1).max(7)).max(7),
+    timesPerWeek: int.min(1).max(7).nullable(),
+  })
+  .strict();
+
+export const habitFields = z
+  .object({
+    goalId: uuid.nullable(),
+    title: z.string().trim().min(1).max(120),
+    rules: z.array(habitRule).min(1).max(100),
+    pauses: z.array(z.object({ from: dateOnly, to: dateOnly.nullable() }).strict()).max(200),
+    status: z.enum(['ACTIVE', 'ARCHIVEE']),
+    startDate: dateOnly,
+  })
+  .strict();
+
+export const habitCheckFields = z
+  .object({
+    habitId: uuid,
+    date: dateOnly,
+    done: z.boolean(),
+  })
+  .strict();
+
 export const FIELD_SCHEMAS = {
   goals: goalFields,
   milestones: milestoneFields,
@@ -136,6 +166,8 @@ export const FIELD_SCHEMAS = {
   event_series: seriesFields,
   events: eventFields,
   tasks: taskFields,
+  habits: habitFields,
+  habit_checks: habitCheckFields,
 } as const;
 
 // --- Messages

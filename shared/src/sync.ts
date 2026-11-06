@@ -3,9 +3,9 @@
 
 /**
  * Version du protocole parlée par ce code. À incrémenter à toute évolution incompatible.
- * 2 (spec 009) : rendez-vous et réunions récurrentes synchronisés.
+ * 2 (spec 009) : rendez-vous et réunions récurrentes synchronisés. 3 (spec 012) : habitudes.
  */
-export const SYNC_PROTOCOL_VERSION = 2;
+export const SYNC_PROTOCOL_VERSION = 3;
 
 /**
  * Plus ancienne version encore acceptée par le serveur. Règle de la spec : au moins 12 mois de
@@ -42,6 +42,8 @@ export const SYNC_ENTITIES = [
   'event_series',
   'events',
   'tasks',
+  'habits',
+  'habit_checks',
   'accounts',
   'budget_categories',
   'envelopes',

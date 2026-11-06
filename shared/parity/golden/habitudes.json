@@ -1,0 +1,1791 @@
+{
+  "01 POST /api/goals": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000006e",
+        "title": "Lire 12 livres",
+        "description": null,
+        "motivation": null,
+        "category": "ETUDES",
+        "horizon": "PERSONNALISEE",
+        "startDate": "2026-09-01",
+        "endDate": "2027-08-31",
+        "priority": "MOYENNE",
+        "status": "EN_COURS",
+        "progressMode": "JALONS",
+        "measureUnit": null,
+        "startValue": null,
+        "targetValue": null,
+        "progress": {
+          "mode": "JALONS",
+          "done": 0,
+          "total": 0,
+          "percent": null,
+          "label": "Ajoute un premier jalon"
+        },
+        "nextAction": null,
+        "needsNextAction": true
+      }
+    }
+  },
+  "02 POST /api/habits": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000006f",
+        "title": "Lire 20 pages",
+        "goalId": "00000000-0000-4000-8000-00000000006e",
+        "status": "ACTIVE",
+        "startDate": "2026-10-26",
+        "kind": "JOURS",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "timesPerWeek": null,
+        "rules": [
+          {
+            "from": "2026-10-26",
+            "kind": "JOURS",
+            "weekdays": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "timesPerWeek": null
+          }
+        ],
+        "pauses": [],
+        "paused": false,
+        "doneToday": false,
+        "streak": {
+          "value": 0,
+          "unit": "JOURS"
+        },
+        "bestStreak": 0,
+        "week": null,
+        "last30": {
+          "expected": 10,
+          "done": 0,
+          "rate": 0
+        }
+      }
+    }
+  },
+  "03 POST /api/habits": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000070",
+        "title": "Sport",
+        "goalId": null,
+        "status": "ACTIVE",
+        "startDate": "2026-10-26",
+        "kind": "SEMAINE",
+        "weekdays": [],
+        "timesPerWeek": 3,
+        "rules": [
+          {
+            "from": "2026-10-26",
+            "kind": "SEMAINE",
+            "weekdays": [],
+            "timesPerWeek": 3
+          }
+        ],
+        "pauses": [],
+        "paused": false,
+        "doneToday": false,
+        "streak": {
+          "value": 0,
+          "unit": "SEMAINES"
+        },
+        "bestStreak": 0,
+        "week": {
+          "done": 0,
+          "target": 3
+        },
+        "last30": {
+          "expected": 4,
+          "done": 0,
+          "rate": 0
+        }
+      }
+    }
+  },
+  "04 POST /api/habits": {
+    "status": 201,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000071",
+        "title": "Réviser",
+        "goalId": null,
+        "status": "ACTIVE",
+        "startDate": "2026-11-04",
+        "kind": "JOURS",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "timesPerWeek": null,
+        "rules": [
+          {
+            "from": "2026-11-04",
+            "kind": "JOURS",
+            "weekdays": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "timesPerWeek": null
+          }
+        ],
+        "pauses": [],
+        "paused": false,
+        "doneToday": false,
+        "streak": {
+          "value": 0,
+          "unit": "JOURS"
+        },
+        "bestStreak": 0,
+        "week": null,
+        "last30": {
+          "expected": 1,
+          "done": 0,
+          "rate": 0
+        }
+      }
+    }
+  },
+  "05 POST /api/habits": {
+    "status": 400,
+    "body": {
+      "success": false,
+      "code": "VALIDATION_ERROR",
+      "message": "Certaines informations sont invalides",
+      "details": [
+        {
+          "field": "kind",
+          "message": "Choisis les jours (jours fixes) ou le nombre de fois par semaine"
+        }
+      ]
+    }
+  },
+  "06 POST /api/habits": {
+    "status": 400,
+    "body": {
+      "success": false,
+      "code": "VALIDATION_ERROR",
+      "message": "Certaines informations sont invalides",
+      "details": [
+        {
+          "field": "timesPerWeek",
+          "message": "7 fois par semaine au maximum"
+        }
+      ]
+    }
+  },
+  "07 POST /api/habits": {
+    "status": 400,
+    "body": {
+      "success": false,
+      "code": "VALIDATION_ERROR",
+      "message": "Certaines informations sont invalides",
+      "details": [
+        {
+          "field": "title",
+          "message": "Le titre est obligatoire"
+        }
+      ]
+    }
+  },
+  "19 POST /api/habits/00000000-0000-4000-8000-00000000006f/check": {
+    "status": 400,
+    "body": {
+      "success": false,
+      "code": "VALIDATION_ERROR",
+      "message": "Certaines informations sont invalides",
+      "details": [
+        {
+          "field": "date",
+          "message": "Tu ne peux pas cocher un jour à venir"
+        }
+      ]
+    }
+  },
+  "20 POST /api/habits/00000000-0000-4000-8000-00000000006f/check": {
+    "status": 400,
+    "body": {
+      "success": false,
+      "code": "VALIDATION_ERROR",
+      "message": "Certaines informations sont invalides",
+      "details": [
+        {
+          "field": "date",
+          "message": "Ce jour précède le début de l’habitude"
+        }
+      ]
+    }
+  },
+  "21 POST /api/habits/00000000-0000-4000-8000-00000000006f/check": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000006f",
+        "title": "Lire 20 pages",
+        "goalId": "00000000-0000-4000-8000-00000000006e",
+        "status": "ACTIVE",
+        "startDate": "2026-10-26",
+        "kind": "JOURS",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "timesPerWeek": null,
+        "rules": [
+          {
+            "from": "2026-10-26",
+            "kind": "JOURS",
+            "weekdays": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "timesPerWeek": null
+          }
+        ],
+        "pauses": [],
+        "paused": false,
+        "doneToday": false,
+        "streak": {
+          "value": 4,
+          "unit": "JOURS"
+        },
+        "bestStreak": 4,
+        "week": null,
+        "last30": {
+          "expected": 10,
+          "done": 7,
+          "rate": 0.7
+        }
+      }
+    }
+  },
+  "22 POST /api/habits/00000000-0000-4000-8000-00000000006f/uncheck": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000006f",
+        "title": "Lire 20 pages",
+        "goalId": "00000000-0000-4000-8000-00000000006e",
+        "status": "ACTIVE",
+        "startDate": "2026-10-26",
+        "kind": "JOURS",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "timesPerWeek": null,
+        "rules": [
+          {
+            "from": "2026-10-26",
+            "kind": "JOURS",
+            "weekdays": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "timesPerWeek": null
+          }
+        ],
+        "pauses": [],
+        "paused": false,
+        "doneToday": false,
+        "streak": {
+          "value": 2,
+          "unit": "JOURS"
+        },
+        "bestStreak": 3,
+        "week": null,
+        "last30": {
+          "expected": 10,
+          "done": 6,
+          "rate": 0.6
+        }
+      }
+    }
+  },
+  "23 POST /api/habits/00000000-0000-4000-8000-00000000006f/uncheck": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000006f",
+        "title": "Lire 20 pages",
+        "goalId": "00000000-0000-4000-8000-00000000006e",
+        "status": "ACTIVE",
+        "startDate": "2026-10-26",
+        "kind": "JOURS",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "timesPerWeek": null,
+        "rules": [
+          {
+            "from": "2026-10-26",
+            "kind": "JOURS",
+            "weekdays": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "timesPerWeek": null
+          }
+        ],
+        "pauses": [],
+        "paused": false,
+        "doneToday": false,
+        "streak": {
+          "value": 2,
+          "unit": "JOURS"
+        },
+        "bestStreak": 3,
+        "week": null,
+        "last30": {
+          "expected": 10,
+          "done": 6,
+          "rate": 0.6
+        }
+      }
+    }
+  },
+  "24 POST /api/habits/00000000-0000-4000-8000-00000000006f/check": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000006f",
+        "title": "Lire 20 pages",
+        "goalId": "00000000-0000-4000-8000-00000000006e",
+        "status": "ACTIVE",
+        "startDate": "2026-10-26",
+        "kind": "JOURS",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "timesPerWeek": null,
+        "rules": [
+          {
+            "from": "2026-10-26",
+            "kind": "JOURS",
+            "weekdays": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "timesPerWeek": null
+          }
+        ],
+        "pauses": [],
+        "paused": false,
+        "doneToday": false,
+        "streak": {
+          "value": 4,
+          "unit": "JOURS"
+        },
+        "bestStreak": 4,
+        "week": null,
+        "last30": {
+          "expected": 10,
+          "done": 7,
+          "rate": 0.7
+        }
+      }
+    }
+  },
+  "25 GET /api/today": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "date": "2026-11-04",
+        "events": [],
+        "habits": [
+          {
+            "id": "00000000-0000-4000-8000-00000000006f",
+            "title": "Lire 20 pages",
+            "goalId": "00000000-0000-4000-8000-00000000006e",
+            "kind": "JOURS",
+            "done": false,
+            "streak": {
+              "value": 4,
+              "unit": "JOURS"
+            },
+            "week": null
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000070",
+            "title": "Sport",
+            "goalId": null,
+            "kind": "SEMAINE",
+            "done": false,
+            "streak": {
+              "value": 1,
+              "unit": "SEMAINES"
+            },
+            "week": {
+              "done": 1,
+              "target": 3
+            }
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000071",
+            "title": "Réviser",
+            "goalId": null,
+            "kind": "JOURS",
+            "done": false,
+            "streak": {
+              "value": 0,
+              "unit": "JOURS"
+            },
+            "week": null
+          }
+        ],
+        "planned": [],
+        "done": [],
+        "toReschedule": [],
+        "overdue": [],
+        "goalsWithoutNextAction": [
+          {
+            "id": "00000000-0000-4000-8000-00000000006e",
+            "title": "Lire 12 livres"
+          }
+        ],
+        "emptyMessage": "Aucune action prévue"
+      }
+    }
+  },
+  "26 POST /api/habits/00000000-0000-4000-8000-00000000006f/check": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000006f",
+        "title": "Lire 20 pages",
+        "goalId": "00000000-0000-4000-8000-00000000006e",
+        "status": "ACTIVE",
+        "startDate": "2026-10-26",
+        "kind": "JOURS",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "timesPerWeek": null,
+        "rules": [
+          {
+            "from": "2026-10-26",
+            "kind": "JOURS",
+            "weekdays": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "timesPerWeek": null
+          }
+        ],
+        "pauses": [],
+        "paused": false,
+        "doneToday": true,
+        "streak": {
+          "value": 5,
+          "unit": "JOURS"
+        },
+        "bestStreak": 5,
+        "week": null,
+        "last30": {
+          "expected": 10,
+          "done": 8,
+          "rate": 0.8
+        }
+      }
+    }
+  },
+  "27 GET /api/habits": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": [
+        {
+          "id": "00000000-0000-4000-8000-00000000006f",
+          "title": "Lire 20 pages",
+          "goalId": "00000000-0000-4000-8000-00000000006e",
+          "status": "ACTIVE",
+          "startDate": "2026-10-26",
+          "kind": "JOURS",
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "timesPerWeek": null,
+          "rules": [
+            {
+              "from": "2026-10-26",
+              "kind": "JOURS",
+              "weekdays": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ],
+              "timesPerWeek": null
+            }
+          ],
+          "pauses": [],
+          "paused": false,
+          "doneToday": true,
+          "streak": {
+            "value": 5,
+            "unit": "JOURS"
+          },
+          "bestStreak": 5,
+          "week": null,
+          "last30": {
+            "expected": 10,
+            "done": 8,
+            "rate": 0.8
+          }
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000070",
+          "title": "Sport",
+          "goalId": null,
+          "status": "ACTIVE",
+          "startDate": "2026-10-26",
+          "kind": "SEMAINE",
+          "weekdays": [],
+          "timesPerWeek": 3,
+          "rules": [
+            {
+              "from": "2026-10-26",
+              "kind": "SEMAINE",
+              "weekdays": [],
+              "timesPerWeek": 3
+            }
+          ],
+          "pauses": [],
+          "paused": false,
+          "doneToday": false,
+          "streak": {
+            "value": 1,
+            "unit": "SEMAINES"
+          },
+          "bestStreak": 1,
+          "week": {
+            "done": 1,
+            "target": 3
+          },
+          "last30": {
+            "expected": 4,
+            "done": 4,
+            "rate": 1
+          }
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000071",
+          "title": "Réviser",
+          "goalId": null,
+          "status": "ACTIVE",
+          "startDate": "2026-11-04",
+          "kind": "JOURS",
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "timesPerWeek": null,
+          "rules": [
+            {
+              "from": "2026-11-04",
+              "kind": "JOURS",
+              "weekdays": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "timesPerWeek": null
+            }
+          ],
+          "pauses": [],
+          "paused": false,
+          "doneToday": false,
+          "streak": {
+            "value": 0,
+            "unit": "JOURS"
+          },
+          "bestStreak": 0,
+          "week": null,
+          "last30": {
+            "expected": 1,
+            "done": 0,
+            "rate": 0
+          }
+        }
+      ]
+    }
+  },
+  "28 GET /api/habits/00000000-0000-4000-8000-00000000006f": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000006f",
+        "title": "Lire 20 pages",
+        "goalId": "00000000-0000-4000-8000-00000000006e",
+        "status": "ACTIVE",
+        "startDate": "2026-10-26",
+        "kind": "JOURS",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "timesPerWeek": null,
+        "rules": [
+          {
+            "from": "2026-10-26",
+            "kind": "JOURS",
+            "weekdays": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "timesPerWeek": null
+          }
+        ],
+        "pauses": [],
+        "paused": false,
+        "doneToday": true,
+        "streak": {
+          "value": 5,
+          "unit": "JOURS"
+        },
+        "bestStreak": 5,
+        "week": null,
+        "last30": {
+          "expected": 10,
+          "done": 8,
+          "rate": 0.8
+        },
+        "grid": [
+          {
+            "date": "2026-10-05",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-06",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-07",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-08",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-09",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-10",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-11",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-12",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-13",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-14",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-15",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-16",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-17",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-18",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-19",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-20",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-21",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-22",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-23",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-24",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-25",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-26",
+            "state": "MANQUE"
+          },
+          {
+            "date": "2026-10-27",
+            "state": "FAIT"
+          },
+          {
+            "date": "2026-10-28",
+            "state": "FAIT"
+          },
+          {
+            "date": "2026-10-29",
+            "state": "FAIT"
+          },
+          {
+            "date": "2026-10-30",
+            "state": "MANQUE"
+          },
+          {
+            "date": "2026-10-31",
+            "state": "FAIT"
+          },
+          {
+            "date": "2026-11-01",
+            "state": "FAIT"
+          },
+          {
+            "date": "2026-11-02",
+            "state": "FAIT"
+          },
+          {
+            "date": "2026-11-03",
+            "state": "FAIT"
+          },
+          {
+            "date": "2026-11-04",
+            "state": "FAIT"
+          },
+          {
+            "date": "2026-11-05",
+            "state": "FUTUR"
+          },
+          {
+            "date": "2026-11-06",
+            "state": "FUTUR"
+          },
+          {
+            "date": "2026-11-07",
+            "state": "FUTUR"
+          },
+          {
+            "date": "2026-11-08",
+            "state": "FUTUR"
+          }
+        ]
+      }
+    }
+  },
+  "29 GET /api/habits/00000000-0000-4000-8000-000000000070": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000070",
+        "title": "Sport",
+        "goalId": null,
+        "status": "ACTIVE",
+        "startDate": "2026-10-26",
+        "kind": "SEMAINE",
+        "weekdays": [],
+        "timesPerWeek": 3,
+        "rules": [
+          {
+            "from": "2026-10-26",
+            "kind": "SEMAINE",
+            "weekdays": [],
+            "timesPerWeek": 3
+          }
+        ],
+        "pauses": [],
+        "paused": false,
+        "doneToday": false,
+        "streak": {
+          "value": 1,
+          "unit": "SEMAINES"
+        },
+        "bestStreak": 1,
+        "week": {
+          "done": 1,
+          "target": 3
+        },
+        "last30": {
+          "expected": 4,
+          "done": 4,
+          "rate": 1
+        },
+        "grid": [
+          {
+            "date": "2026-10-05",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-06",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-07",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-08",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-09",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-10",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-11",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-12",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-13",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-14",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-15",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-16",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-17",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-18",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-19",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-20",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-21",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-22",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-23",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-24",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-25",
+            "state": "AVANT"
+          },
+          {
+            "date": "2026-10-26",
+            "state": "LIBRE"
+          },
+          {
+            "date": "2026-10-27",
+            "state": "FAIT"
+          },
+          {
+            "date": "2026-10-28",
+            "state": "LIBRE"
+          },
+          {
+            "date": "2026-10-29",
+            "state": "FAIT"
+          },
+          {
+            "date": "2026-10-30",
+            "state": "LIBRE"
+          },
+          {
+            "date": "2026-10-31",
+            "state": "FAIT"
+          },
+          {
+            "date": "2026-11-01",
+            "state": "LIBRE"
+          },
+          {
+            "date": "2026-11-02",
+            "state": "FAIT"
+          },
+          {
+            "date": "2026-11-03",
+            "state": "LIBRE"
+          },
+          {
+            "date": "2026-11-04",
+            "state": "LIBRE"
+          },
+          {
+            "date": "2026-11-05",
+            "state": "FUTUR"
+          },
+          {
+            "date": "2026-11-06",
+            "state": "FUTUR"
+          },
+          {
+            "date": "2026-11-07",
+            "state": "FUTUR"
+          },
+          {
+            "date": "2026-11-08",
+            "state": "FUTUR"
+          }
+        ]
+      }
+    }
+  },
+  "30 PATCH /api/habits/00000000-0000-4000-8000-00000000006f": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000006f",
+        "title": "Lire 20 pages",
+        "goalId": "00000000-0000-4000-8000-00000000006e",
+        "status": "ACTIVE",
+        "startDate": "2026-10-26",
+        "kind": "JOURS",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "timesPerWeek": null,
+        "rules": [
+          {
+            "from": "2026-10-26",
+            "kind": "JOURS",
+            "weekdays": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "timesPerWeek": null
+          },
+          {
+            "from": "2026-11-05",
+            "kind": "JOURS",
+            "weekdays": [
+              1,
+              3,
+              5
+            ],
+            "timesPerWeek": null
+          }
+        ],
+        "pauses": [],
+        "paused": false,
+        "doneToday": true,
+        "streak": {
+          "value": 5,
+          "unit": "JOURS"
+        },
+        "bestStreak": 5,
+        "week": null,
+        "last30": {
+          "expected": 10,
+          "done": 8,
+          "rate": 0.8
+        }
+      }
+    }
+  },
+  "31 PATCH /api/habits/00000000-0000-4000-8000-00000000006f": {
+    "status": 400,
+    "body": {
+      "success": false,
+      "code": "VALIDATION_ERROR",
+      "message": "Certaines informations sont invalides",
+      "details": [
+        {
+          "field": "from",
+          "message": "La nouvelle fréquence ne peut pas commencer avant l’habitude"
+        }
+      ]
+    }
+  },
+  "32 PATCH /api/habits/00000000-0000-4000-8000-00000000006f": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-00000000006f",
+        "title": "Lire 30 pages",
+        "goalId": "00000000-0000-4000-8000-00000000006e",
+        "status": "ACTIVE",
+        "startDate": "2026-10-26",
+        "kind": "JOURS",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "timesPerWeek": null,
+        "rules": [
+          {
+            "from": "2026-10-26",
+            "kind": "JOURS",
+            "weekdays": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "timesPerWeek": null
+          },
+          {
+            "from": "2026-11-05",
+            "kind": "JOURS",
+            "weekdays": [
+              1,
+              3,
+              5
+            ],
+            "timesPerWeek": null
+          }
+        ],
+        "pauses": [],
+        "paused": false,
+        "doneToday": true,
+        "streak": {
+          "value": 5,
+          "unit": "JOURS"
+        },
+        "bestStreak": 5,
+        "week": null,
+        "last30": {
+          "expected": 10,
+          "done": 8,
+          "rate": 0.8
+        }
+      }
+    }
+  },
+  "33 POST /api/habits/00000000-0000-4000-8000-000000000071/pause": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000071",
+        "title": "Réviser",
+        "goalId": null,
+        "status": "ACTIVE",
+        "startDate": "2026-11-04",
+        "kind": "JOURS",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "timesPerWeek": null,
+        "rules": [
+          {
+            "from": "2026-11-04",
+            "kind": "JOURS",
+            "weekdays": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "timesPerWeek": null
+          }
+        ],
+        "pauses": [
+          {
+            "to": null,
+            "from": "2026-11-04"
+          }
+        ],
+        "paused": true,
+        "doneToday": false,
+        "streak": {
+          "value": 0,
+          "unit": "JOURS"
+        },
+        "bestStreak": 0,
+        "week": null,
+        "last30": {
+          "expected": 0,
+          "done": 0,
+          "rate": null
+        }
+      }
+    }
+  },
+  "34 GET /api/today": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "date": "2026-11-04",
+        "events": [],
+        "habits": [
+          {
+            "id": "00000000-0000-4000-8000-00000000006f",
+            "title": "Lire 30 pages",
+            "goalId": "00000000-0000-4000-8000-00000000006e",
+            "kind": "JOURS",
+            "done": true,
+            "streak": {
+              "value": 5,
+              "unit": "JOURS"
+            },
+            "week": null
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000070",
+            "title": "Sport",
+            "goalId": null,
+            "kind": "SEMAINE",
+            "done": false,
+            "streak": {
+              "value": 1,
+              "unit": "SEMAINES"
+            },
+            "week": {
+              "done": 1,
+              "target": 3
+            }
+          }
+        ],
+        "planned": [],
+        "done": [],
+        "toReschedule": [],
+        "overdue": [],
+        "goalsWithoutNextAction": [
+          {
+            "id": "00000000-0000-4000-8000-00000000006e",
+            "title": "Lire 12 livres"
+          }
+        ],
+        "emptyMessage": "Aucune action prévue"
+      }
+    }
+  },
+  "35 POST /api/habits/00000000-0000-4000-8000-000000000071/resume": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000071",
+        "title": "Réviser",
+        "goalId": null,
+        "status": "ACTIVE",
+        "startDate": "2026-11-04",
+        "kind": "JOURS",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "timesPerWeek": null,
+        "rules": [
+          {
+            "from": "2026-11-04",
+            "kind": "JOURS",
+            "weekdays": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "timesPerWeek": null
+          }
+        ],
+        "pauses": [],
+        "paused": false,
+        "doneToday": false,
+        "streak": {
+          "value": 0,
+          "unit": "JOURS"
+        },
+        "bestStreak": 0,
+        "week": null,
+        "last30": {
+          "expected": 1,
+          "done": 0,
+          "rate": 0
+        }
+      }
+    }
+  },
+  "36 POST /api/habits/00000000-0000-4000-8000-000000000070/archive": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000070",
+        "title": "Sport",
+        "goalId": null,
+        "status": "ARCHIVEE",
+        "startDate": "2026-10-26",
+        "kind": "SEMAINE",
+        "weekdays": [],
+        "timesPerWeek": 3,
+        "rules": [
+          {
+            "from": "2026-10-26",
+            "kind": "SEMAINE",
+            "weekdays": [],
+            "timesPerWeek": 3
+          }
+        ],
+        "pauses": [],
+        "paused": false,
+        "doneToday": false,
+        "streak": {
+          "value": 1,
+          "unit": "SEMAINES"
+        },
+        "bestStreak": 1,
+        "week": {
+          "done": 1,
+          "target": 3
+        },
+        "last30": {
+          "expected": 4,
+          "done": 4,
+          "rate": 1
+        }
+      }
+    }
+  },
+  "37 GET /api/habits?status=ACTIVE": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": [
+        {
+          "id": "00000000-0000-4000-8000-00000000006f",
+          "title": "Lire 30 pages",
+          "goalId": "00000000-0000-4000-8000-00000000006e",
+          "status": "ACTIVE",
+          "startDate": "2026-10-26",
+          "kind": "JOURS",
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "timesPerWeek": null,
+          "rules": [
+            {
+              "from": "2026-10-26",
+              "kind": "JOURS",
+              "weekdays": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ],
+              "timesPerWeek": null
+            },
+            {
+              "from": "2026-11-05",
+              "kind": "JOURS",
+              "weekdays": [
+                1,
+                3,
+                5
+              ],
+              "timesPerWeek": null
+            }
+          ],
+          "pauses": [],
+          "paused": false,
+          "doneToday": true,
+          "streak": {
+            "value": 5,
+            "unit": "JOURS"
+          },
+          "bestStreak": 5,
+          "week": null,
+          "last30": {
+            "expected": 10,
+            "done": 8,
+            "rate": 0.8
+          }
+        },
+        {
+          "id": "00000000-0000-4000-8000-000000000071",
+          "title": "Réviser",
+          "goalId": null,
+          "status": "ACTIVE",
+          "startDate": "2026-11-04",
+          "kind": "JOURS",
+          "weekdays": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "timesPerWeek": null,
+          "rules": [
+            {
+              "from": "2026-11-04",
+              "kind": "JOURS",
+              "weekdays": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "timesPerWeek": null
+            }
+          ],
+          "pauses": [],
+          "paused": false,
+          "doneToday": false,
+          "streak": {
+            "value": 0,
+            "unit": "JOURS"
+          },
+          "bestStreak": 0,
+          "week": null,
+          "last30": {
+            "expected": 1,
+            "done": 0,
+            "rate": 0
+          }
+        }
+      ]
+    }
+  },
+  "38 POST /api/habits/00000000-0000-4000-8000-000000000070/unarchive": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "id": "00000000-0000-4000-8000-000000000070",
+        "title": "Sport",
+        "goalId": null,
+        "status": "ACTIVE",
+        "startDate": "2026-10-26",
+        "kind": "SEMAINE",
+        "weekdays": [],
+        "timesPerWeek": 3,
+        "rules": [
+          {
+            "from": "2026-10-26",
+            "kind": "SEMAINE",
+            "weekdays": [],
+            "timesPerWeek": 3
+          }
+        ],
+        "pauses": [],
+        "paused": false,
+        "doneToday": false,
+        "streak": {
+          "value": 1,
+          "unit": "SEMAINES"
+        },
+        "bestStreak": 1,
+        "week": {
+          "done": 1,
+          "target": 3
+        },
+        "last30": {
+          "expected": 4,
+          "done": 4,
+          "rate": 1
+        }
+      }
+    }
+  },
+  "39 GET /api/reviews?period=week&date=2026-11-04": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "from": "2026-11-02",
+        "to": "2026-11-08",
+        "tasks": {
+          "expected": 0,
+          "done": 0,
+          "pending": 0,
+          "rescheduledOut": 0,
+          "cancelled": 0,
+          "plannedAtStart": 0,
+          "addedDuringPeriod": 0,
+          "executionRate": null
+        },
+        "events": {
+          "planned": 0,
+          "done": 0,
+          "cancelled": 0,
+          "expected": 0
+        },
+        "habits": [
+          {
+            "id": "00000000-0000-4000-8000-00000000006f",
+            "title": "Lire 30 pages",
+            "expected": 3,
+            "done": 3,
+            "rate": 1
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000070",
+            "title": "Sport",
+            "expected": 1,
+            "done": 1,
+            "rate": 1
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000071",
+            "title": "Réviser",
+            "expected": 1,
+            "done": 0,
+            "rate": 0
+          }
+        ],
+        "goals": [
+          {
+            "id": "00000000-0000-4000-8000-00000000006e",
+            "title": "Lire 12 livres",
+            "progress": {
+              "mode": "JALONS",
+              "done": 0,
+              "total": 0,
+              "percent": null,
+              "label": "Ajoute un premier jalon"
+            },
+            "milestonesDoneInPeriod": 0
+          }
+        ],
+        "questions": [
+          "Qu'ai-je accompli ?",
+          "Qu'est-ce qui m'a bloqué ?",
+          "Quelle est ma prochaine priorité ?"
+        ]
+      }
+    }
+  },
+  "40 GET /api/reviews?period=week&date=2026-10-28": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "from": "2026-10-26",
+        "to": "2026-11-01",
+        "tasks": {
+          "expected": 0,
+          "done": 0,
+          "pending": 0,
+          "rescheduledOut": 0,
+          "cancelled": 0,
+          "plannedAtStart": 0,
+          "addedDuringPeriod": 0,
+          "executionRate": null
+        },
+        "events": {
+          "planned": 0,
+          "done": 0,
+          "cancelled": 0,
+          "expected": 0
+        },
+        "habits": [
+          {
+            "id": "00000000-0000-4000-8000-00000000006f",
+            "title": "Lire 30 pages",
+            "expected": 7,
+            "done": 5,
+            "rate": 0.71
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000070",
+            "title": "Sport",
+            "expected": 3,
+            "done": 3,
+            "rate": 1
+          }
+        ],
+        "goals": [
+          {
+            "id": "00000000-0000-4000-8000-00000000006e",
+            "title": "Lire 12 livres",
+            "progress": {
+              "mode": "JALONS",
+              "done": 0,
+              "total": 0,
+              "percent": null,
+              "label": "Ajoute un premier jalon"
+            },
+            "milestonesDoneInPeriod": 0
+          }
+        ],
+        "questions": [
+          "Qu'ai-je accompli ?",
+          "Qu'est-ce qui m'a bloqué ?",
+          "Quelle est ma prochaine priorité ?"
+        ]
+      }
+    }
+  },
+  "41 GET /api/today?date=2026-11-02": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "data": {
+        "date": "2026-11-02",
+        "events": [],
+        "habits": [
+          {
+            "id": "00000000-0000-4000-8000-00000000006f",
+            "title": "Lire 30 pages",
+            "goalId": "00000000-0000-4000-8000-00000000006e",
+            "kind": "JOURS",
+            "done": true,
+            "streak": {
+              "value": 3,
+              "unit": "JOURS"
+            },
+            "week": null
+          },
+          {
+            "id": "00000000-0000-4000-8000-000000000070",
+            "title": "Sport",
+            "goalId": null,
+            "kind": "SEMAINE",
+            "done": true,
+            "streak": {
+              "value": 1,
+              "unit": "SEMAINES"
+            },
+            "week": {
+              "done": 1,
+              "target": 3
+            }
+          }
+        ],
+        "planned": [],
+        "done": [],
+        "toReschedule": [],
+        "overdue": [],
+        "goalsWithoutNextAction": [
+          {
+            "id": "00000000-0000-4000-8000-00000000006e",
+            "title": "Lire 12 livres"
+          }
+        ],
+        "emptyMessage": "Aucune action prévue"
+      }
+    }
+  },
+  "42 DELETE /api/habits/00000000-0000-4000-8000-000000000071": {
+    "status": 200,
+    "body": {
+      "success": true,
+      "message": "Habitude supprimée"
+    }
+  },
+  "43 GET /api/habits/00000000-0000-4000-8000-000000000071": {
+    "status": 404,
+    "body": {
+      "success": false,
+      "code": "NOT_FOUND",
+      "message": "Habitude introuvable"
+    }
+  },
+  "44 GET /api/habits?status=PERDUE": {
+    "status": 400,
+    "body": {
+      "success": false,
+      "code": "VALIDATION_ERROR",
+      "message": "Certaines informations sont invalides",
+      "details": [
+        {
+          "field": "status",
+          "message": "Statut inconnu"
+        }
+      ]
+    }
+  }
+}

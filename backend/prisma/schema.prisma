@@ -27,6 +27,8 @@ model User {
   tasks       Task[]
   events      Event[]
   eventSeries EventSeries[]
+  habits      Habit[]
+  habitChecks HabitCheck[]
   sessions    Session[]
 
   milestones        Milestone[]
@@ -140,6 +142,7 @@ model Goal {
   readings    GoalReading[]
   events      Event[]
   eventSeries EventSeries[]
+  habits      Habit[]
 
   // Numéro de version attribué par un déclencheur (spec 007) : sert à la synchronisation.
   // Horloge hybride de chaque champ (synchronisation, spec 007) : sert à trancher les conflits.
@@ -587,4 +590,58 @@ model SyncMutation {
   @@id([userId, mutationId])
   @@index([createdAt])
   @@map("sync_mutations")
+}
+
+enum HabitStatus {
+  ACTIVE
+  ARCHIVEE
+
+  @@map("habit_status")
+}
+
+// Habitude (spec 012). `rules` : liste datée [{ from, kind: JOURS|SEMAINE, weekdays, timesPerWeek }] (changer de
+// fréquence n'altère pas le passé) ; `pauses` : [{ from, to|null }]. Évaluée par shared/src/habits.rules.ts.
+model Habit {
+  id        String      @id @default(uuid()) @db.Uuid
+  userId    String      @map("user_id") @db.Uuid
+  goalId    String?     @map("goal_id") @db.Uuid
+  title     String      @db.VarChar(120)
+  rules     Json
+  pauses    Json        @default("[]")
+  status    HabitStatus @default(ACTIVE)
+  startDate DateTime    @map("start_date") @db.Date
+  createdAt DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  fieldClocks   Json   @default("{}") @map("field_clocks")
+  serverVersion BigInt @default(0) @map("server_version")
+
+  user   User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goal   Goal?        @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  checks HabitCheck[]
+
+  @@index([userId, serverVersion])
+  @@map("habits")
+}
+
+// Un jour d'une habitude : fait ou non (décocher garde la ligne : son identifiant est calculé à partir de
+// l'habitude et du jour, une suppression empêcherait de recocher après synchronisation).
+model HabitCheck {
+  id        String   @id @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  habitId   String   @map("habit_id") @db.Uuid
+  date      DateTime @db.Date
+  done      Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  fieldClocks   Json   @default("{}") @map("field_clocks")
+  serverVersion BigInt @default(0) @map("server_version")
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  habit Habit @relation(fields: [habitId], references: [id], onDelete: Cascade)
+
+  @@unique([habitId, date])
+  @@index([userId, serverVersion])
+  @@map("habit_checks")
 }

@@ -5,6 +5,8 @@ import type {
   EventRepo,
   GoalQuery,
   GoalRepo,
+  HabitCheckRepo,
+  HabitRepo,
   MilestoneRepo,
   ReadingRepo,
   Repo,
@@ -12,9 +14,10 @@ import type {
   TaskQuery,
   TaskRepo,
 } from '../../../shared/src/domain/repo.ts';
-import type { EventRow, GoalRow, MilestoneRow, ReadingRow, SeriesRow, TaskRow } from '../../../shared/src/domain/rows.ts';
+import type { EventRow, GoalRow, HabitCheckRow, HabitRow, MilestoneRow, ReadingRow, SeriesRow, TaskRow } from '../../../shared/src/domain/rows.ts';
+import type { HabitPause, HabitRule } from '../../../shared/src/habits.rules.ts';
 import { ACTIVE_GOAL_STATUSES } from '../../../shared/src/domain/rows.ts';
-import type { Event, EventSeries, Goal, GoalReading, Milestone, Prisma, Task } from '../generated/prisma/client.ts';
+import type { Event, EventSeries, Goal, GoalReading, Habit, HabitCheck, Milestone, Prisma, Task } from '../generated/prisma/client.ts';
 import { fromDbDate, toDbDate } from '../../../shared/src/dates.ts';
 import { prisma } from './prisma.ts';
 
@@ -139,6 +142,46 @@ export function toSeriesRow(s: EventSeries): SeriesRow {
     createdAt: s.createdAt.toISOString(),
     updatedAt: s.updatedAt.toISOString(),
   };
+}
+
+export function toHabitRow(h: Habit): HabitRow {
+  return {
+    id: h.id,
+    goalId: h.goalId,
+    title: h.title,
+    rules: h.rules as unknown as HabitRule[],
+    pauses: h.pauses as unknown as HabitPause[],
+    status: h.status,
+    startDate: day(h.startDate)!,
+    createdAt: h.createdAt.toISOString(),
+    updatedAt: h.updatedAt.toISOString(),
+  };
+}
+
+export function toHabitCheckRow(c: HabitCheck): HabitCheckRow {
+  return {
+    id: c.id,
+    habitId: c.habitId,
+    date: day(c.date)!,
+    done: c.done,
+    createdAt: c.createdAt.toISOString(),
+    updatedAt: c.updatedAt.toISOString(),
+  };
+}
+
+export function habitData(p: Partial<HabitRow>): Prisma.HabitUncheckedUpdateInput {
+  return {
+    goalId: p.goalId,
+    title: p.title,
+    rules: p.rules as unknown as Prisma.InputJsonValue | undefined,
+    pauses: p.pauses as unknown as Prisma.InputJsonValue | undefined,
+    status: p.status,
+    startDate: dbDay(p.startDate) ?? undefined,
+  };
+}
+
+export function habitCheckData(p: Partial<HabitCheckRow>): Prisma.HabitCheckUncheckedUpdateInput {
+  return { habitId: p.habitId, date: dbDay(p.date) ?? undefined, done: p.done };
 }
 
 /** Colonnes Prisma d'un correctif de rendez-vous (dates et instants convertis). */
@@ -482,6 +525,56 @@ function seriesRepo(userId: string): SeriesRepo {
   };
 }
 
+function habitRepo(userId: string): HabitRepo {
+  return {
+    async get(id) {
+      const h = await prisma.habit.findFirst({ where: { id, userId } });
+      return h ? toHabitRow(h) : null;
+    },
+    async list() {
+      return (await prisma.habit.findMany({ where: { userId }, orderBy: [{ createdAt: 'asc' }, { id: 'asc' }] })).map(toHabitRow);
+    },
+    async insert(row) {
+      await prisma.habit.create({
+        data: {
+          ...(habitData(row) as Prisma.HabitUncheckedCreateInput),
+          id: row.id,
+          userId,
+          startDate: toDbDate(row.startDate),
+          createdAt: new Date(row.createdAt),
+        },
+      });
+    },
+    async update(id, patch) {
+      return toHabitRow(await prisma.habit.update({ where: { id, userId }, data: habitData(patch) }));
+    },
+    async remove(id) {
+      // La base supprime les jours cochés (cascade).
+      await prisma.habit.deleteMany({ where: { id, userId } });
+    },
+  };
+}
+
+function habitCheckRepo(userId: string): HabitCheckRepo {
+  return {
+    async get(id) {
+      const c = await prisma.habitCheck.findFirst({ where: { id, userId } });
+      return c ? toHabitCheckRow(c) : null;
+    },
+    async byHabits(habitIds) {
+      return (await prisma.habitCheck.findMany({ where: { userId, habitId: { in: habitIds } } })).map(toHabitCheckRow);
+    },
+    async insert(row) {
+      await prisma.habitCheck.create({
+        data: { id: row.id, userId, habitId: row.habitId, date: toDbDate(row.date), done: row.done, createdAt: new Date(row.createdAt) },
+      });
+    },
+    async update(id, patch) {
+      return toHabitCheckRow(await prisma.habitCheck.update({ where: { id, userId }, data: habitCheckData(patch) }));
+    },
+  };
+}
+
 /** Interface de stockage partagée, limitée aux données d'un utilisateur. */
 export function prismaRepo(userId: string): Repo {
   return {
@@ -491,6 +584,8 @@ export function prismaRepo(userId: string): Repo {
     readings: readingRepo(userId),
     events: eventRepo(userId),
     series: seriesRepo(userId),
+    habits: habitRepo(userId),
+    habitChecks: habitCheckRepo(userId),
   };
 }
 
