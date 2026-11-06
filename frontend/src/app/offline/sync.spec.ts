@@ -615,3 +615,41 @@ describe('rendez-vous et réunions récurrentes sur le téléphone (spec 009)', 
     expect(order).toEqual(['event_series', 'events', 'events', 'tasks']);
   });
 });
+
+describe('habitudes sur le téléphone (spec 012)', () => {
+  it('créer et cocher hors ligne : messages valides, une seule ligne par jour même cochée deux fois', async () => {
+    await setup();
+    vi.setSystemTime(new Date('2026-11-04T08:00:00.000Z'));
+    const h = (
+      (await call('POST', '/habits', { id: uuid(400), title: 'Lire', kind: 'JOURS', weekdays: [1, 2, 3, 4, 5, 6, 7] }))
+        .body as { data: { id: string } }
+    ).data;
+    await call('POST', `/habits/${h.id}/check`, {});
+    await call('POST', `/habits/${h.id}/check`, {});
+    await call('POST', `/habits/${h.id}/uncheck`, {});
+    const pending = (await offline.current!.pending(50)).map((o) => o.mutation);
+    expect(pending.map((m) => `${m.op}:${m.entity}`)).toEqual([
+      'create:habits',
+      'create:habit_checks',
+      'update:habit_checks',
+    ]);
+    for (const m of pending.filter((x) => x.fields && x.op === 'create')) {
+      expect(FIELD_SCHEMAS[m.entity].safeParse(m.fields).success, m.entity).toBe(true);
+    }
+    expect(pushSchema.safeParse({ deviceId: 'appareil', mutations: pending }).success).toBe(true);
+  });
+
+  it('habitude supprimée reçue du serveur : ses jours cochés disparaissent aussi, rien à renvoyer', async () => {
+    await setup();
+    vi.setSystemTime(new Date('2026-11-04T08:00:00.000Z'));
+    await call('POST', '/habits', { id: uuid(410), title: 'Sport', kind: 'SEMAINE', timesPerWeek: 3 });
+    await call('POST', `/habits/${uuid(410)}/check`, {});
+    await offline.current!.acknowledge(
+      (await offline.current!.pending(50)).map((o) => ({ mutationId: o.mutation.mutationId, status: 'applied' })),
+    );
+    await offline.current!.applyPull([{ entity: 'habits', op: 'delete', id: uuid(410), version: 5 }], 5, 'epoch-1');
+    expect(await offline.current!.db.habits.count()).toBe(0);
+    expect(await offline.current!.db.habitChecks.count()).toBe(0);
+    expect(await offline.current!.pendingCount()).toBe(0);
+  });
+});

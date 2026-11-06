@@ -869,3 +869,164 @@ ion-modal:not(.ob-sheet) ion-accordion ion-item[slot='header'] {
     color: var(--ob-warn-ink);
   }
 }
+
+/* ---- Habitudes (spec 012) */
+.ob-icon-btn {
+  --padding-start: 0;
+  --padding-end: 0;
+  width: 44px;
+  height: 44px;
+  color: var(--ob-text-2);
+}
+.ob-habit {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  padding: 8px 12px 8px 8px;
+
+  .check {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 2px solid var(--ob-hairline-strong);
+    border-radius: 999px;
+    background: var(--ob-surface);
+    color: var(--ion-color-primary-contrast);
+    font-size: 22px;
+    cursor: pointer;
+  }
+  &.done .check {
+    border-color: var(--ion-color-primary);
+    background: var(--ion-color-primary);
+  }
+  .body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    min-height: 44px;
+    justify-content: center;
+    color: inherit;
+    text-decoration: none;
+  }
+  .title {
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+  &.done .title {
+    color: var(--ob-text-2);
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+}
+.ob-habit-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+.ob-habit-hero {
+  margin-top: 8px;
+  padding: 18px;
+
+  h1 {
+    margin: 0 0 4px;
+    font-size: 1.5rem;
+    overflow-wrap: anywhere;
+  }
+  > p {
+    margin: 0;
+  }
+}
+.ob-habit-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 16px 0 0;
+
+  > div {
+    padding: 10px 8px;
+    border-radius: var(--ob-radius-md);
+    background: var(--ob-surface-2);
+    text-align: center;
+  }
+  dt {
+    color: var(--ob-text-2);
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  dd {
+    margin: 0;
+  }
+  .ob-display {
+    font-size: 1.5rem;
+  }
+  .unit {
+    color: var(--ob-text-2);
+    font-size: 0.75rem;
+  }
+}
+.ob-habit-h2 {
+  margin: 0;
+  font-size: 1.0625rem;
+}
+.ob-habit-hint {
+  margin: 2px 0 8px;
+  font-size: 0.8125rem;
+}
+.ob-habit-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 3px;
+  margin-top: 4px;
+
+  button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    border: 1.5px solid transparent;
+    border-radius: var(--ob-radius-sm);
+    background: var(--ob-surface);
+    color: var(--ob-text);
+    font: inherit;
+    font-size: 0.75rem;
+    cursor: pointer;
+
+    ion-icon {
+      font-size: 16px;
+    }
+    &:disabled {
+      cursor: default;
+      opacity: 0.45;
+    }
+  }
+  .s-FAIT {
+    background: var(--ion-color-primary);
+    color: var(--ion-color-primary-contrast);
+  }
+  .s-MANQUE {
+    border-color: color-mix(in srgb, var(--ob-danger) 45%, transparent);
+    color: var(--ob-danger);
+  }
+  .s-A_FAIRE {
+    border-color: var(--ion-color-primary);
+  }
+  .s-PAUSE {
+    background: var(--ob-surface-2);
+    color: var(--ob-text-2);
+  }
+}
+.ob-habit-actions {
+  display: grid;
+  gap: 8px;
+  margin-top: 20px;
+}

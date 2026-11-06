@@ -3,6 +3,7 @@ import type { Table } from 'dexie';
 import { todayIn } from '../../../../shared/src/dates';
 import * as events from '../../../../shared/src/domain/events';
 import * as goals from '../../../../shared/src/domain/goals';
+import * as habits from '../../../../shared/src/domain/habits';
 import * as overview from '../../../../shared/src/domain/overview';
 import type { Ctx, Repo } from '../../../../shared/src/domain/repo';
 import { newId } from '../../../../shared/src/domain/repo';
@@ -266,6 +267,88 @@ const ROUTES: { method: string; pattern: string; write: boolean; handler: Handle
     write: true,
     handler: async (c) => ({ data: await events.getAgenda(c.repo, c.ctx, c.query) }),
   },
+  // Habitudes (spec 012).
+  {
+    method: 'GET',
+    pattern: '/habits',
+    write: false,
+    handler: async (c) => ({ data: await habits.listHabits(c.repo, c.ctx, c.query) }),
+  },
+  {
+    method: 'POST',
+    pattern: '/habits',
+    write: true,
+    handler: async (c) => ({ status: 201, data: await habits.createHabit(c.repo, c.ctx, c.body) }),
+  },
+  {
+    method: 'GET',
+    pattern: '/habits/:id',
+    write: false,
+    handler: async (c) => ({ data: await habits.getHabit(c.repo, c.ctx, idParam(c.params['id'], 'Habitude')) }),
+  },
+  {
+    method: 'PATCH',
+    pattern: '/habits/:id',
+    write: true,
+    handler: async (c) => ({
+      data: await habits.updateHabit(c.repo, c.ctx, idParam(c.params['id'], 'Habitude'), c.body),
+    }),
+  },
+  {
+    method: 'DELETE',
+    pattern: '/habits/:id',
+    write: true,
+    handler: async (c) => {
+      await habits.deleteHabit(c.repo, idParam(c.params['id'], 'Habitude'));
+      return { message: 'Habitude supprimée' };
+    },
+  },
+  {
+    method: 'POST',
+    pattern: '/habits/:id/check',
+    write: true,
+    handler: async (c) => ({
+      data: await habits.setHabitDay(c.repo, c.ctx, idParam(c.params['id'], 'Habitude'), c.body, true),
+    }),
+  },
+  {
+    method: 'POST',
+    pattern: '/habits/:id/uncheck',
+    write: true,
+    handler: async (c) => ({
+      data: await habits.setHabitDay(c.repo, c.ctx, idParam(c.params['id'], 'Habitude'), c.body, false),
+    }),
+  },
+  {
+    method: 'POST',
+    pattern: '/habits/:id/pause',
+    write: true,
+    handler: async (c) => ({
+      data: await habits.pauseHabit(c.repo, c.ctx, idParam(c.params['id'], 'Habitude'), c.body),
+    }),
+  },
+  {
+    method: 'POST',
+    pattern: '/habits/:id/resume',
+    write: true,
+    handler: async (c) => ({ data: await habits.resumeHabit(c.repo, c.ctx, idParam(c.params['id'], 'Habitude')) }),
+  },
+  {
+    method: 'POST',
+    pattern: '/habits/:id/archive',
+    write: true,
+    handler: async (c) => ({
+      data: await habits.setHabitStatus(c.repo, c.ctx, idParam(c.params['id'], 'Habitude'), 'ARCHIVEE'),
+    }),
+  },
+  {
+    method: 'POST',
+    pattern: '/habits/:id/unarchive',
+    write: true,
+    handler: async (c) => ({
+      data: await habits.setHabitStatus(c.repo, c.ctx, idParam(c.params['id'], 'Habitude'), 'ACTIVE'),
+    }),
+  },
   // Vue d'ensemble (spec 010) : elles aussi créent les occurrences à venir.
   {
     method: 'GET',
@@ -506,6 +589,8 @@ export class LocalEngine {
           else if (change.entity === 'goal_readings') await remote.readings.remove(change.id);
           else if (change.entity === 'event_series') await remote.series.remove(change.id);
           else if (change.entity === 'events') await remote.events.remove(change.id);
+          else if (change.entity === 'habits') await remote.habits.remove(change.id);
+          else if (change.entity === 'habit_checks') await this.db.habitChecks.delete(change.id);
           else await remote.tasks.remove(change.id);
           continue;
         }
@@ -535,6 +620,8 @@ export class LocalEngine {
       event_series: this.db.series,
       events: this.db.events,
       tasks: this.db.tasks,
+      habits: this.db.habits,
+      habit_checks: this.db.habitChecks,
     };
     return tables[entity] as unknown as Table<Stored<{ id: string; createdAt: string; updatedAt: string }>, string>;
   }

@@ -218,9 +218,53 @@ export interface EventSummary {
   expected: number;
 }
 
+export type HabitKind = 'JOURS' | 'SEMAINE';
+export type HabitDayState = 'FAIT' | 'MANQUE' | 'A_FAIRE' | 'PAUSE' | 'LIBRE' | 'AVANT' | 'FUTUR';
+
+export interface HabitStreak {
+  value: number;
+  unit: 'JOURS' | 'SEMAINES';
+}
+
+/** Habitude (spec 012) : règle en vigueur, séries et réussite calculées par l'API ou le moteur local. */
+export interface Habit {
+  id: string;
+  title: string;
+  goalId: string | null;
+  status: 'ACTIVE' | 'ARCHIVEE';
+  startDate: string;
+  kind: HabitKind;
+  weekdays: number[];
+  timesPerWeek: number | null;
+  rules: { from: string; kind: HabitKind; weekdays: number[]; timesPerWeek: number | null }[];
+  pauses: { from: string; to: string | null }[];
+  paused: boolean;
+  doneToday: boolean;
+  streak: HabitStreak;
+  bestStreak: number;
+  week: { done: number; target: number } | null;
+  last30: { expected: number; done: number; rate: number | null };
+}
+
+export interface HabitDetail extends Habit {
+  grid: { date: string; state: HabitDayState }[];
+}
+
+/** Habitude du jour (« Aujourd'hui »). */
+export interface TodayHabit {
+  id: string;
+  title: string;
+  goalId: string | null;
+  kind: HabitKind;
+  done: boolean;
+  streak: HabitStreak;
+  week: { done: number; target: number } | null;
+}
+
 export interface TodayView {
   date: string;
   events: CalendarEvent[];
+  habits: TodayHabit[];
   planned: Task[];
   done: Task[];
   toReschedule: Task[];
@@ -249,6 +293,7 @@ export interface Review {
     executionRate: Rate | null;
   };
   events: EventSummary;
+  habits: { id: string; title: string; expected: number; done: number; rate: number | null }[];
   goals: { id: string; title: string; progress: Progress; milestonesDoneInPeriod: number }[];
   questions: string[];
 }

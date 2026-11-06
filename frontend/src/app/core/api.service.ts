@@ -19,6 +19,8 @@ import type {
   EventScope,
   Goal,
   GoalDetail,
+  Habit,
+  HabitDetail,
   GoalReading,
   Milestone,
   Page,
@@ -90,6 +92,30 @@ export class ApiService {
   calendar(month?: string): Promise<CalendarMonth> {
     return this.call('GET', '/calendar', undefined, { month });
   }
+  // Habitudes (spec 012)
+  habits(q: Query = {}): Promise<Habit[]> {
+    return this.call('GET', '/habits', undefined, q);
+  }
+  habit(id: string): Promise<HabitDetail> {
+    return this.call('GET', `/habits/${id}`);
+  }
+  createHabit(body: Body): Promise<Habit> {
+    return this.call('POST', '/habits', body);
+  }
+  updateHabit(id: string, body: Body): Promise<Habit> {
+    return this.call('PATCH', `/habits/${id}`, body);
+  }
+  deleteHabit(id: string): Promise<void> {
+    return this.call('DELETE', `/habits/${id}`);
+  }
+  /** Coche (`done`) ou décoche un jour : aujourd'hui par défaut. */
+  markHabit(id: string, done: boolean, date?: string): Promise<Habit> {
+    return this.call('POST', `/habits/${id}/${done ? 'check' : 'uncheck'}`, date ? { date } : {});
+  }
+  habitAction(id: string, action: 'pause' | 'resume' | 'archive' | 'unarchive'): Promise<Habit> {
+    return this.call('POST', `/habits/${id}/${action}`, {});
+  }
+
   /** Réunions récurrentes. */
   series(): Promise<SeriesSummary[]> {
     return this.call('GET', '/series');

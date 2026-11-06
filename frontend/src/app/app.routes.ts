@@ -21,6 +21,11 @@ export const routes: Routes = [
         path: 'evenements/:id',
         loadComponent: () => import('./events/event-detail.page').then((m) => m.EventDetailPage),
       },
+      { path: 'habitudes', loadComponent: () => import('./habits/habits.page').then((m) => m.HabitsPage) },
+      {
+        path: 'habitudes/:id',
+        loadComponent: () => import('./habits/habit-detail.page').then((m) => m.HabitDetailPage),
+      },
       { path: 'reunions', loadComponent: () => import('./series/series.page').then((m) => m.SeriesPage) },
       { path: 'agenda', loadComponent: () => import('./agenda/agenda.page').then((m) => m.AgendaPage) },
       { path: 'agenda/:date', loadComponent: () => import('./agenda/agenda.page').then((m) => m.AgendaPage) },

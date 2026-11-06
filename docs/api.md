@@ -263,3 +263,21 @@ Champ `reminder` des rendez-vous et des réunions récurrentes (création, modif
 `AUCUN`, `HEURE`, `M15`, `M30`, `H1`, `DEPART` (début du temps réservé, sinon 15 min avant), ou `null` pour le
 réglage par défaut du téléphone. Copié dans les occurrences. Synchronisé (facultatif dans les messages : une
 application plus ancienne reste compatible). Les notifications elles-mêmes sont programmées par le téléphone.
+
+## Habitudes (spec 012)
+
+Aussi traitées par le téléphone, sans réseau.
+
+| Méthode | Chemin | Entrée | Réponse |
+|---|---|---|---|
+| GET | `/habits` | `status?` (`ACTIVE`, `ARCHIVEE`) | habitudes (actives d'abord) avec `streak`, `bestStreak`, `week`, `last30` |
+| POST | `/habits` | `title`, `goalId?`, `kind` (`JOURS` + `weekdays`, ou `SEMAINE` + `timesPerWeek` 1-7), `startDate?` | `201` habitude |
+| GET | `/habits/:id` | — | habitude + `grid` (5 semaines : `FAIT`, `MANQUE`, `A_FAIRE`, `PAUSE`, `LIBRE`, `AVANT`, `FUTUR`) |
+| PATCH | `/habits/:id` | `title?`, `goalId?`, fréquence (`kind`…) + `from?` (aujourd'hui par défaut) | habitude ; nouvelle règle à partir de `from` |
+| DELETE | `/habits/:id` | — | jours cochés supprimés avec elle |
+| POST | `/habits/:id/check` · `/uncheck` | `date?` (aujourd'hui par défaut, jamais futur ni avant le début) | habitude (idempotent) |
+| POST | `/habits/:id/pause` (`date?`) · `/resume` · `/archive` · `/unarchive` | — | habitude (idempotent) |
+
+`GET /today` renvoie `habits` (habitudes du jour : `done`, `streak`, `week`) ; `GET /reviews` renvoie `habits`
+(`expected`, `done`, `rate` par habitude). Synchronisation : tables `habits` et `habit_checks` (protocole 3 ;
+un client en version 2 ne les reçoit pas).

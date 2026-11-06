@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import budgetGolden from '../../../../shared/parity/golden/budget-mensuel.json';
 import evenementsGolden from '../../../../shared/parity/golden/evenements.json';
+import habitudesGolden from '../../../../shared/parity/golden/habitudes.json';
 import ordreGolden from '../../../../shared/parity/golden/ordre-des-listes.json';
 import progressionGolden from '../../../../shared/parity/golden/progression-mesuree.json';
 import reunionsGolden from '../../../../shared/parity/golden/reunions-recurrentes.json';
@@ -26,6 +27,7 @@ const GOLDEN: Record<string, unknown> = {
   'ordre-des-listes': ordreGolden,
   'reunions-recurrentes': reunionsGolden,
   'vue-ensemble': vueGolden,
+  habitudes: habitudesGolden,
 };
 
 /** Scénarios dont TOUS les appels sont gérés localement. Budget : phase 3. */
@@ -36,6 +38,7 @@ const LOCAL = [
   'evenements',
   'reunions-recurrentes',
   'vue-ensemble',
+  'habitudes',
 ];
 
 let counter = 0;

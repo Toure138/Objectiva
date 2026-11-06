@@ -187,6 +187,21 @@ interface Stat {
               }
             </div>
 
+            @if (r.habits.length > 0) {
+              <section>
+                <app-section-header title="Habitudes" />
+                @for (h of r.habits; track h.id) {
+                  <div class="goal ob-card">
+                    <strong>{{ h.title }}</strong>
+                    @if (h.rate !== null) {
+                      <app-progress-bar [percent]="h.rate * 100" [label]="h.done + ' sur ' + h.expected" />
+                    }
+                    <small>{{ h.done }} sur {{ h.expected }} attendu{{ h.expected > 1 ? 's' : '' }}</small>
+                  </div>
+                }
+              </section>
+            }
+
             <section>
               <app-section-header title="Progression des objectifs" />
               @for (g of r.goals; track g.id) {

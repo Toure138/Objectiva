@@ -3,6 +3,8 @@ import Dexie, { type Table } from 'dexie';
 import type {
   EventRow,
   GoalRow,
+  HabitCheckRow,
+  HabitRow,
   MilestoneRow,
   ReadingRow,
   SeriesRow,
@@ -57,6 +59,8 @@ export class OfflineDb extends Dexie {
   tasks!: Table<Stored<TaskRow>, string>;
   events!: Table<Stored<EventRow>, string>;
   series!: Table<Stored<SeriesRow>, string>;
+  habits!: Table<Stored<HabitRow>, string>;
+  habitChecks!: Table<Stored<HabitCheckRow>, string>;
   outbox!: Table<OutboxItem, number>;
   meta!: Table<MetaEntry, string>;
 
@@ -77,11 +81,25 @@ export class OfflineDb extends Dexie {
       events: 'id, startsAt, seriesId, goalId, milestoneId',
       series: 'id, goalId, milestoneId',
     });
+    // Spec 012 : habitudes et jours cochés.
+    this.version(3).stores({
+      habits: 'id, goalId',
+      habitChecks: 'id, habitId, date',
+    });
   }
 
   /** Les tables de données, pour ouvrir une transaction. */
   get dataTables(): Table[] {
-    return [this.goals, this.milestones, this.readings, this.tasks, this.events, this.series];
+    return [
+      this.goals,
+      this.milestones,
+      this.readings,
+      this.tasks,
+      this.events,
+      this.series,
+      this.habits,
+      this.habitChecks,
+    ];
   }
 
   get allTables(): Table[] {

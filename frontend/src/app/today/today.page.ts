@@ -16,6 +16,7 @@ import { ApiService } from '../core/api.service';
 import { AuthService } from '../core/auth.service';
 import { localToday, longDate } from '../core/dates';
 import type { TodayView } from '../core/models';
+import { HabitCheckComponent } from '../habits/habit-check.component';
 import { AddMenuService } from '../shared/add-menu.service';
 import { EmptyStateComponent } from '../shared/empty-state.component';
 import { EventItemComponent } from '../shared/event-item.component';
@@ -35,6 +36,7 @@ import { TaskItemComponent } from '../shared/task-item.component';
     SectionHeaderComponent,
     EmptyStateComponent,
     EventItemComponent,
+    HabitCheckComponent,
     RouterLink,
     IonContent,
     IonButton,
@@ -131,11 +133,6 @@ import { TaskItemComponent } from '../shared/task-item.component';
     .hint {
       margin: 4px 0 8px;
     }
-    .soon {
-      margin: 28px 0 0;
-      text-align: center;
-      font-size: 0.8125rem;
-    }
   `,
   template: `
     <app-page-header [eyebrow]="eyebrow()" [title]="greeting()" />
@@ -164,6 +161,17 @@ import { TaskItemComponent } from '../shared/task-item.component';
                 </app-section-header>
                 @for (e of v.events; track e.id; let i = $index) {
                   <app-event-item [event]="e" [index]="i" />
+                }
+              </section>
+            }
+
+            @if (v.habits.length > 0) {
+              <section>
+                <app-section-header title="Habitudes du jour" [count]="habitsLeft()">
+                  <a class="ob-link" routerLink="/app/habitudes">Toutes</a>
+                </app-section-header>
+                @for (h of v.habits; track h.id) {
+                  <app-habit-check [habit]="h" [date]="v.date" (changed)="load()" />
                 }
               </section>
             }
@@ -246,10 +254,12 @@ import { TaskItemComponent } from '../shared/task-item.component';
               </section>
             }
 
-            <p class="soon ob-muted">
-              <ion-icon [icon]="icons.sparkles" aria-hidden="true"></ion-icon>
-              Budget du jour, habitudes et rendez-vous : bientôt disponibles.
-            </p>
+            @if (v.habits.length === 0) {
+              <a class="ob-card ob-row ob-plan-series" routerLink="/app/habitudes">
+                <ion-icon [icon]="icons.sparkles" aria-hidden="true"></ion-icon>
+                <span class="ob-row-txt">Installer une habitude</span>
+              </a>
+            }
             <div class="ob-fab-space"></div>
           }
         </app-state-view>
@@ -267,6 +277,8 @@ export class TodayPage {
   private readonly addMenu = inject(AddMenuService);
 
   protected readonly view = signal<TodayView | null>(null);
+  /** Habitudes du jour pas encore faites. */
+  protected readonly habitsLeft = computed(() => this.view()?.habits.filter((h) => !h.done).length ?? 0);
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
   protected readonly showDone = signal(false);

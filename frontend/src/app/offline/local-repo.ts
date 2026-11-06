@@ -5,6 +5,8 @@ import type {
   EventRepo,
   GoalQuery,
   GoalRepo,
+  HabitCheckRepo,
+  HabitRepo,
   MilestoneRepo,
   ReadingRepo,
   Repo,
@@ -13,7 +15,7 @@ import type {
   TaskRepo,
 } from '../../../../shared/src/domain/repo';
 import { newId } from '../../../../shared/src/domain/repo';
-import type { EventRow, GoalRow, ReadingRow, SeriesRow, TaskRow } from '../../../../shared/src/domain/rows';
+import type { EventRow, GoalRow, HabitRow, ReadingRow, SeriesRow, TaskRow } from '../../../../shared/src/domain/rows';
 import { ACTIVE_GOAL_STATUSES } from '../../../../shared/src/domain/rows';
 import { sortTasksForList } from '../../../../shared/src/domain/views';
 import { DomainError } from '../../../../shared/src/errors';
@@ -52,6 +54,8 @@ export class LocalRepo implements Repo {
   readonly readings: ReadingRepo;
   readonly events: EventRepo;
   readonly series: SeriesRepo;
+  readonly habits: HabitRepo;
+  readonly habitChecks: HabitCheckRepo;
 
   /**
    * @param clock fournit la prochaine valeur de l'horloge hybride de l'appareil
@@ -68,6 +72,8 @@ export class LocalRepo implements Repo {
     this.readings = this.buildReadings();
     this.events = this.buildEvents();
     this.series = this.buildSeries();
+    this.habits = this.buildHabits();
+    this.habitChecks = this.buildHabitChecks();
   }
 
   // --- Écriture générique
@@ -229,6 +235,7 @@ export class LocalRepo implements Repo {
         await this.db.tasks.where('goalId').equals(id).modify({ goalId: null, milestoneId: null });
         await this.db.events.where('goalId').equals(id).modify({ goalId: null, milestoneId: null });
         await this.db.series.where('goalId').equals(id).modify({ goalId: null, milestoneId: null });
+        await this.db.habits.where('goalId').equals(id).modify({ goalId: null });
         await this.removeRow(table as unknown as Table<Stored<{ id: string }>, string>, 'goals', id);
       },
     };
@@ -319,6 +326,42 @@ export class LocalRepo implements Repo {
         }
         await this.removeRow(table as unknown as Table<Stored<{ id: string }>, string>, 'event_series', id);
       },
+    };
+  }
+
+  // --- Habitudes (spec 012)
+
+  private buildHabits(): HabitRepo {
+    const table = this.db.habits;
+    return {
+      get: async (id) => {
+        const r = await table.get(id);
+        return r ? clean(r) : null;
+      },
+      list: async () =>
+        (await table.toArray())
+          .map((r) => clean(r))
+          .sort((a: HabitRow, b: HabitRow) => text(a.createdAt, b.createdAt) || text(a.id, b.id)),
+      insert: (row) => this.insertRow(table, 'habits', row),
+      update: (id, patch) => this.updateRow(table, 'habits', id, patch),
+      remove: async (id) => {
+        // Comme la base : les jours cochés disparaissent avec l'habitude.
+        await this.db.habitChecks.where('habitId').equals(id).delete();
+        await this.removeRow(table as unknown as Table<Stored<{ id: string }>, string>, 'habits', id);
+      },
+    };
+  }
+
+  private buildHabitChecks(): HabitCheckRepo {
+    const table = this.db.habitChecks;
+    return {
+      get: async (id) => {
+        const r = await table.get(id);
+        return r ? clean(r) : null;
+      },
+      byHabits: async (habitIds) => (await table.where('habitId').anyOf(habitIds).toArray()).map((r) => clean(r)),
+      insert: (row) => this.insertRow(table, 'habit_checks', row),
+      update: (id, patch) => this.updateRow(table, 'habit_checks', id, patch),
     };
   }
 

@@ -1,6 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 
+import { HabitFormComponent } from '../habits/habit-form.component';
+
 import { AddSheetComponent, type AddChoice } from './add-sheet.component';
 import { EventFormComponent } from './event-form.component';
 import { GoalFormComponent } from './goal-form.component';
@@ -26,6 +28,7 @@ export class AddMenuService {
     if (data === 'task') await this.openTask({}, onCreated);
     if (data === 'goal') await this.openGoal(onCreated);
     if (data === 'event') await this.openEvent({}, onCreated);
+    if (data === 'habit') await this.openHabit(onCreated);
     if (data === 'money') await this.openMoney({}, onCreated);
   }
 
@@ -49,6 +52,13 @@ export class AddMenuService {
     onCreated: () => void,
   ): Promise<void> {
     const modal = await this.modals.create({ component: EventFormComponent, componentProps: preset });
+    await modal.present();
+    const { role } = await modal.onWillDismiss();
+    if (role === 'saved') onCreated();
+  }
+
+  async openHabit(onCreated: () => void): Promise<void> {
+    const modal = await this.modals.create({ component: HabitFormComponent });
     await modal.present();
     const { role } = await modal.onWillDismiss();
     if (role === 'saved') onCreated();
